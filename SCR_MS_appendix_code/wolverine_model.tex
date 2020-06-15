@@ -1,0 +1,224 @@
+\subsection{Vectorized Computations Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+dHabitat <- nimbleFunction(
+    run = function(x = double(0), sxy = double(1), lower = double(1),
+                   upper = double(1), habitat = double(2), log = double()) {
+        if(sxy[1] < lower[1]) return(-Inf)   # x-coordinates
+        if(sxy[1] > upper[1]) return(-Inf)   # x-coordinates
+        if(sxy[2] < lower[2]) return(-Inf)   # y-coordinates
+        if(sxy[2] > upper[2]) return(-Inf)   # y-coordinates
+        returnType(double())
+        if(habitat[trunc(sxy[2])+1, trunc(sxy[1])+1] == 0) return(-Inf) else return(0)
+    }
+)
+
+dBernoulliVector <- nimbleFunction(
+    run = function(x = double(1), prob = double(1), 
+                   trials = double(1), log = integer(0)) {
+        returnType(double(0))
+        logProb <- sum(dbinom(x, prob = prob, size = trials, log = TRUE))
+        return(logProb)
+    }
+)
+
+code <- nimbleCode({
+    for(i in 1:n.individuals) {
+        sxy[i,1] ~ dunif(0, x.max)
+        sxy[i,2] ~ dunif(0, y.max)
+        ones[i] ~ dHabitat(sxy = sxy[i,1:2], lower = lowerCoords[1:2], 
+                    upper = upperCoords[1:2], habitat = habitat.mx[1:y.max,1:x.max])
+    }
+    psi ~ dunif(0,1)
+    for (i in 1:n.individuals) {
+        z[i] ~ dbern(psi)
+    }
+    sigma ~ dunif(0, 50)
+    alpha <- -1 / (2 * sigma^2)
+    p0 ~ dunif(0, 1)
+    for(i in 1:n.individuals) {
+        d2[i, 1:n.detectors] <- (sxy[i,1] - detector.xy[1:n.detectors,1])^2 + 
+                                (sxy[i,2] - detector.xy[1:n.detectors,2])^2
+        p[i, 1:n.detectors] <- p0 * exp(alpha * d2[i,1:n.detectors])
+        y[i, 1:n.detectors] ~ dBernoulliVector(prob = p[i,1:n.detectors]*z[i], 
+                                               trials =  trials[1:n.detectors])
+    }
+    N <- sum(z[1:n.individuals])
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
+\newpage
+\subsection{Local Detector Evaluations and Sparse Observation Matrix Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+dBernoulliVector2 <- nimbleFunction(
+                    run = function(x = double(1), pZero = double(0),
+                                   sxy = double(1), sigma = double(0),
+                                   nbDetections = double(0), yDets = double(1),
+                                   detector.xy = double(2), trials = double(1),
+                                   detectorIndex = double(2), nDetectorsLESS = double(1),
+                                   ResizeFactor = double(0, default = 1),
+                                   maxNBDets = double(0), habitatID = double(2),
+                                   log = integer(0, default = 0)){
+  returnType(double(0))
+  nDetectors <- length(trials)
+  sxyID <- habitatID[trunc(sxy[2]/ResizeFactor)+1, trunc(sxy[1]/ResizeFactor)+1]
+  index <- detectorIndex[sxyID,1:nDetectorsLESS[sxyID]]
+  n.detectors <- length(index)
+  y <- nimNumeric(length = nDetectors, value = 0, init = TRUE)
+  if(nbDetections > 0){
+    for(r in 1:nbDetections){
+      y[yDets[r]] <- x[r] 
+      if(sum(yDets[r]==index)==0){
+        if(log == 0) return(0.0)
+        else return(-Inf)
+      } 
+    } 
+  }
+  alpha <- -1.0 / (2.0 * sigma * sigma)
+  logProb <- 0.0 
+  count <- 1 
+  index1 <- c(index,0) 
+  for(r in 1:nDetectors){
+      if(index1[count] == r){  
+        d2 <- pow(detector.xy[r,1] - sxy[1], 2) + pow(detector.xy[r,2] - sxy[2], 2)
+        p <- pZero * exp(alpha * d2)
+        logProb <- logProb + dbinom(y[r], prob = p, size = trials[r], log = TRUE)
+        count <- count + 1
+      }
+  }
+  if(log)return(logProb)
+  return(exp(logProb))
+})
+
+code <- nimbleCode({
+    for(i in 1:n.individuals) {
+        sxy[i,1] ~ dunif(0, x.max)
+        sxy[i,2] ~ dunif(0, y.max)
+        ones[i] ~ dHabitat(sxy = sxy[i,1:2], lower = lowerCoords[1:2], 
+                    upper = upperCoords[1:2], habitat = habitat.mx[1:y.max,1:x.max])
+    }
+    psi ~ dunif(0,1)
+    for (i in 1:n.individuals) {
+        z[i] ~ dbern(psi)
+    }
+    sigma ~ dunif(0, 50)
+    p0 ~ dunif(0, 1)
+    for(i in 1:n.individuals) {
+        y[i,1:n.detectors] ~ 
+            dBernoulliVector2(pZero = p0*z[i], sxy = sxy[i,1:2], sigma = sigma,
+                              nbDetections[i], yDets = yDets[i,1:nMaxDetectors],
+                              detector.xy =  detector.xy[1:n.detectors,1:2],
+                              trials = trials[1:n.detectors],
+                              detectorIndex = detectorIndex[1:n.cells,1:maxNBDets], 
+                              nDetectorsLESS = nDetectorsLESS[1:n.cells],  
+                              ResizeFactor = ResizeFactor, maxNBDets = maxNBDets,
+                              habitatID = habitatIDDet[1:y.maxDet,1:x.maxDet])
+    }
+    N <- sum(z[1:n.individuals])
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
+
+\newpage
+\subsection{Skip Local Calculations Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+dBernoulliVector3 <- nimbleFunction(
+                    run = function(x = double(1), pZero = double(0),
+                                   sxy = double(1), sigma = double(0),
+                                   nbDetections = double(0), yDets = double(1),
+                                   detector.xy = double(2), trials = double(1),
+                                   detectorIndex = double(2), nDetectorsLESS = double(1),
+                                   ResizeFactor = double(0, default = 1),
+                                   maxNBDets = double(0), habitatID = double(2),
+                                   indicator = double(0, default = 1.0),
+                                   log = integer(0, default = 0)) {
+  returnType(double(0))
+  nDetectors <- length(trials)
+  if(indicator == 0){
+    if(nbDetections == 0){
+      if(log == 0) return(1.0)
+      else return(0.0)
+    } else {
+      if(log == 0) return(0.0)
+      else return(-Inf)
+    }
+  }
+  sxyID <- habitatID[trunc(sxy[2]/ResizeFactor)+1, trunc(sxy[1]/ResizeFactor)+1]
+  index <- detectorIndex[sxyID,1:nDetectorsLESS[sxyID]]
+  n.detectors <- length(index)
+  y <- nimNumeric(length = nDetectors, value = 0, init = TRUE)
+  if(nbDetections > 0){
+    for(r in 1:nbDetections){
+      y[yDets[r]] <- x[r] 
+      if(sum(yDets[r]==index)==0){
+        if(log == 0) return(0.0)
+        else return(-Inf)
+      } 
+    } 
+  }
+  alpha <- -1.0 / (2.0 * sigma * sigma)
+  logProb <- 0.0 
+  count <- 1 
+  index1 <- c(index,0) 
+  for(r in 1:nDetectors){
+      if(index1[count] == r){ 
+        d2 <- pow(detector.xy[r,1] - sxy[1], 2) + pow(detector.xy[r,2] - sxy[2], 2)
+        p <- pZero * exp(alpha * d2)
+        logProb <- logProb + dbinom(y[r], prob = p, size = trials[r], log = TRUE)
+        count <- count + 1
+      }
+  }
+  if(log)return(logProb)
+  return(exp(logProb))
+})
+
+code <- nimbleCode({
+    for(i in 1:n.individuals) {
+        sxy[i,1] ~ dunif(0, x.max)
+        sxy[i,2] ~ dunif(0, y.max)
+        ones[i] ~ dHabitat(sxy = sxy[i,1:2], lower = lowerCoords[1:2], 
+                    upper = upperCoords[1:2], habitat = habitat.mx[1:y.max,1:x.max])
+    }
+    psi ~ dunif(0,1)
+    for (i in 1:n.individuals) {
+        z[i] ~ dbern(psi)
+    }
+    sigma ~ dunif(0, 50)
+    p0 ~ dunif(0, 1)
+    for(i in 1:n.individuals) {
+    y[i, 1:nMaxDetectors] ~ dBernoulliVector3(pZero = p0, sxy = sxy[i,1:2],
+            sigma = sigma, nbDetections[i], yDets = yDets[i,1:nMaxDetectors],
+            detector.xy =  detector.xy[1:n.detectors,1:2],
+            trials = trials[1:n.detectors],
+            detectorIndex = detectorIndex[1:n.cells,1:maxNBDets], 
+            nDetectorsLESS = nDetectorsLESS[1:n.cells],  
+            ResizeFactor = ResizeFactor, maxNBDets = maxNBDets, 
+            habitatID = habitatIDDet[1:y.maxDet,1:x.maxDet],
+             indicator = z[i])
+    }
+    N <- sum(z[1:n.individuals])
+})
+
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+

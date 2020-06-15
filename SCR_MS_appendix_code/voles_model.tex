@@ -1,0 +1,433 @@
+\subsection{JAGS Code} \label{appendix:voles_jags}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+code <- nimbleCode({
+    for(sex in 1:2){
+        kappa[sex] ~ dunif(0,50)
+        sigma[sex] ~ dunif(0.1,20)
+    }
+    for(sex in 1:2){
+        for(TOD in 1:2){
+            lambda[TOD, sex] <- lambda0 * pow(beta[1],(TOD-1)) * pow(beta[2],(sex-1))
+        }
+    }
+    PL ~ dunif(0.01,0.99)
+    lambda0 <- -log(1-PL)
+    beta[1] ~ dunif(0.1,10)
+    beta[2] ~ dunif(0.1,10)
+    for(sex in 1:2){
+        Phi[sex] ~ dunif(0,1)
+        for(k in 1:(n.prim-1)){
+            phi[sex,k] <- pow(Phi[sex], dt[k])
+        }
+    }
+    for(sex in 1:2){
+        dmean[sex] ~ dunif(0,100)
+        dlambda[sex] <- 1/dmean[sex]
+    }
+    for(i in 1:N[1]){
+        z[i,first[i]] ~ dbern(1)
+        S[i,1,first[i]] ~ dunif(xlow[i], xupp[i]) # Prior for the first x coordinate
+        S[i,2,first[i]] ~ dunif(ylow[i], yupp[i]) # Prior for the first y coordinate
+        g[i,first[i],1] <- 0
+        for(r in 1:R){ # trap
+            D[i,r,first[i]] <- sqrt(pow(S[i,1,first[i]]-X[r,1],2) + 
+                                    pow(S[i,2,first[i]]-X[r,2],2))
+            g[i,first[i],r+1] <- exp(-pow(D[i,r,first[i]]/sigma[gr[i]], kappa[gr[i]]))
+        }
+        G[i,first[i]] <- sum(g[i,first[i],1:(R+1)]) # Total trap exposure
+        for(j in 1:J[i,first[i]]){
+            P[i,j,first[i]] <- 1 - exp(-lambda[tod[first[i],j],gr[i]]*G[i,first[i]])
+            PPII[i,first[i],j] <- step(H[i,j,first[i]]-2) * 
+                                  (g[i,first[i],H[i,j,first[i]]] / 
+                                  (G[i,first[i]]+ 0.0001)) * 
+                                  P[i,j,first[i]] + 
+                                  (1-step(H[i,j,first[i]]-2)) * (1-P[i,j,first[i]])
+            Ones[i,j,first[i]] ~ dbern(PPII[i,first[i],j])
+        }
+    }
+    for(i in (N[1]+1):N[2]){
+        z[i,first[i]] ~ dbern(1)
+        S[i,1,first[i]] ~ dunif(xlow[i], xupp[i]) # Prior for the first x coordinate
+        S[i,2,first[i]] ~ dunif(ylow[i], yupp[i]) # Prior for the first y coordinate
+        ## First primary session:
+        g[i,first[i],1] <- 0
+        for(r in 1:R){ # trap
+            D[i,r,first[i]] <- sqrt(pow(S[i,1,first[i]]-X[r,1],2) + 
+                                    pow(S[i,2,first[i]]-X[r,2],2))
+            g[i,first[i],r+1] <- exp(-pow(D[i,r,first[i]]/sigma[gr[i]], kappa[gr[i]]))
+        }
+        G[i,first[i]] <- sum(g[i,first[i],1:(R+1)]) # Total trap exposure
+        for(j in 1:J[i,first[i]]){
+            P[i,j,first[i]] <- 1 - exp(-lambda[tod[first[i],j],gr[i]]*G[i,first[i]])
+            PPII[i,first[i],j] <- step(H[i,j,first[i]]-2) * 
+                                       (g[i,first[i],H[i,j,first[i]]] / 
+                                       (G[i,first[i]]+ 0.0001)) * 
+                                       P[i,j,first[i]] + 
+                                       (1-step(H[i,j,first[i]]-2))*(1-P[i,j,first[i]])
+            Ones[i,j,first[i]] ~ dbern(PPII[i,first[i],j])
+        }
+        for(k in (first[i]+1):K[i]){ # primary session
+            theta[i,k-1] ~ dunif(-3.141593,3.141593) # Prior for dispersal direction 
+            z[i,k] ~ dbern(Palive[i,k-1])
+            Palive[i,k-1] <- z[i,k-1]*phi[gr[i],k-1] # Pr(alive in primary session k)
+            d[i,k-1] ~ dexp(dlambda[gr[i]])
+            S[i,1,k] <- S[i,1,k-1] + d[i,k-1]*cos(theta[i,k-1])
+            S[i,2,k] <- S[i,2,k-1] + d[i,k-1]*sin(theta[i,k-1])
+            g[i,k,1] <- 0
+            for(r in 1:R){ # trap
+                D[i,r,k] <- sqrt(pow(S[i,1,k]-X[r,1],2) + pow(S[i,2,k]-X[r,2],2))
+                g[i,k,r+1] <- exp(-pow(D[i,r,k]/sigma[gr[i]], kappa[gr[i]]))
+            }
+            G[i,k] <- sum(g[i,k,1:(R+1)]) # Total trap exposure
+            for(j in 1:J[i,k]){
+                P[i,j,k] <- (1 - exp(-lambda[tod[k,j],gr[i]]*G[i,k]))*z[i,k]
+                PPII[i,k,j] <- step(H[i,j,k]-2) * 
+                               (g[i,k,H[i,j,k]] / 
+                               (G[i,k] + 0.0001))*P[i,j,k] + 
+                               (1-step(H[i,j,k]-2))*(1-P[i,j,k])
+                Ones[i,j,k] ~ dbern(PPII[i,k,j])
+            }
+        }
+    }
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
+
+\newpage
+\subsection{Joint Sampling and Marginalization Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+dLikelihood <- nimbleFunction(
+    run = function(x = double(2), first = double(), last = double(), 
+                   J = double(1), lambda = double(1), tod = double(2),
+                   g = double(2), G = double(1), z = double(1), 
+                   phi = double(1), log = double()) {
+        pAlive <- 1
+        pDead <- 0
+        lp <- 0
+        for(k in first:last) {
+            if(z[k] == 1) {    # known to be alive
+                if(k > first)           # survived
+                    lp <- lp + log(phi[k-1])
+                for(j in 1:J[k]) {
+                    pNoCaptureGivenAlive <- exp(-lambda[tod[k,j]] * G[k])
+                    if(x[j,k] == 1) {   # not captured
+                        lp <- lp + log(pNoCaptureGivenAlive)
+                    } else {            # captured
+                        lp <- lp + log(1-pNoCaptureGivenAlive) + 
+                              log(g[k, x[j,k]-1]) - log(G[k])
+                    }
+                }
+            } else {           # could be dead or alive
+                pTheseNonSightings <- 1
+                for(j in 1:J[k]) {
+                    pNoCaptureGivenAlive <- exp(-lambda[tod[k,j]] * G[k])
+                    pTheseNonSightings <- pTheseNonSightings * pNoCaptureGivenAlive
+                }
+                pAlive_new <- phi[k-1] * pAlive
+                pDead_new <- (1-phi[k-1]) * pAlive + pDead
+                L <- pAlive_new * pTheseNonSightings + pDead_new
+                pAlive <- (pAlive_new * pTheseNonSightings) / L
+                pDead <- pDead_new / L
+                lp <- lp + log(L)
+            }
+        }
+        returnType(double())
+        if(log) return(lp) else return(exp(lp))
+    }
+)
+
+code <- nimbleCode({
+    PL ~ dunif(0.01, 0.99)
+    lambda0 <- -log(1-PL)
+    for(sex in 1:2) {
+        kappa[sex] ~ dunif(0,   50)
+        sigma[sex] ~ dunif(0.1, 20)
+        beta[sex]  ~ dunif(0.1, 10)
+        for(TOD in 1:2) {
+            lambda[TOD, sex] <- lambda0 * beta[1]^(TOD-1) * beta[2]^(sex-1)
+        }
+        Phi[sex] ~ dunif(0, 1)
+        for(k in 1:(nPrimary-1)) {
+            phi[sex, k] <- Phi[sex]^dt[k]
+        }
+        dmean[sex] ~ dunif(0, 100)
+        dlambda[sex] <- 1/dmean[sex]
+    }
+    for(i in 1:nInd) {
+        S[i, 1, first[i]] ~ dunif(xlow[i], xupp[i])
+        S[i, 2, first[i]] ~ dunif(ylow[i], yupp[i])
+        for(k in first[i]:last[i]) {
+            D[i, k, 1:R] <- sqrt((S[i, 1, k] - X[1:R, 1])^2 + (S[i, 2, k] - X[1:R, 2])^2)
+            g[i, k, 1:R] <- exp(-(D[i, k, 1:R]/sigma[gr[i]])^kappa[gr[i]])
+            G[i, k] <- sum(g[i, k, 1:R])
+        }
+        for(k in first[i]:(last[i]-1)) {
+            theta[i, k] ~ dunif(-3.141593, 3.141593)   # dispersal direction
+            d[i, k] ~ dexp(dlambda[gr[i]])
+            S[i, 1, k+1] <- S[i, 1, k] + d[i, k] * cos(theta[i, k])
+            S[i, 2, k+1] <- S[i, 2, k] + d[i, k] * sin(theta[i, k])
+        }
+        H[i, 1:nSecondary, 1:nPrimary] ~ dLikelihood(
+            first = first[i], last = last[i], J = J[i,1:nPrimary],
+            lambda = lambda[1:2,gr[i]], tod = tod[1:nPrimary,1:nSecondary],
+            g = g[i,1:nPrimary,1:R], G = G[i,1:nPrimary],
+            z = z[i,1:nPrimary], phi = phi[gr[i],1:(nPrimary-1)])
+    }
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
+
+
+
+\newpage
+\subsection{Custom Dispersal Distribution Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+dDispersal <- nimbleFunction(
+    run = function(x = double(1), S = double(1), lam = double(), log = double()) {
+        dist <- sqrt(sum((x-S)^2))
+        lp <- dexp(dist, rate = lam, log = TRUE) - log(dist)
+        returnType(double())
+        if(log) return(lp) else return(exp(lp))
+    }
+)
+
+code <- nimbleCode({
+    PL ~ dunif(0.01, 0.99)
+    lambda0 <- -log(1-PL)
+    for(sex in 1:2) {
+        kappa[sex] ~ dunif(0,   50)
+        sigma[sex] ~ dunif(0.1, 20)
+        beta[sex]  ~ dunif(0.1, 10)
+        for(TOD in 1:2) {
+            lambda[TOD, sex] <- lambda0 * beta[1]^(TOD-1) * beta[2]^(sex-1)
+        }
+        Phi[sex] ~ dunif(0, 1)
+        for(k in 1:(nPrimary-1)) {
+            phi[sex, k] <- Phi[sex]^dt[k]
+        }
+        dmean[sex] ~ dunif(0, 100)
+        dlambda[sex] <- 1/dmean[sex]
+    }
+    for(i in 1:nInd) {
+        S[i, 1, first[i]] ~ dunif(xlow[i], xupp[i])
+        S[i, 2, first[i]] ~ dunif(ylow[i], yupp[i])
+        for(k in first[i]:last[i]) {
+            D[i, k, 1:R] <- sqrt((S[i, 1, k] - X[1:R, 1])^2 + (S[i, 2, k] - X[1:R, 2])^2)
+            g[i, k, 1:R] <- exp(-(D[i, k, 1:R]/sigma[gr[i]])^kappa[gr[i]])
+            G[i, k] <- sum(g[i, k, 1:R])
+        }
+        for(k in first[i]:(last[i]-1)) {
+            S[i, 1:2, k+1] ~ dDispersal(S[i, 1:2, k], dlambda[gr[i]])
+        }
+        H[i, 1:nSecondary, 1:nPrimary] ~ dLikelihood(
+            first = first[i], last = last[i], J = J[i,1:nPrimary],
+            lambda = lambda[1:2,gr[i]], tod = tod[1:nPrimary,1:nSecondary],
+            g = g[i,1:nPrimary,1:R], G = G[i,1:nPrimary],
+            z = z[i,1:nPrimary], phi = phi[gr[i],1:(nPrimary-1)])
+    }
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
+
+\newpage
+\subsection{Local Trap Calculations Code}
+
+\begin{singlespace}
+\begin{small}
+\begin{verbatim}
+makeGrid <- function(xmin=0, ymin=0, xmax, ymax, resolution=1, buffer=0) {
+    makeVals <- function(min, max, buf, res) {
+        unique(c(rev(seq(min, min-buf, by = -res)), seq(min, max+buf, by = res)))
+    }
+    xvals <- makeVals(xmin, xmax, buffer, resolution)
+    yvals <- makeVals(ymin, ymax, buffer, resolution)
+    grid <- expand.grid(xvals, yvals)
+    colnames(grid) <- c('x', 'y')
+    ## unique ids:
+    mult <- diff(range(grid$y/resolution)) + 1
+    ids <- grid$x/resolution * mult + grid$y/resolution
+    offset <- 1 - min(ids)
+    require(nimble)
+    makeIDdef <- substitute(
+        nimbleFunction(
+            run = function(xy = double(1)) {
+                id <- xy[1]/RES * MULT + xy[2]/RES + OFFSET
+                returnType(double())
+                return(id)
+            }
+        ),
+        list(RES = resolution,
+             MULT = mult,
+             OFFSET = offset))
+    makeID <- eval(makeIDdef)
+    ids2 <- apply(grid, 1, function(xy) makeID(xy))
+    sorted <- sort(ids2, index.return = TRUE)
+    gridReordered <- grid[sorted$ix, ]
+    gridReordered$id <- sorted$x
+    return(list(grid = gridReordered, makeID = makeID))
+}
+
+xr <- range(constants$X[, 1])
+yr <- range(constants$X[, 2])
+buffer <- 40
+exposureRadius <- 40
+resolution <- 7
+makeGridReturn <- makeGrid(xmin=xr[1], xmax = xr[2],
+                           ymin=yr[1], ymax = yr[2],
+                           buffer = buffer,
+                           resolution = resolution)
+grid <- makeGridReturn$grid
+makeID <- makeGridReturn$makeID
+
+findLocalTraps <- function(grid, traps, exposureRadius) {
+    trtrapsBool <- apply(grid, 1, function(row) {
+        apply(traps, 1, function(tp) {
+            sqrt(sum((row[1:2]-tp)^2)) <= exposureRadius
+        })
+    })
+    trapsBool <- t(trtrapsBool)
+    trapsInd <- apply(trapsBool, 1, which)
+    numsTraps <- sapply(trapsInd, length)
+    localTraps <- array(as.numeric(NA), c(dim(grid)[1], max(numsTraps)+1))
+    for(i in seq_along(trapsInd)) {
+        n <- numsTraps[i]
+        localTraps[i,1] <- n
+        if(n > 0)    localTraps[i, 2:(n+1)] <- trapsInd[[i]]
+    }
+    localTraps
+}
+
+## n = localTraps[i,1] gives the number of local traps
+## localTraps[i, 2:(n+1)] gives the indices of the local traps
+localTraps <- findLocalTraps(grid, constants$X, exposureRadius)
+
+getNumLocalTraps6 <- nimbleFunction(
+    run = function(idarg = double(), localTrapNumbers = double(1), LTD1arg = double()) {
+        if(idarg < 1)       {   return(0)   }
+        if(idarg > LTD1arg) {   return(0)   }
+        n <- localTrapNumbers[idarg]
+        returnType(double())
+        return(n)
+    }
+)
+
+getLocalTrapIndices6 <- nimbleFunction(
+    run = function(MAXNUM = double(), localTraps = double(2),
+                   n = double(), idarg = double()) {
+        indices <- numeric(MAXNUM, 0)
+        if(n > 0) {
+            indices[1:n] <- localTraps[idarg, 2:(n+1)]
+        }
+        returnType(double(1))
+        return(indices)
+    }
+)
+
+calcLocalTrapDists6 <- nimbleFunction(
+    run = function(MAXNUM = double(), n = double(), 
+                   localTrapInd = double(1), S = double(1), X = double(2)) {
+        Ds <- numeric(MAXNUM, 0)
+        if(n > 0) {
+            Ds[1:n] <- sqrt((S[1] - X[localTrapInd[1:n],1])^2 + 
+                            (S[2] - X[localTrapInd[1:n],2])^2)
+        }
+        returnType(double(1))
+        return(Ds)
+    }
+)
+
+calcLocalTrapExposure6 <- nimbleFunction(
+    run = function(R = double(), n = double(), Ds = double(1),
+                  localTrapInd = double(1), sigma = double(), kappa = double()) {
+        g <- numeric(R, 0.00000000000001)      ## small value
+        if(n > 0) {
+            g[localTrapInd[1:n]] <- exp(-(Ds[1:n]/sigma)^kappa)
+        }
+        returnType(double(1))
+        return(g)
+    }
+)
+
+code <- nimbleCode({
+    PL ~ dunif(0.01, 0.99)
+    lambda0 <- -log(1-PL)
+    for(sex in 1:2) {
+        kappa[sex] ~ dunif(0,   50)
+        sigma[sex] ~ dunif(0.1, 20)
+        beta[sex]  ~ dunif(0.1, 10)
+        for(TOD in 1:2) {
+            lambda[TOD, sex] <- lambda0 * beta[1]^(TOD-1) * beta[2]^(sex-1)
+        }
+        Phi[sex] ~ dunif(0, 1)
+        for(k in 1:(nPrimary-1)) {
+            phi[sex, k] <- Phi[sex]^dt[k]
+        }
+        dmean[sex] ~ dunif(0, 100)
+        dlambda[sex] <- 1/dmean[sex]
+    }
+    for(i in 1:nInd) {
+        S[i, 1, first[i]] ~ dunif(xlow[i], xupp[i])
+        S[i, 2, first[i]] ~ dunif(ylow[i], yupp[i])
+        Sdiscrete[i, 1, first[i]] <- round(S[i, 1, first[i]]/7) * 7   ## resolution = 7
+        Sdiscrete[i, 2, first[i]] <- round(S[i, 2, first[i]]/7) * 7   ## resolution = 7
+        for(k in first[i]:last[i]) {
+            id[i, k] <- makeID(Sdiscrete[i,1:2,k])
+            nLocalTraps[i, k] <- 
+                getNumLocalTraps6(idarg=id[i,k], localTrapNumbers =
+                                  localTraps[1:LTD1,1], LTD1arg = LTD1)
+            localTrapIndices[i, k, 1:maxTraps] <- 
+                getLocalTrapIndices6(MAXNUM = maxTraps, 
+                                     localTraps = localTraps[1:LTD1,1:LTD2], 
+                                     n = nLocalTraps[i, k], idarg = id[i,k])
+            Ds[i, k, 1:maxTraps] <- 
+                calcLocalTrapDists6(MAXNUM = maxTraps, n = nLocalTraps[i,k], 
+                                    localTrapInd = localTrapIndices[i,k,1:maxTraps],
+                                    S = S[i,1:2,k], X = X[1:R,1:2])
+            g[i, k, 1:R] <- calcLocalTrapExposure6(
+                R = R, n = nLocalTraps[i,k], Ds = Ds[i,k,1:maxTraps], 
+                localTrapInd = localTrapIndices[i,k,1:maxTraps], 
+                sigma = sigma[gr[i]], kappa = kappa[gr[i]])
+            G[i, k] <- sum(g[i, k, 1:R])
+        }
+        for(k in first[i]:(last[i]-1)) {
+            S[i, 1:2, k+1] ~ dDispersal(S[i, 1:2, k], dlambda[gr[i]])
+            Sdiscrete[i, 1:2, k+1] <- round(S[i, 1:2, k+1]/7) * 7
+        }
+        H[i, 1:nSecondary, 1:nPrimary] ~ dLikelihood(
+            first = first[i], last = last[i], J = J[i,1:nPrimary],
+            lambda = lambda[1:2,gr[i]], tod = tod[1:nPrimary,1:nSecondary],
+            g = g[i,1:nPrimary,1:R], G = G[i,1:nPrimary],
+            z = z[i,1:nPrimary], phi = phi[gr[i],1:(nPrimary-1)])
+    }
+})
+\end{verbatim}
+\end{small}
+\end{singlespace}
+
+
+
+
