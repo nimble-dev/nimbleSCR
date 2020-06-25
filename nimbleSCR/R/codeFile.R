@@ -21,17 +21,19 @@ exampleFunction <- function(a, b) {
 
 #' Bivariate dispersal distribution for activity centers
 #'
-#' Longer description here.  Describe how to use it, etc.
+#' The dDisperal distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.
+#'
+#' The dDispersal distribution models the location of an AC at time (t+1), conditional on the previous AC location at time (t), and also the rate parameter lambda of the exponential distribution for dispersal distance.
 #'
 #' @name dDispersal
 #'
-#' @param x DESCRIPTION OF x PARAMETER
-#' @param S DESCRIPTION OF S PARAMETER
-#' @param lam DESCRIPTION OF lam PARAMETER
-#' @param log DESCRIPTION OF log PARAMETER
-#' @param n DESCRIPTION OF n PARAMETER
+#' @param x Bivariate activity center coordinates (at time t+1).
+#' @param S Current location of the bivariate activity center (at time t).
+#' @param lam Rate parameter of the exponential distribution for dispersal distance.
+#' @param log Logical argument, specifying whether to return the log-probability of the distribution.
+#' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #'
-#' @return returns the log-likelihood value associated with the bivariate activity center location x, given the current activity center S, and the lambda parameter of the exponential dispersal distance distribution
+#' @return The log-likelihood value associated with the bivariate activity center location x, given the current activity center S, and the lambda parameter of the exponential dispersal distance distribution.
 #'
 #' @author Daniel Turek
 #'
@@ -39,9 +41,24 @@ exampleFunction <- function(a, b) {
 #' @importFrom stats dexp rexp runif
 #'
 #' @examples
-#' ## R CODE EXAMPLE HERE USING dDispersal DISTRIBUTION
-#' x[1:2] ~ dDispersal()
-#' ### etc ...
+#' \donttest{
+#' ## define model code
+#' code <- nimbleCode({
+#'     lambda ~ dgamma(0.001, 0.001)
+#'     for(i in 1:N) {
+#'         AC[i, 1, 1] ~ dunif(0, 100)
+#'         AC[i, 2, 1] ~ dunif(0, 100)
+#'         for(t in 2:T) {
+#'             AC[i, 1:2, t+1] ~ dDispersal(S = AC[i, 1:2, t], lam = lambda)
+#'         }
+#'     }
+#' })
+#'
+#' ## create NIMBLE model object
+#' Rmodel <- nimbleModel(code)
+#'
+#' ## use model object for MCMC, etc.
+#' }
 #'
 #' @export
 NULL
