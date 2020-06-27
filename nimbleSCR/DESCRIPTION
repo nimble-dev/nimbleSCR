@@ -16,7 +16,4 @@ License: GPL-3
 Depends: R (>= 3.4.0), nimble
 Encoding: UTF-8
 LazyData: true
-Collate:
-  codeFile.R
-  zzz.R
 RoxygenNote: 6.1.1
