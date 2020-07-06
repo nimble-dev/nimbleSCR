@@ -1,4 +1,4 @@
-#' Local evalution of a binomial SCR observation process distribution
+#' Local evaluation of a binomial SCR observation process 
 #'
 #' The dbinom_SparseLocalSCR distribution is a NIMBLE custom distribution which can be used to model 
 #' the binomial observations (x) of a single individual over a set of detectors defined by their 
@@ -10,7 +10,7 @@
 #' 2 - It uses a sparse matrix representation (x, detIndices, detNum) of the observation data to reduce the size of objetcs to be processed.
 #' 3 - It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
 #'
-#' @name dbinom_SparseLocalSCR
+#' @name dbinom_sparseLocalSCR
 #'
 #' @param x vector of individual detection frequencies, as returned by the getSparseY function 
 #' (padded with -1's to maintain the square structure of the observation data).
@@ -34,7 +34,7 @@
 #' @author Cyril Milleret
 #'
 #' @import nimble
-#' @importFrom stats dbinom rbinom 
+#' @importFrom stats dbinom  
 #'
 #' @examples
 #' \donttest{
@@ -53,19 +53,18 @@
 #'         
 #'         z[i] ~ dbern(psi)
 #'         
-#'         y[i,1:maxDetNum] ~ dbin_LESSCachedAllSparse( detNums = detNums[i],
-#'                                                      detIndices = detIndices[i,1:maxDetNum],
-#'                                                      size = size[1:R],
-#'                                                      p0 = p0,
-#'                                                      sigma = sigma,
-#'                                                      s = s[i,1:2],
-#'                                                      trapCoords = trapCoords[1:R,1:2],
-#'                                                      localTrapsIndices = localTrapsIndices[1:maxHabCells,1:maxLocalTrapsNum],
-#'                                                      localTrapsNum = localTrapsNum[1:maxHabCells],
-#'                                                      resizeFactor = resizeFactor,
-#'                                                      habitatGrid = habitatGrid[1:maxHabY,1:maxHabX],
-#'                                                      indicator = z[i])
-#'   }#i
+#'         y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR( detNums = double(0),
+#'                                                   detIndices = double(1),
+#'                                                   size = double(1),
+#'                                                   p0 = double(0),
+#'                                                   sigma = double(0),
+#'                                                   s = double(1),
+#'                                                   trapCoords = double(2),
+#'                                                   localTrapsIndices = double(2),
+#'                                                   localTrapsNum = double(1),
+#'                                                   resizeFactor = double(0, default = 1),
+#'                                                   habitatGrid = double(2),
+#'                                                   indicator = double(0, default = 1.0)
 #' })
 #'
 #' ## create NIMBLE model object
@@ -77,9 +76,9 @@
 #' @export
 NULL
 
-#' @rdname dbinom_SparseLocalSCR
+#' @rdname dbinom_sparseLocalSCR
 #' @export
-dbinom_SparseLocalSCR <- nimbleFunction(
+dbinom_sparseLocalSCR <- nimbleFunction(
   run = function( x = double(1),
                   detNums = double(0),
                   detIndices = double(1),
@@ -150,4 +149,26 @@ dbinom_SparseLocalSCR <- nimbleFunction(
     ## Return the probability of the vector of detections (or log-probability if required)
     if(log)return(logProb)
     return(exp(logProb))
+  })
+
+
+#' @rdname dbinom_sparseLocalSCR
+#' @export
+#' 
+rbinom_sparseLocalSCR <- nimbleFunction(
+  run = function( n = double(0, default = 1),
+                  detNums = double(0),
+                  detIndices = double(1),
+                  size = double(1),
+                  p0 = double(0),
+                  sigma = double(0),
+                  s = double(1),
+                  trapCoords = double(2),
+                  localTrapsIndices = double(2),
+                  localTrapsNum = double(1),
+                  resizeFactor = double(0, default = 1),
+                  habitatGrid = double(2),
+                  indicator = double(0, default = 1.0)
+  ) {
+    stop("Random generation for the dbinom_sparseLocalSCR distribution is not currently supported")
   })

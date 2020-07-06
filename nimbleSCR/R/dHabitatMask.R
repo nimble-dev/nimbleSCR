@@ -100,7 +100,3 @@ rHabitatMask <- nimbleFunction(
     
     if(habitatMask[trunc(s[2])+1, trunc(s[1])+1] == 0) return(0) else return(1)
   })
-
-
-
-
