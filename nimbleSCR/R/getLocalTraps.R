@@ -24,7 +24,7 @@
 #' 
 #' @author Cyril Milleret
 #'
-#' @importFrom stats aggregate
+#' @importFrom raster aggregate raster
 #' @importFrom graphics plot points
 #'
 #' @examples
@@ -103,7 +103,7 @@ getLocalTraps <- function( habitatMask,
   numLocalTraps <- unlist(lapply(localTrapsIndices, function(x) length(x)))
   maxLocalTraps <- max(numLocalTraps)
   # store detector index (colums) for each habitat cell (rows)
-  detectorIndex <- matrix(0, nrow = length(localTrapsIndices), ncol = maxNBDets)
+  detectorIndex <- matrix(0, nrow = length(localTrapsIndices), ncol = maxLocalTraps)
   for(j in 1:length(localTrapsIndices)){
     if(length(localTrapsIndices[[j]])!=0){
       detectorIndex[j, 1:numLocalTraps[j]] <- localTrapsIndices[[j]]
@@ -128,7 +128,7 @@ getLocalTraps <- function( habitatMask,
   output <-list( habitatGrid = habitatID,
                  localTrapsIndices = detectorIndex,
                  numLocalTraps = numLocalTraps,
-                 numLocalTrapsMax = maxNBDets,
+                 numLocalTrapsMax = maxLocalTraps,
                  resizeFactor = resizeFactor)
   
   return(output)

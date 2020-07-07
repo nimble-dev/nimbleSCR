@@ -53,7 +53,7 @@ getSparseY <- function( x,
       if(detNums[i,t] > 0){
         # GET WHERE (DETECTOR ID) DETECTIONS OCCUR
         detIndices[i,1:detNums[i,t],t] <- which(Y[i, ,t] > 0)
-        # GET NUMBE OF DETECTIONS 
+        # GET NUMBER OF DETECTIONS 
         ySparse[i,1:detNums[i,t],t] <- Y[i,which(Y[i, ,t] > 0),t]
       }
     }

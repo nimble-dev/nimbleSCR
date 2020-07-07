@@ -1,6 +1,6 @@
 #' Vectorized binomial distribution
 #'
-#' The dbinom_vector distribution is a vectorized version of the binomial distribution.
+#' The \code{dbinom_vector} distribution is a vectorized version of the binomial distribution.
 #' It can be used to model a vector of binomial realizations. NB: using the vectorized version 
 #' is beneficial only when the entire joint likelihood of the vector of binomial realizations (x)
 #' is calculated simultaneously.
@@ -63,7 +63,7 @@ dbinom_vector <- nimbleFunction(
                   log = integer(0, default = 0)
                   ) {
     returnType(double(0))
-    logProb <- sum(dbinom(x, prob = prob, size = trials, log = TRUE))
+    logProb <- sum(dbinom(x, prob = prob, size = size, log = TRUE))
     if(log) return(logProb) else return(exp(logProb))
   })
 
@@ -75,10 +75,7 @@ rbinom_vector <- nimbleFunction(
                   prob = double(1)
   ) {
     returnType(double(1))
-    
-    if(n != length(prob)){}
-    
-    return(rbinom(length(size), prob = prob, size = trials))
+    return(rbinom(length(size), prob = prob, size = size))
   })
 
 

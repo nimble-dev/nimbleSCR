@@ -1,13 +1,13 @@
 #' Local evaluation of a binomial SCR observation process 
 #'
-#' The dbinom_sparseLocalSCR distribution is a NIMBLE custom distribution which can be used to model 
+#' The \code{dbinom_sparseLocalSCR} distribution is a NIMBLE custom distribution which can be used to model 
 #' the binomial observations (x) of a single individual over a set of detectors defined by their 
 #' coordinates (trapCoords). The distribution assumes that the detection probability at any detector 
 #' follows a half-normal function of the distance between the individual's activity center (s) and the detector location.
 #'
 #' The dbinom_sparseLocalSCR distribution incorporates three features to increase computation efficiency:
 #' 1 - A local evaluation of the detection probability calculation (see Milleret et al., 2019 for more details)
-#' 2 - It uses a sparse matrix representation (x, detIndices, detNum) of the observation data to reduce the size of objetcs to be processed.
+#' 2 - It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objetcs to be processed.
 #' 3 - It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
 #'
 #' @name dbinom_sparseLocalSCR
@@ -83,26 +83,26 @@ NULL
 #' @export
 dbinom_sparseLocalSCR <- nimbleFunction(
     run = function( x = double(1),
-        detNums = double(0),
-        detIndices = double(1),
-        size = double(1),
-        p0 = double(0),
-        sigma = double(0),
-        s = double(1),
-        trapCoords = double(2),
-        localTrapsIndices = double(2),
-        localTrapsNum = double(1),
-        resizeFactor = double(0, default = 1),
-        habitatGrid = double(2),
-        indicator = double(0, default = 1.0),
-        log = integer(0, default = 0)
-                   ) {
+                    detNums = double(0),
+                    detIndices = double(1),
+                    size = double(1),
+                    p0 = double(0),
+                    sigma = double(0),
+                    s = double(1),
+                    trapCoords = double(2),
+                    localTrapsIndices = double(2),
+                    localTrapsNum = double(1),
+                    resizeFactor = double(0, default = 1),
+                    habitatGrid = double(2),
+                    indicator = double(0, default = 1.0),
+                    log = integer(0, default = 0)
+    ) {
         ## Specify return type
         returnType(double(0))
         
         ## Shortcut if the current individual is not available for detection
         if(indicator == 0){
-            if(detNum == 0){
+            if(detNums == 0){
                 if(log == 0) return(1.0)
                 else return(0.0)
             } else {
@@ -112,7 +112,7 @@ dbinom_sparseLocalSCR <- nimbleFunction(
         }
         
         ## Retrieve the index of the habitat cell where the current AC is
-        sID <- habitatID[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+        sID <- habitatGrid[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
         
         ## Retrieve the indices of the local traps surrounding the selected habita grid cell
         theseLocalTraps <- localTrapsIndices[sID,1:localTrapsNum[sID]]
@@ -125,10 +125,10 @@ dbinom_sparseLocalSCR <- nimbleFunction(
         
         ## Recreate the full detection vector (NOT NECESSARY ; COULD BE OPTIMIZED IN A LATER VERSION)
         y <- nimNumeric(length = nDetectors, value = 0, init = TRUE)
-        if(detNum > 0){
-            for(r in 1:detNum){
+        if(detNums > 0){
+            for(r in 1:detNums){
                 y[detIndices[r]] <- x[r] 
-                if(sum(detIndices[r] == index) == 0){
+                if(sum(detIndices[r] == theseLocalTraps) == 0){
                     if(log == 0) return(0.0)
                     else return(-Inf)
                 } 
@@ -139,12 +139,12 @@ dbinom_sparseLocalSCR <- nimbleFunction(
         alpha <- -1.0 / (2.0 * sigma * sigma)
         logProb <- 0.0 
         count <- 1 
-        index1 <- c(index,0) 
+        theseLocalTraps1 <- c(theseLocalTraps,0) 
         for(r in 1:nDetectors){
-            if(index1[count] == r){ 
+            if(theseLocalTraps1[count] == r){ 
                 d2 <- pow(trapCoords[r,1] - s[1], 2) + pow(trapCoords[r,2] - s[2], 2)
-                p <- pZero * exp(alpha * d2)
-                logProb <- logProb + dbinom(y[r], prob = p, size = trials[r], log = TRUE)
+                p <- p0 * exp(alpha * d2)
+                logProb <- logProb + dbinom(y[r], prob = p, size = size[r], log = TRUE)
                 count <- count + 1
             }
         }
@@ -157,22 +157,21 @@ dbinom_sparseLocalSCR <- nimbleFunction(
 
 #' @rdname dbinom_sparseLocalSCR
 #' @export
-#' 
 rbinom_sparseLocalSCR <- nimbleFunction(
     run = function( n = double(0, default = 1),
-        detNums = double(0),
-        detIndices = double(1),
-        size = double(1),
-        p0 = double(0),
-        sigma = double(0),
-        s = double(1),
-        trapCoords = double(2),
-        localTrapsIndices = double(2),
-        localTrapsNum = double(1),
-        resizeFactor = double(0, default = 1),
-        habitatGrid = double(2),
-        indicator = double(0, default = 1.0)
-                   ) {
+                    detNums = double(0),
+                    detIndices = double(1),
+                    size = double(1),
+                    p0 = double(0),
+                    sigma = double(0),
+                    s = double(1),
+                    trapCoords = double(2),
+                    localTrapsIndices = double(2),
+                    localTrapsNum = double(1),
+                    resizeFactor = double(0, default = 1),
+                    habitatGrid = double(2),
+                    indicator = double(0, default = 1.0)
+    ) {
         stop("Random generation for the dbinom_sparseLocalSCR distribution is not currently supported")
     })
 
