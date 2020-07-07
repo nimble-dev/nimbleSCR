@@ -27,6 +27,7 @@
 #' @param resizeFactor aggregation factor used in the getLocalTraps function to reduce the number of habitat grid cells to retrieve local traps for.
 #' @param habitatGrid matrix of habitat grid cells indices.
 #' @param indicator Logical argument, specifying whether the current individual is available or not for detection.
+#' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of SCR observations, given the current activity center (s),
 #'  and the half-normal detection function : p = p0 * exp(-d^2 / sigma^2).
@@ -34,42 +35,44 @@
 #' @author Cyril Milleret
 #'
 #' @import nimble
-#' @importFrom stats dbinom  
+#' @importFrom stats dbinom
 #'
 #' @examples
 #' \donttest{
 #' ## define model code
-#' # nimModel <- nimbleCode({
-#' 
-#' psi ~ dunif(0,1)
-#' p0 ~ dunif(0,1)
-#' sigma ~ dunif(0,100)
-#' 
-#' N <- sum(z[1:M])
-#'
-#'    for(i in 1:M) {
+#' nimModel <- nimbleCode({
+#'  
+#'     psi ~ dunif(0,1)
+#'     p0 ~ dunif(0,1)
+#'     sigma ~ dunif(0,100)
+#'  
+#'     N <- sum(z[1:M])
+#'  
+#'     for(i in 1:M) {
 #'         s[i, 1] ~ dunif(0, 100)
 #'         s[i, 2] ~ dunif(0, 100)
 #'         
 #'         z[i] ~ dbern(psi)
 #'         
 #'         y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR( detNums = double(0),
-#'                                                   detIndices = double(1),
-#'                                                   size = double(1),
-#'                                                   p0 = double(0),
-#'                                                   sigma = double(0),
-#'                                                   s = double(1),
-#'                                                   trapCoords = double(2),
-#'                                                   localTrapsIndices = double(2),
-#'                                                   localTrapsNum = double(1),
-#'                                                   resizeFactor = double(0, default = 1),
-#'                                                   habitatGrid = double(2),
-#'                                                   indicator = double(0, default = 1.0)
+#'                                                  detIndices = double(1),
+#'                                                  size = double(1),
+#'                                                  p0 = double(0),
+#'                                                  sigma = double(0),
+#'                                                  s = double(1),
+#'                                                  trapCoords = double(2),
+#'                                                  localTrapsIndices = double(2),
+#'                                                  localTrapsNum = double(1),
+#'                                                  resizeFactor = double(0, default = 1),
+#'                                                  habitatGrid = double(2),
+#'                                                  indicator = double(0, default = 1.0)
+#'                                                  )
+#'     }
 #' })
-#'
+#'  
 #' ## create NIMBLE model object
 #' Rmodel <- nimbleModel(code)
-#'
+#'  
 #' ## use model object for MCMC, etc.
 #' }
 #'

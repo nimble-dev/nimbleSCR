@@ -7,6 +7,7 @@ if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 document(paste0(baseDir, 'nimbleSCR'))
 system(paste0('R CMD BUILD ', baseDir, 'nimbleSCR'))
+
 check(paste0(baseDir, 'nimbleSCR'))
 
 suppressMessages(try(remove.packages('nimbleSCR'), silent = TRUE))

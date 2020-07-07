@@ -24,6 +24,9 @@
 #' 
 #' @author Cyril Milleret
 #'
+#' @importFrom stats aggregate
+#' @importFrom graphics plot points
+#'
 #' @examples
 #' \donttest{
 #' 
