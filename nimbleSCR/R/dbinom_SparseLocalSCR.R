@@ -7,7 +7,7 @@
 #'
 #' The dbinom_sparseLocalSCR distribution incorporates three features to increase computation efficiency:
 #' 1 - A local evaluation of the detection probability calculation (see Milleret et al., 2019 for more details)
-#' 2 - It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objetcs to be processed.
+#' 2 - It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
 #' 3 - It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
 #'
 #' @name dbinom_sparseLocalSCR
