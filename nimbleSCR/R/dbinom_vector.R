@@ -80,3 +80,6 @@ rbinom_vector <- nimbleFunction(
     
     return(rbinom(length(size), prob = prob, size = trials))
   })
+
+
+
