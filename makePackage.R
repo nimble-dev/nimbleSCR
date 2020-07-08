@@ -22,9 +22,6 @@ system(paste0('R CMD install ', lastTarFile))
 
 library(nimbleSCR)
 
-exampleFunction
-?exampleFunction
-
 dDispersal
 ?dDispersal
 
@@ -33,6 +30,12 @@ rDispersal
 
 makeGrid
 ?makeGrid
+
+dbinom_vector
+?dbinom_vector
+
+getSparseY
+?getSparseY
 
 
 

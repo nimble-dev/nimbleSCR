@@ -24,7 +24,7 @@ rbinom_vector(n = 1, size, prob)
 The log-likelihood value associated with the vector of binomial observations.
 }
 \description{
-The dbinom_vector distribution is a vectorized version of the binomial distribution.
+The \code{dbinom_vector} distribution is a vectorized version of the binomial distribution.
 It can be used to model a vector of binomial realizations. NB: using the vectorized version 
 is beneficial only when the entire joint likelihood of the vector of binomial realizations (x)
 is calculated simultaneously.

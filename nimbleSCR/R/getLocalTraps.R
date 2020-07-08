@@ -69,8 +69,8 @@ getLocalTraps <- function( habitatMask,
   
   
   ## ==== 2. RESCALE THE HABITAT ====
-  r <- raster(habitatMask)
-  if(resizeFactor > 1){ r <- aggregate(r, fact = resizeFactor)}
+  r <- raster::raster(habitatMask)
+  if(resizeFactor > 1){ r <- raster::aggregate(r, fact = resizeFactor)}
   r[r > 0] <-1
   habitatMask1 <- as.matrix(r)
   

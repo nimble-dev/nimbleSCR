@@ -13,7 +13,7 @@ Date: 2020-06-16
 Description: Provides utility functions and methods for improving MCMC sampling efficiency of Spatial Capture-Recapture (SCR) and Open Population SCR (OPSCR) ecological models.  Some of the distributions and functions provided rely on the 'nimble' R package.
   Turek et al. <doi:10.1101/2020.05.07.081182>.
 License: GPL-3
-Depends: R (>= 3.4.0), nimble
+Depends: R (>= 3.4.0), nimble, raster
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
