@@ -31,16 +31,16 @@ Each row gives the id numbers of the local traps for this grid cell.
 - habitatGrid : a matrix of habitat grid cells ID corresponding to the row indices in localTrapIndices. 
 - numLocalTraps: a vector of the number of local traps for each habitat grid cell in habitatGrid.
 - numLocalTrapsMax: the maximum number of local traps for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
-- resizeFactor: the aggregation fatcor used to reduces the number of habitat grid cells ; default = 1 means no aggregation.
+- resizeFactor: the aggregation fatcor used to reduce the number of habitat grid cells ; default = 1 means no aggregation.
 }
 \description{
 R utility function to find the traps/detector locations within a given radius of all the cells in a habitat mask.
+Used in the implementation of the local evaluation approach in SCR models. The distance to the activity center and the 
+detection probability are then calculated for these local traps only (i.e. the detection probability is assumed to be 0 
+for all other detectors as they are far enoughfrom the considered activity center).
 }
 \details{
 The \code{getLocalTraps} function is used in advance of model building.
-
-A visualization option (plot.check) is also provided, which displays which traps are considered "local traps"
-around one habitat grid cell selected at random.
 }
 \examples{
 \donttest{
