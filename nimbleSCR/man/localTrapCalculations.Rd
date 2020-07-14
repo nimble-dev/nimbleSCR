@@ -10,8 +10,7 @@
 \alias{calcLocalTrapExposure}
 \title{Local Trap Calculations}
 \usage{
-makeGrid(xmin = 0, ymin = 0, xmax, ymax, resolution = 1,
-  buffer = 0)
+makeGrid(xmin = 0, ymin = 0, xmax, ymax, resolution = 1, buffer = 0)
 
 findLocalTraps(grid, traps, exposureRadius)
 
@@ -83,6 +82,7 @@ The getNumLocalTraps function is used inside the model code.  It operates on an 
 The getLocalTrapIndices function is used inside the model code.  It returns a vector containing the ids of the local traps to a particular grid cell.
 
 The calcLocalTrapDists function is used inside the model code.  It calculates the distances from an activity center, to the local traps relative to the grid cell nearest that activity center.
+
 
 The calcLocalTrapExposure function is specific to the detection probability calculations used in this example.  This function should be modified specifically to the detection function, exposure function, or otherwise calculations to be done only for the traps in the vicinity of individual activity center locations
 }

@@ -3,6 +3,7 @@ library(devtools)
 library(roxygen2)
 library(nimble, warn.conflicts = FALSE)
 baseDir <- '~/github/nimble/nimbleSCR/'
+# baseDir <- 'C:/Users/pidu/OneDrive - Norwegian University of Life Sciences/PROJECTS/WILDMAP/PACKAGES/nimbleSCR/'
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 document(paste0(baseDir, 'nimbleSCR'))
@@ -34,8 +35,12 @@ makeGrid
 dbinom_vector
 ?dbinom_vector
 
+dbinom_sparseLocalSCR
+?dbinom_sparseLocalSCR
+
 getSparseY
 ?getSparseY
 
-
+getLocalTraps
+?getLocalTraps
 

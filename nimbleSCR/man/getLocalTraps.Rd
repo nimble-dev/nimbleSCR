@@ -4,8 +4,13 @@
 \alias{getLocalTraps}
 \title{Local Trap Identification}
 \usage{
-getLocalTraps(habitatMask, trapCoords, dmax, resizeFactor = 1,
-  plot.check = TRUE)
+getLocalTraps(
+  habitatMask,
+  trapCoords,
+  dmax,
+  resizeFactor = 1,
+  plot.check = TRUE
+)
 }
 \arguments{
 \item{habitatMask}{a binary matrix object indicating which cells are considered as suitable habitat.}
@@ -16,8 +21,8 @@ getLocalTraps(habitatMask, trapCoords, dmax, resizeFactor = 1,
 
 \item{resizeFactor}{An aggregation factor to reduce the number of habitat cells to retrieve local traps for.}
 
-\item{plot.check}{A visualization option (if TRUE), which displays which traps are considered "local traps"
-around one habitat grid cell selected at random.}
+\item{plot.check}{A visualization option (if TRUE); displays which traps are considered "local traps"
+around one randomly selected habitat grid cell.}
 }
 \value{
 It returns a list of objects:
@@ -39,13 +44,17 @@ around one habitat grid cell selected at random.
 }
 \examples{
 \donttest{
+colNum <- sample(20:100,1)
+rowNum <- sample(20:100,1)
+trapCoords <- expand.grid(list(x = seq(0.5, colNum, 1),
+                               y = seq(0.5, rowNum, 1)))
 
-habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
-trapCoords <- expand.grid(list(1:100,1:100))
-localTraps.list <- getLocalTraps(habitatMask, trapCoords, dmax = 6)
+habitatMask <- matrix(rbinom(colNum*rowNum, 1, 0.8), ncol = colNum, nrow = rowNum)
+
+localTraps.list <- getLocalTraps(habitatMask, trapCoords, resizeFactor = 1, dmax = 7)
 }
 
 }
 \author{
-Cyril Milleret
+Pierre Dupont
 }

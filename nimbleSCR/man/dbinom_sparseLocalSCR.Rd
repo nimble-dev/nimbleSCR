@@ -5,13 +5,38 @@
 \alias{rbinom_sparseLocalSCR}
 \title{Local evaluation of a binomial SCR observation process}
 \usage{
-dbinom_sparseLocalSCR(x, detNums, detIndices, size, p0, sigma, s,
-  trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1,
-  habitatGrid, indicator = 1, log = 0)
+dbinom_sparseLocalSCR(
+  x,
+  detNums,
+  detIndices,
+  size,
+  p0,
+  sigma,
+  s,
+  trapCoords,
+  localTrapsIndices,
+  localTrapsNum,
+  resizeFactor = 1,
+  habitatGrid,
+  indicator = 1,
+  log = 0
+)
 
-rbinom_sparseLocalSCR(n = 1, detNums, detIndices, size, p0, sigma, s,
-  trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1,
-  habitatGrid, indicator = 1)
+rbinom_sparseLocalSCR(
+  n = 1,
+  detNums,
+  detIndices,
+  size,
+  p0,
+  sigma,
+  s,
+  trapCoords,
+  localTrapsIndices,
+  localTrapsNum,
+  resizeFactor = 1,
+  habitatGrid,
+  indicator = 1
+)
 }
 \arguments{
 \item{x}{vector of individual detection frequencies, as returned by the getSparseY function 

@@ -11,8 +11,8 @@
 #' @param trapCoords A matrix giving the x- and y-coordinate locations of all traps.
 #' @param dmax The maximal radius from a cell center for performing local trap calculations
 #' @param resizeFactor An aggregation factor to reduce the number of habitat cells to retrieve local traps for. 
-#' @param plot.check A visualization option (if TRUE), which displays which traps are considered "local traps"
-#' around one habitat grid cell selected at random.
+#' @param plot.check A visualization option (if TRUE); displays which traps are considered "local traps"
+#' around one randomly selected habitat grid cell.
 #'
 #' @return It returns a list of objects:
 #' - localTrapIndices : a matrix with number of rows equal to the reduced number of habitat grid cells.
@@ -22,17 +22,20 @@
 #' - numLocalTrapsMax: the maximum number of local traps for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
 #' - resizeFactor: the aggregation fatcor used to reduces the number of habitat grid cells ; default = 1 means no aggregation.
 #' 
-#' @author Cyril Milleret
+#' @author Pierre Dupont
 #'
-#' @importFrom raster aggregate raster
 #' @importFrom graphics plot points
 #'
 #' @examples
 #' \donttest{
+#' colNum <- sample(20:100,1)
+#' rowNum <- sample(20:100,1)
+#' trapCoords <- expand.grid(list(x = seq(0.5, colNum, 1),
+#'                                y = seq(0.5, rowNum, 1)))
 #' 
-#' habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
-#' trapCoords <- expand.grid(list(1:100,1:100))
-#' localTraps.list <- getLocalTraps(habitatMask, trapCoords, dmax = 6)
+#' habitatMask <- matrix(rbinom(colNum*rowNum, 1, 0.8), ncol = colNum, nrow = rowNum)
+#' 
+#' localTraps.list <- getLocalTraps(habitatMask, trapCoords, resizeFactor = 1, dmax = 7)
 #' }
 #'
 #' @export
@@ -42,67 +45,60 @@ getLocalTraps <- function( habitatMask,
                            resizeFactor = 1,
                            plot.check = TRUE
 ){
-  ## ==== 1. CREATE THE XY COORDINATES OF THE HABITAT ====
-  habitatID <- habCoordsx <- habCoordsy <- habitatMask 
-  if(resizeFactor == 1){
-    from <- 0.5
-    resizeFactor <- 1 
-  } else {  
-    from <- (resizeFactor/2) + 0.5
+  ## STORE THE COORDINATES OF THE ORIGINAL HABITAT CELLS
+  oldCoords <- which(habitatMask == 1, arr.ind = T)-0.5
+  
+  ## GET ORIGIN FOR THE NEW (RESIZED) HABITAT MATRIX
+  origin <- (resizeFactor/2) 
+
+  ## GET DIMENSIONS FOR THE NEW HABITAT MATRIX
+  xMax <- ceiling(dim(habitatMask)[2]/resizeFactor) * resizeFactor
+  yMax <- ceiling(dim(habitatMask)[1]/resizeFactor) * resizeFactor
+
+  ## GET COORDINATES FOR THE NEW HABITAT CELLS
+  xCoords <- seq(origin, xMax, by = resizeFactor)
+  yCoords <- seq(origin, yMax, by = resizeFactor)
+  habitatCoords <- expand.grid(list(x = xCoords, y = yCoords))
+  habitatCoords <- habitatCoords[order(habitatCoords[ ,1],habitatCoords[ ,2]), ]
+  
+  ## GET UPPER AND LOWER COORDS FOR THE NEW HABITAT CELLS
+  habUpCoords <- habitatCoords + resizeFactor/2
+  habLoCoords <- habitatCoords - resizeFactor/2
+  
+  # check which "new cells" contains at least one "old cell"
+  # Assess the intersection between the coordinates and the observation windows
+  # Initialise an output vector with each element set to 1
+  isIn <- NULL
+  for(c in 1:dim(habUpCoords)[1]){
+    isIn[c] <- sum((habLoCoords[c,1] <= oldCoords[ ,2]) * (habLoCoords[c,2] <= oldCoords[ ,1]) *
+      (habUpCoords[c, 1] > oldCoords[ ,2]) * (habUpCoords[c,2] > oldCoords[ ,1])) > 0
+      }#c
+  
+  ## REMOVE NEW HABITAT CELL COORDINATES THAT ARE NOT HABITAT  
+  habitatCoords <- habitatCoords[isIn, ]
+  
+  ## CREATE AN EMPTY MATRIX OF NEW HABITAT CELL IDs
+  habitatID <- matrix(0, nrow = length(yCoords), ncol = length(xCoords))
+  for(c in 1:dim(habitatCoords)[1]){
+    habitatID[trunc(habitatCoords[c,2]/resizeFactor)+1, trunc(habitatCoords[c,1]/resizeFactor)+1] <- c
   }
-  # GET DIMENSIONS MATRIX
-  dimCoords <- c(ceiling(dim(habCoordsx)[1]/resizeFactor), ceiling(dim(habCoordsx)[2]/resizeFactor))
-  CoordsMax <- dimCoords * resizeFactor
   
-  habCoordsx <- matrix(rep(seq(from, CoordsMax[2], by = resizeFactor ), dimCoords[1]),
-                       nrow = dimCoords[1],
-                       ncol = dimCoords[2],
-                       byrow = T)
-  
-  habCoordsy <- matrix(rep(seq(from, CoordsMax[1], by = resizeFactor ), dimCoords[2]),
-                       nrow = dimCoords[1],
-                       ncol = dimCoords[2],
-                       byrow = F)
-  habCoordsy <- as.vector(habCoordsy)
-  habCoordsx <- as.vector(habCoordsx)
-  habCoordsxy <- cbind(habCoordsx, habCoordsy)
-  
-  
-  ## ==== 2. RESCALE THE HABITAT ====
-  r <- raster::raster(habitatMask)
-  if(resizeFactor > 1){ r <- raster::aggregate(r, fact = resizeFactor)}
-  r[r > 0] <-1
-  habitatMask1 <- as.matrix(r)
-  
-  # CREATE A HABITAT ID MATRIX 
-  habitatID <- habitatMask1
-  habitatID[] <- as.character(habitatMask1)
-  
-  # ONLY GIVE AN ID TO THE HABITAT CELLS == 1 
-  habitatID[habitatMask1 == "1"] <- 1:sum(habitatMask1 == "1")
-  m <- sapply(habitatID, FUN = as.numeric)
-  habitatID <- matrix(m, nrow = dim(habitatID)[1], ncol = dim(habitatID)[2], byrow = F)
-  
-  # REMOVE HABITAT CELL COORDINATES THAT ARE NOT HABITAT  
-  habCoordsxy  <- habCoordsxy[as.character(as.vector(habitatMask1))=="1",]
-  
-  ## ==== 3. FIND DETECTORS THAT ARE WITHIN dmax OF EACH HABITAT CELL  ====
-  # Determine detector within radius distance from the center of each habitat cell
-  localTrapsIndices  <- apply(habCoordsxy, 1, function(x){
+  ## DETERMINE WHICH DETECTORS ARE WITHIN dmax OF THE CENTER OF EACH NEW HABITAT CELL
+  localTrapsIndices  <- apply(habitatCoords, 1, function(x){
     D <- sqrt((x[1] - trapCoords[,1])^2 + (x[2] - trapCoords[,2])^2) 
     which(D < dmax)
   })
   
-  # Make sure it always returns a list. 
+  ## MAKE SURE IT ALWAYS RETURN A LIST
   if(class(localTrapsIndices) == "matrix"){
     localTrapsIndices <- lapply(1:dim(localTrapsIndices)[2], function(x) localTrapsIndices[ ,x])
   }
   
-  ## ==== 4. STORE LOCAL DETECTOR INDICES IN A MATRIX ====
-  # get number of detectors within dmax of each cell
+  ## GET NUMBER OF DETECTORS WITHIN dmax OF EACH NEW HABITAT CELL
   numLocalTraps <- unlist(lapply(localTrapsIndices, function(x) length(x)))
   maxLocalTraps <- max(numLocalTraps)
-  # store detector index (colums) for each habitat cell (rows)
+  
+  ## STORE LOCAL DETECTOR INDICES IN A MATRIX 
   detectorIndex <- matrix(0, nrow = length(localTrapsIndices), ncol = maxLocalTraps)
   for(j in 1:length(localTrapsIndices)){
     if(length(localTrapsIndices[[j]])!=0){
@@ -112,14 +108,15 @@ getLocalTraps <- function( habitatMask,
   
   ## PLOT CHECK 
   if(plot.check){
-    SXY <- habCoordsxy[sample(1:dim(habCoordsxy)[1], size = 1), ]
-    sxyID <- habitatID[trunc(SXY[2]/resizeFactor)+1, trunc(SXY[1]/resizeFactor)+1]
-
-    index <- detectorIndex[sxyID,1:numLocalTraps[sxyID]]
-    plot(habCoordsxy[,2] ~ habCoordsxy[,1], pch=16, cex=0.1)
-    points(habCoordsxy[sxyID,2]~habCoordsxy[sxyID,1], pch=16, cex=0.4, col="orange")
+    SXY <- as.numeric(habitatCoords[sample(1:dim(habitatCoords)[1], size = 1), ])
+    sxyID <- habitatID[as.numeric(trunc(SXY[2]/resizeFactor)+1),
+                       as.numeric(trunc(SXY[1]/resizeFactor)+1)]
     
-    points(trapCoords[,2]~trapCoords[,1], pch=16, cex=0.2, col="red")
+    index <- detectorIndex[sxyID,1:numLocalTraps[sxyID]]
+    plot(habitatCoords[,2] ~ habitatCoords[,1], pch=16, cex=0.1)
+    points(habitatCoords[sxyID,2] ~ habitatCoords[sxyID,1], pch=16, cex=0.4, col="orange")
+    
+    points(trapCoords[ ,2] ~ trapCoords[,1], pch=16, cex=0.2, col="red")
     points(trapCoords[index,2]~trapCoords[index,1], pch=16, cex=0.4, col="blue")
     points(SXY[2]~SXY[1], bg="red", pch=21, cex=1.2)
     
