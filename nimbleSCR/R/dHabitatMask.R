@@ -75,7 +75,7 @@ dHabitatMask <- nimbleFunction(
     if(s[2] < ymin) return(-Inf)   # min y-coordinates
     if(s[2] > ymax) return(-Inf)   # max y-coordinates
     
-    test <- habitatMask[trunc(s[2])+1, trunc(s[1])+1] == 0
+    test <- 1-(habitatMask[trunc(s[2])+1, trunc(s[1])+1] == 0)
     
     if(log) return(log(test)) else return(test)
   })
