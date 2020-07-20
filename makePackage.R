@@ -2,9 +2,12 @@
 library(devtools)
 library(roxygen2)
 library(nimble, warn.conflicts = FALSE)
-# baseDir <- '~/github/nimble/nimbleSCR/'
-baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'
 
+if(Sys.info()['user'] == 'dturek') {
+    baseDir <- '~/github/nimble/nimbleSCR/'          ## Daniel
+} else {
+    baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Pierre
+}
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 document(paste0(baseDir, 'nimbleSCR'))
