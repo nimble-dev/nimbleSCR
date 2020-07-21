@@ -10,10 +10,10 @@ if(Sys.info()['user'] == 'pidu') {
     baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Pierre
 }
 if(Sys.info()['user'] == 'cymi') {
-    baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Cyril
+    baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR'   ## Cyril
 }
 if(Sys.info()['user'] == 'arichbi') {
-    baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Pierre
+    baseDir <- 'C:/PROJECTS/nimbleSCR'                      ## Richard
 }
 
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
