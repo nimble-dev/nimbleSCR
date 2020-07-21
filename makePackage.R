@@ -5,9 +5,11 @@ library(nimble, warn.conflicts = FALSE)
 
 if(Sys.info()['user'] == 'dturek') {
     baseDir <- '~/github/nimble/nimbleSCR/'          ## Daniel
-} else {
+}
+if(Sys.info()['user'] == 'pidu') {
     baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Pierre
 }
+
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 document(paste0(baseDir, 'nimbleSCR'))

@@ -103,18 +103,18 @@ nimModel <- nimbleCode({
         
         z[i] ~ dbern(psi)
         
-        y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR( detNums = double(0),
-                                                 detIndices = double(1),
-                                                 size = double(1),
-                                                 p0 = double(0),
-                                                 sigma = double(0),
-                                                 s = double(1),
-                                                 trapCoords = double(2),
-                                                 localTrapsIndices = double(2),
-                                                 localTrapsNum = double(1),
-                                                 resizeFactor = double(0, default = 1),
-                                                 habitatGrid = double(2),
-                                                 indicator = double(0, default = 1.0)
+        y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR( detNums,
+                                                 detIndices,
+                                                 size,
+                                                 p0,
+                                                 sigma,
+                                                 s[i,1:2],
+                                                 trapCoords,
+                                                 localTrapsIndices,
+                                                 localTrapsNum,
+                                                 resizeFactor,
+                                                 habitatGrid,
+                                                 z[i]
                                                  )
     }
 })
