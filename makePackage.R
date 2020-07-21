@@ -36,6 +36,10 @@ if(.Platform$OS.type == "windows") {
 
 library(nimbleSCR)
 
+## inspect package vignettes
+(vignettes <- vignette(package = 'nimbleSCR'))
+for(v in vignettes$results[, 'Item'])   print(vignette(v))
+
 dDispersal
 ?dDispersal
 
