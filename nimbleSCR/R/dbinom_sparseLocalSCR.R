@@ -117,9 +117,6 @@ dbinom_sparseLocalSCR <- nimbleFunction(
     ## Retrieve the indices of the local traps surrounding the selected habita grid cell
     theseLocalTraps <- localTrapsIndices[sID,1:localTrapsNum[sID]]
     
-    ## Retrieve the number of local traps surrounding the selected habita grid cell
-    numLocalTraps <- length(theseLocalTraps)
-    
     ## Retrieve the total number of traps
     nDetectors <- length(size)
     
@@ -172,7 +169,11 @@ rbinom_sparseLocalSCR <- nimbleFunction(
                   habitatGrid = double(2),
                   indicator = double(0, default = 1.0)
   ) {
-    stop("Random generation for the dbinom_sparseLocalSCR distribution is not currently supported")
+    ## Specify return type
+    returnType(double(1))
+    if(n >= 0) stop("Random generation for the dbinom_sparseLocalSCR distribution is not currently supported")
+    dummyOut <- detIndices
+    return(dummyOut)
   })
 
 
