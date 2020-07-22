@@ -1,6 +1,6 @@
 ---
 title: "Wolverine Example"
-author: "Pierre Dupont"
+author: "Cyril Milleret, Daniel Turek and Pierre Dupont"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,36 +9,223 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Here's my vignette.
+This example demonstrates the Wolverine example model, as in
+"Efficient MCMC for Spatial Capture-Recapture Models" (Turek *et al*, *submitted*).
+Specifically, we implement the final version of the wolverine
+model and MCMC.  Details of the functions and procedure are provided therein.
 
-```{r}
+
+### Load Libraries 
+
+```{r , warning = FALSE, message = FALSE}
 library(nimble)
 library(nimbleSCR)
+library(basicMCMCplots)
+library(coda)
 
-5 + 6
-
-calculate
-
-dDispersal
 ```
 
 
+### Define Model Structure
 
+Here, we define the `nimble` model structure.
 ```{r }
 code <- nimbleCode({
-    AC[1, 1] ~ dunif(0, 100)
-    AC[2, 1] ~ dunif(0, 100)
-    AC[1:2, 2] ~ dDispersal(S = AC[1:2, 1], lam = 1)
+  ## priors
+  psi ~ dunif(0, 1)
+  sigma ~ dunif(0, 50)
+  p0 ~ dunif(0, 1)
+  ## loop over individuals
+  for(i in 1:n.individuals) {
+    ## AC coordinates
+    sxy[i,1] ~ dunif(0, x.max)
+    sxy[i,2] ~ dunif(0, y.max)
+    ## habitat constraint 
+    ones[i] ~ dHabitatMask( s = sxy[i,1:2],
+                            xmin = lowerCoords[1],
+                            xmax = upperCoords[1],
+                            ymin = lowerCoords[2],
+                            ymax = upperCoords[2],
+                            habitat = habitat.mx[1:y.max,1:x.max])
+    ## latent dead/alive indicators
+    z[i] ~ dbern(psi)
+    ## likelihood
+    y[i, 1:nMaxDetectors] ~ dbinom_sparseLocalSCR( detNums = nbDetections[i],
+                                                   detIndices = yDets[i,1:nMaxDetectors],
+                                                   size = trials[1:n.detectors],
+                                                   p0 = p0,
+                                                   s = sxy[i,1:2],
+                                                   sigma = sigma,
+                                                   trapCoords = detector.xy[1:n.detectors,1:2],
+                                                   localTrapsIndices = detectorIndex[1:n.cells,1:maxNBDets],
+                                                   localTrapsNum = nDetectors[1:n.cells],
+                                                   resizeFactor = ResizeFactor,
+                                                   habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
+                                                   indicator = z[i])
+  }
+  ## derived quantity: total population size
+  N <- sum(z[1:n.individuals])
 })
+```
 
-inits <- list(AC = array(c(1,1,2,2), c(2,2)))
 
-Rmodel <- nimbleModel(code, inits = inits)
-Rmodel$calculate()
+### Load and Process Data
 
+We load the Wolverine example data.
+
+The data file can be [downloaded here](http://danielturek.github.io/public/scr/wolverine_data.RData).
+
+We also create the `code`, `constants`, `data`, and `inits` for later use in the function `nimbleModel`. 
+
+```{r }
+load("C:/Users/pidu/OneDrive - Norwegian University of Life Sciences/PROJECTS/WILDMAP/PACKAGES/nimbleSCR_documents/wolverine_data.RData")
+data <- list(y = wolverine_input$y,
+             z = wolverine_input$z,
+             detector.xy = wolverine_input$detector.xy,
+             habitat.mx = wolverine_input$habitat.mx,
+             ones = wolverine_input$OK,
+             lowerCoords = c(0,0),
+             upperCoords = c(
+               dim(wolverine_input$habitat.mx)[2],
+               dim(wolverine_input$habitat.mx)[1]),
+             trials = rep(1, dim(wolverine_input$detector.xy)[1]))
+constants <- list(n.individuals = wolverine_input$n.individuals,
+                  n.detectors = dim(wolverine_input$detector.xy)[1],
+                  y.max = dim(wolverine_input$habitat.mx)[1],
+                  x.max = dim(wolverine_input$habitat.mx)[2])
+inits <- list(sxy = wolverine_inits$sxy,
+              z = wolverine_inits$z,
+              p0 = 0.05,
+              psi = 0.5,
+              sigma = 6)
+```
+
+
+Now we do some processing of the data, for use in this version
+of the model.
+
+The function `getLocalTraps` identifies the set of detectors that
+are within a certain distance $d_{max}$ of each habitat cell
+center (<span style="color: blue;">blue points</span> in the plot below). These reduced set of detectors are stored in the `localTrapIndices` matrix and later used in the local evaluation of the detection model to speed-up calculations.
+The value of $d_{max}$ should be as small as possible but always large enough so that for any particular individual, the `sxy` values of the initial activity center location
+restrict the calculation of $p_{0}$ to all detectors with positive detections.
+The $d_{max}$ value will therefore affect the number of columns in `localTrapIndices`
+Here, we use $d_{max}=38$. 
+
+We also resize the habitat matrix to lower dimensions before identifying the local detectors. This reduces the number of habitat cells for which we have to identify the set of detectors that are within $d_{max}$ of the cell center. 
+The goal is to create the object `localTrapsIndices` of the smallest dimension possible for a more efficient processing of the model.  
+Here, we resize the habitat matrix by a factor of 24, which corresponds to the the `resizeFactor` argument. This value will affect how many rows will compose `localTrapIndices`.
+
+```{r, fig.width = 6, fig.height = 7}
+DetectorIndex <- getLocalTraps(habitatMask = data$habitat.mx,
+                               trapCoords = data$detector.xy,
+                               dmax = 38,
+                               resizeFactor = 24)
+
+constants$y.maxDet <- dim(DetectorIndex$habitatGrid)[1]
+constants$x.maxDet <- dim(DetectorIndex$habitatGrid)[2]
+constants$ResizeFactor <- DetectorIndex$resizeFactor
+constants$n.cells <- dim(DetectorIndex$localTrapsIndices)[1]
+constants$maxNBDets <- DetectorIndex$numLocalTrapsMax
+data$detectorIndex <- DetectorIndex$localTrapsIndices
+data$nDetectors <- DetectorIndex$numLocalTraps
+data$habitatIDDet <- DetectorIndex$habitatGrid
+
+```
+
+
+Last, we re-express the detection matrix `y` as a sparse matrix, to reduce its size. In this representation, we turn `y` the detection matrix into three objects:
+
+* `detIndices`: where each row (corresponding to one individual) contains the detector identification numbers where that individual was detected. 
+* `y`: A second matrix of identical dimension, containing the number of detections occurring at each detector. This second matrix is necessary for modelling non-binary detections (e.g. $binomial$ or $Poisson$ observation models)
+* `detNums`: a vector containing the number of detectors where each individual was designated.
+
+```{r }
+ySparse <- getSparseY(x = wolverine_input$y)
+data$y <- ySparse$y[,,1]  
+data$yDets <- ySparse$detIndices[,,1]
+data$nbDetections <- ySparse$detNums[,1]
+constants$nMaxDetectors <- ySparse$maxDetNums
+
+```
+
+
+### Create NIMBLE Model
+
+Now, we can create the `nimble` model object, using the model structure
+defined in `code`, and the constants, data, and initial values.
+```{r }
+Rmodel <- nimbleModel(code, constants, data, inits)
+```
+
+
+### Configure and Build MCMC
+
+We configure an MCMC algorithm to the `Rmodel` model object.
+
+We assign MCMC monitors to $N$, $\sigma$, and $p_0$.
+
+We also remove the univariate Metropolis-Hastings samplers which were
+assigned (by default) to each AC component, the `sxy` variables.
+Rather, we add joint Metropolis-Hastings samplers (`RW_block`)
+samplers to each $x$ and $y$ coordinate pair `sxy[i, 1:2]`.
+
+```{r message = FALSE}
+conf <- configureMCMC(Rmodel, monitors = c("N", "sigma", "p0"), print = FALSE)
+conf$removeSamplers("sxy")
+ACnodes <- paste0("sxy[", 1:constants$n.individuals, ", 1:2]")
+for(node in ACnodes) {
+  conf$addSampler(target = node,
+                  type = "RW_block",
+                  control = list(adaptScaleOnly = TRUE),
+                  silent = TRUE)
+}
+Rmcmc <- buildMCMC(conf)
+```
+
+
+### Compile and Run MCMC
+```{r echo = FALSE}
+n.iterations <- 1000
+```
+
+Finally, we compile both the model and MCMC objects and
+execute the compiled MCMC for `r n.iterations` iterations.
+
+```{r }
 Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+MCMC_runtime <- system.time(
+  samples <- runMCMC(Cmcmc, niter = n.iterations)
+)
+```
+```{r eval = FALSE, echo = FALSE}
+#save(samples, time, file = "wolverine_samples.RData")
+```
+```{r echo = FALSE}
+#load("wolverine_samples.RData")
+```
 
-Cmodel$calculate()
+
+### Results
+
+First, we can look at the MCMC runtime: `r round(MCMC_runtime[3] / 60, 1)`min
+  
+Next, we can check the posterior effective sample size (ESS) resulting from our
+`r n.iterations` posterior samples for the three parameters we tracked ($N$, $\sigma$, and $p_0$):  
+`r round(effectiveSize(samples),2)`
+
+We can also calculate the MCMC efficiency for each parameter; this corresponds to the rate of generating effectively independent posterior samples, per second of MCMC runtime :  
+`r round(effectiveSize(samples)/MCMC_runtime[3],2)`  
+
+Summary of posterior distributions for each parameter:
+```{r }
+round(samplesSummary(samples), 2)
+```
+
+Examine traceplots and posterior distributions:
+```{r }
+basicMCMCplots::chainsPlot(samples)
 ```
 
 
