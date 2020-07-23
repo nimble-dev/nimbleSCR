@@ -77,8 +77,15 @@ The data file can be [downloaded here](http://danielturek.github.io/public/scr/w
 
 We also create the `code`, `constants`, `data`, and `inits` for later use in the function `nimbleModel`. 
 
+```{r echo = FALSE}
+load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
+```
+
+```{r eval = FALSE}
+load("wolverine_data.RData")
+```
+
 ```{r }
-load("C:/Users/pidu/OneDrive - Norwegian University of Life Sciences/PROJECTS/WILDMAP/PACKAGES/nimbleSCR_documents/wolverine_data.RData")
 data <- list(y = wolverine_input$y,
              z = wolverine_input$z,
              detector.xy = wolverine_input$detector.xy,
