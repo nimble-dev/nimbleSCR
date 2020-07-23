@@ -4,17 +4,14 @@ library(roxygen2)
 library(nimble, warn.conflicts = FALSE)
 
 if(Sys.info()['user'] == 'dturek') {
-    baseDir <- '~/github/nimble/nimbleSCR/'          ## Daniel
-}
-if(Sys.info()['user'] == 'pidu') {
-    baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'   ## Pierre
-}
-if(Sys.info()['user'] == 'cymi') {
+    baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
+} else if(Sys.info()['user'] == 'pidu') {
+    baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'            ## Pierre
+} else if(Sys.info()['user'] == 'cymi') {
     baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
-}
-if(Sys.info()['user'] == 'arichbi') {
-    baseDir <- 'C:/PROJECTS/nimbleSCR/'                      ## Richard
-}
+} else if(Sys.info()['user'] == 'arichbi') {
+    baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else stop('unknown user')
 
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
