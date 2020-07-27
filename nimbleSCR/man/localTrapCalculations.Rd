@@ -12,13 +12,13 @@
 \usage{
 makeGrid(xmin = 0, ymin = 0, xmax, ymax, resolution = 1, buffer = 0)
 
-findLocalTraps(grid, traps, exposureRadius)
+findLocalTraps(grid, trapCoords, dmax)
 
 getNumLocalTraps(idarg, nLocalTraps, LTD1arg)
 
 getLocalTrapIndices(MAXNUM, localTraps, n, idarg)
 
-calcLocalTrapDists(MAXNUM, n, localTrapInd, S, X)
+calcLocalTrapDists(MAXNUM, n, localTrapInd, s, trapCoords)
 
 calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 }
@@ -37,9 +37,9 @@ calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 
 \item{grid}{The grid object returned from the makeGrid function}
 
-\item{traps}{An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps}
+\item{trapCoords}{An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps}
 
-\item{exposureRadius}{The maximal radius from an activity center for performing trap calculations (dmax)}
+\item{dmax}{The maximal radius from an activity center for performing trap calculations (dmax)}
 
 \item{idarg}{A grid id, returned from the makeID function inside model code}
 
@@ -55,9 +55,7 @@ calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 
 \item{localTrapInd}{The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function}
 
-\item{S}{A length-2 vector giving the activity center of an indiviual}
-
-\item{X}{An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps}
+\item{s}{A length-2 vector giving the activity center of an indiviual}
 
 \item{R}{The total number of traps}
 
@@ -118,12 +116,11 @@ grid <- makeGridReturn$grid
 makeID <- makeGridReturn$makeID
  
 ## maximum radis within an individual AC to perform trap calculations,
-## called dmin in paper
-exposureRadius <- 30
+dmax <- 30
  
 ## n = localTraps[i,1] gives the number of local traps
 ## localTraps[i, 2:(n+1)] gives the indices of the local traps
-localTraps <- findLocalTraps(grid, trap_coords, exposureRadius)
+localTraps <- findLocalTraps(grid, trap_coords, dmax)
  
 plotTraps <- function(i, grid, trap_coords, localTraps) {
     plot(grid[,1], grid[,2], pch = '.', cex=2)
@@ -144,27 +141,6 @@ plotTraps(10,  grid, trap_coords, localTraps)
 plotTraps(200, grid, trap_coords, localTraps)
 plotTraps(380, grid, trap_coords, localTraps)
  
-dBernoulliVectorExample <- nimbleFunction(
-    run = function(x = double(1), prob = double(1), log = double()) {
-        logProb <- sum(dbinom(x, prob = prob, size = 1, log = TRUE))
-        returnType(double(0))
-        return(logProb)
-    }
-)
- 
-rBernoulliVectorExample <- nimbleFunction(
-    run = function(n = double(), prob = double(1)) {
-        stop('not implemented')
-        returnType(double(1))
-        return(0)
-    }
-)
- 
-registerDistributions(list(
-    dBernoulliVectorExample = list(
-        BUGSdist = 'dBernoulliVectorExample(prob)',
-        types = c('value = double(1)', 'prob = double(1)'))))
- 
 ## example model code
 ## using local trap calculations
 code <- nimbleCode({
@@ -184,7 +160,7 @@ code <- nimbleCode({
             S[i,1:2], trap_coords[1:nTraps,1:2])
         g[i, 1:nTraps] <- calcLocalTrapExposure(
             nTraps, nLocalTraps[i], d[i,1:maxTraps], localTrapIndices[i,1:maxTraps], sigma, p0)
-        y[i, 1:nTraps] ~ dBernoulliVectorExample(g[i,1:nTraps])
+        y[i, 1:nTraps] ~ dbinom_vector(prob = g[i,1:nTraps], size = trials[1:nTraps])
     }
 })
  
@@ -208,7 +184,7 @@ constants <- list(N = N,
                   LTD2 = dim(localTraps)[2],
                   maxTraps = dim(localTraps)[2] - 1)
  
-data <- list(y = y)
+data <- list(y = y, trials = rep(1,nTraps))
  
 inits <- list(sigma = 1,
               p0 = 0.5,

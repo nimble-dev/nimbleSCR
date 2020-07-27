@@ -1,6 +1,4 @@
 
-
-
 #' Local Trap Calculations
 #'
 #' Utility functions to enable local trap calculations in SCR models
@@ -29,8 +27,8 @@
 #' @param resolution Desired resolution (in both x and y directions) of discretized grid
 #' @param buffer Horizontal and vertical buffer for discretized grid, specifying how much it should extend (above, below, left, and right) of the maximal trap locations
 #' @param grid The grid object returned from the makeGrid function
-#' @param traps An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps
-#' @param exposureRadius The maximal radius from an activity center for performing trap calculations (dmax)
+#' @param trapCoords An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps
+#' @param dmax The maximal radius from an activity center for performing trap calculations (dmax)
 #' @param idarg A grid id, returned from the makeID function inside model code
 #' @param nLocalTraps The number of local traps to all grid cells, which is given by the first column of the localTraps array
 #' @param LTD1arg The number of columns in the localTraps array
@@ -38,8 +36,7 @@
 #' @param localTraps The array returned from the findLocalTraps function
 #' @param n The number of local traps to a specified grid cell, as return
 #' @param localTrapInd The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function
-#' @param S A length-2 vector giving the activity center of an indiviual
-#' @param X An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps
+#' @param s A length-2 vector giving the activity center of an indiviual
 #' @param R The total number of traps
 #' @param d A vector of distances from an activity center to the local traps
 #' @param sigma Scale of decay for detection probability
@@ -81,12 +78,11 @@
 #' makeID <- makeGridReturn$makeID
 #'  
 #' ## maximum radis within an individual AC to perform trap calculations,
-#' ## called dmin in paper
-#' exposureRadius <- 30
+#' dmax <- 30
 #'  
 #' ## n = localTraps[i,1] gives the number of local traps
 #' ## localTraps[i, 2:(n+1)] gives the indices of the local traps
-#' localTraps <- findLocalTraps(grid, trap_coords, exposureRadius)
+#' localTraps <- findLocalTraps(grid, trap_coords, dmax)
 #'  
 #' plotTraps <- function(i, grid, trap_coords, localTraps) {
 #'     plot(grid[,1], grid[,2], pch = '.', cex=2)
@@ -107,27 +103,6 @@
 #' plotTraps(200, grid, trap_coords, localTraps)
 #' plotTraps(380, grid, trap_coords, localTraps)
 #'  
-#' dBernoulliVectorExample <- nimbleFunction(
-#'     run = function(x = double(1), prob = double(1), log = double()) {
-#'         logProb <- sum(dbinom(x, prob = prob, size = 1, log = TRUE))
-#'         returnType(double(0))
-#'         return(logProb)
-#'     }
-#' )
-#'  
-#' rBernoulliVectorExample <- nimbleFunction(
-#'     run = function(n = double(), prob = double(1)) {
-#'         stop('not implemented')
-#'         returnType(double(1))
-#'         return(0)
-#'     }
-#' )
-#'  
-#' registerDistributions(list(
-#'     dBernoulliVectorExample = list(
-#'         BUGSdist = 'dBernoulliVectorExample(prob)',
-#'         types = c('value = double(1)', 'prob = double(1)'))))
-#'  
 #' ## example model code
 #' ## using local trap calculations
 #' code <- nimbleCode({
@@ -147,7 +122,7 @@
 #'             S[i,1:2], trap_coords[1:nTraps,1:2])
 #'         g[i, 1:nTraps] <- calcLocalTrapExposure(
 #'             nTraps, nLocalTraps[i], d[i,1:maxTraps], localTrapIndices[i,1:maxTraps], sigma, p0)
-#'         y[i, 1:nTraps] ~ dBernoulliVectorExample(g[i,1:nTraps])
+#'         y[i, 1:nTraps] ~ dbinom_vector(prob = g[i,1:nTraps], size = trials[1:nTraps])
 #'     }
 #' })
 #'  
@@ -171,7 +146,7 @@
 #'                   LTD2 = dim(localTraps)[2],
 #'                   maxTraps = dim(localTraps)[2] - 1)
 #'  
-#' data <- list(y = y)
+#' data <- list(y = y, trials = rep(1,nTraps))
 #'  
 #' inits <- list(sigma = 1,
 #'               p0 = 0.5,
@@ -188,7 +163,12 @@ NULL
 
 #' @rdname localTrapCalculations
 #' @export
-makeGrid <- function(xmin=0, ymin=0, xmax, ymax, resolution=1, buffer=0) {
+makeGrid <- function( xmin = 0,
+                      ymin = 0,
+                      xmax,
+                      ymax,
+                      resolution = 1,
+                      buffer = 0) {
     makeVals <- function(min, max, buf, res) {
         unique(c(rev(seq(min, min-buf, by = -res)), seq(min, max+buf, by = res)))
     }
@@ -221,10 +201,12 @@ makeGrid <- function(xmin=0, ymin=0, xmax, ymax, resolution=1, buffer=0) {
 
 #' @rdname localTrapCalculations
 #' @export
-findLocalTraps <- function(grid, traps, exposureRadius) {
+findLocalTraps <- function( grid,
+                            trapCoords,
+                            dmax) {
     trtrapsBool <- apply(grid, 1, function(row) {
-        apply(traps, 1, function(tp) {
-            sqrt(sum((row[1:2]-tp)^2)) <= exposureRadius
+        apply(trapCoords, 1, function(tp) {
+            sqrt(sum((row[1:2]-tp)^2)) <= dmax
         })
     })
     trapsBool <- t(trtrapsBool)
@@ -242,58 +224,61 @@ findLocalTraps <- function(grid, traps, exposureRadius) {
 #' @rdname localTrapCalculations
 #' @export
 getNumLocalTraps <- nimbleFunction(
-    run = function(idarg = double(), nLocalTraps = double(1), LTD1arg = double()) {
+    run = function( idarg = double(),
+                    nLocalTraps = double(1),
+                    LTD1arg = double()) {
         if(idarg < 1)       {   return(0)   }
         if(idarg > LTD1arg) {   return(0)   }
         n <- nLocalTraps[idarg]
         returnType(double())
         return(n)
-    }
-)
+    })
 
 #' @rdname localTrapCalculations
 #' @export
 getLocalTrapIndices <- nimbleFunction(
-    run = function(MAXNUM = double(), localTraps = double(2), n = double(), idarg = double()) {
+    run = function( MAXNUM = double(),
+                    localTraps = double(2),
+                    n = double(),
+                    idarg = double()) {
         indices <- numeric(MAXNUM, 0)
         if(n > 0) {
             indices[1:n] <- localTraps[idarg, 2:(n+1)]
         }
         returnType(double(1))
         return(indices)
-    }
-)
+    })
 
 #' @rdname localTrapCalculations
 #' @export
 calcLocalTrapDists <- nimbleFunction(
-    run = function(MAXNUM = double(), n = double(), localTrapInd = double(1), S = double(1), X = double(2)) {
+    run = function( MAXNUM = double(),
+                    n = double(),
+                    localTrapInd = double(1),
+                    s = double(1),
+                    trapCoords = double(2)) {
         Ds <- numeric(MAXNUM, 0)
         if(n > 0) {
-            Ds[1:n] <- sqrt((S[1] - X[localTrapInd[1:n],1])^2 + 
-                                (S[2] - X[localTrapInd[1:n],2])^2)
+            Ds[1:n] <- sqrt((s[1] - trapCoords[localTrapInd[1:n],1])^2 + 
+                                (s[2] - trapCoords[localTrapInd[1:n],2])^2)
         }
         returnType(double(1))
         return(Ds)
-    }
-)
+    })
 
 #' @rdname localTrapCalculations
 #' @export
 calcLocalTrapExposure <- nimbleFunction(
-    run = function(R = double(), n = double(), d = double(1),
-        localTrapInd = double(1), sigma = double(), p0 = double()) {
+    run = function( R = double(),
+                    n = double(),
+                    d = double(1),
+                    localTrapInd = double(1),
+                    sigma = double(),
+                    p0 = double()) {
         g <- numeric(R, 0.00000000000001)      ## small value
         if(n > 0) {
             g[localTrapInd[1:n]] <- p0 * exp(-d[1:n]/sigma)
         }
         returnType(double(1))
         return(g)
-    }
-)
-
-
-
-
-
-
+    })
