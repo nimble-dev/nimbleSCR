@@ -3,6 +3,7 @@ title: "Wolverine Example"
 author: "Cyril Milleret, Daniel Turek and Pierre Dupont"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: references.bib  
 vignette: >
   %\VignetteIndexEntry{Wolverine Example}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,17 +13,23 @@ vignette: >
 This example demonstrates the Wolverine example model, as in
 "Efficient MCMC for Spatial Capture-Recapture Models" (Turek *et al*, *submitted*).
 Specifically, we implement the final version of the wolverine
-model and MCMC.  Details of the functions and procedure are provided therein.
+model and MCMC using nimble [@de2017programming;@nimbleSoftware2020].  Details of the functions and procedure are provided therein.
 
 
 ### Load Libraries 
 
 ```{r , warning = FALSE, message = FALSE}
 library(nimble)
-library(nimbleSCR)
 library(basicMCMCplots)
 library(coda)
 
+```
+
+### Load nimbleSCR package 
+We compiled all functions in the nimbleSCR package version 0.1.0 [@nimbleSCR].
+
+```{r , warning = FALSE, message = FALSE}
+library(nimbleSCR)
 ```
 
 
@@ -71,17 +78,18 @@ code <- nimbleCode({
 
 ### Load and Process Data
 
-We load the Wolverine example data.
+We load the Wolverine example data available from the Dryad Digital Repository [@Milleret2019Dryad] (see @Milleret2019 for a complete description of the data):
 
-The data file can be [downloaded here](http://danielturek.github.io/public/scr/wolverine_data.RData).
+The data file can be downloaded here [https://doi.org/10.5061/dryad.42m96c8].
 
 We also create the `code`, `constants`, `data`, and `inits` for later use in the function `nimbleModel`. 
 
 ```{r echo = FALSE}
-load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
+#load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
 ```
 
-```{r eval = FALSE}
+```{r eval = T}
+setwd("C:/Users/cymi/Downloads")
 load("wolverine_data.RData")
 ```
 
@@ -193,7 +201,7 @@ Rmcmc <- buildMCMC(conf)
 
 ### Compile and Run MCMC
 ```{r echo = FALSE}
-n.iterations <- 1000
+n.iterations <- 10000
 ```
 
 Finally, we compile both the model and MCMC objects and
@@ -235,5 +243,6 @@ Examine traceplots and posterior distributions:
 basicMCMCplots::chainsPlot(samples)
 ```
 
+### References
 
 
