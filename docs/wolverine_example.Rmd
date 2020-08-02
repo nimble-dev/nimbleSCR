@@ -22,7 +22,6 @@ model and MCMC using nimble [@de2017programming;@nimbleSoftware2020].  Details o
 library(nimble)
 library(basicMCMCplots)
 library(coda)
-
 ```
 
 ### Load nimbleSCR package 
