@@ -1,5 +1,5 @@
 
-#' Zero's trick distribution for irregular habitat shapes
+#' One's trick distribution for irregular habitat shapes
 #'
 #' The dHabitatMask distribution checks that the proposed activity center location (s) falls
 #' within the suitable habitat (defined in the binary matrix habitatMask).
@@ -8,18 +8,18 @@
 #' 
 #' @name dHabitatMask
 #'
-#' @param x Zero's trick data (==1).
+#' @param x One's trick data.
 #' @param s Bivariate activity center coordinates.
-#' @param xmin Minimal value among all trap location x-coordinates
-#' @param xmax Maximal value among all trap location x-coordinates
-#' @param ymin Minimal value among all trap location y-coordinates
-#' @param ymax Maximal value among all trap location y-coordinates
+#' @param xmin Minimum of trap location x-coordinates
+#' @param xmax Maximum of trap location x-coordinates
+#' @param ymin Minimum of trap location y-coordinates
+#' @param ymax Maximum of trap location y-coordinates
 #' @param habitatMask two-dimensional binary habitat mask matrix 
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #'
 #' @return The log-likelihood value associated with the bivariate activity center location s being in the suitable habitat
-#' (i.e. 0 if it falls within the habitat mask and -Inf otherwise)
+#' (i.e. 0 if it falls within the habitat mask and -Inf otherwise).
 #'
 #' @author Pierre Dupont
 #'
@@ -28,6 +28,7 @@
 #' @examples
 #' \donttest{
 #' 
+#' N <- 100
 #' OK <- rep(1, N)
 #'
 #' habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
@@ -48,7 +49,7 @@
 #' })
 #'
 #' ## create NIMBLE model object
-#' Rmodel <- nimbleModel(code)
+#' ## Rmodel <- nimbleModel(code,data = ...,constants = ...)
 #'
 #' ## use model object for MCMC, etc.
 #' }

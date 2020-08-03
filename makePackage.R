@@ -45,11 +45,11 @@ library(nimbleSCR)
 (vignettes <- vignette(package = 'nimbleSCR'))
 for(v in vignettes$results[, 'Item'])   print(vignette(v))
 
-dDispersal
-?dDispersal
+dDispersal_exp
+?dDispersal_exp
 
-rDispersal
-?rDispersal
+rDispersal_exp
+?rDispersal_exp
 
 makeGrid
 ?makeGrid

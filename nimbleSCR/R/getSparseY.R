@@ -11,16 +11,16 @@
 #' - a matrix of dimensions n.individuals * maxDetNums which contains the number of observations of each individual
 #' at the detectors it was detected (y).
 #'
-#' @param x a two- or three-dimensional observation data array.
-#' @param noDetections the default value indicating no detection.
+#' @param x A two- or three-dimensional observation data array.
+#' @param noDetections The value indicating no detection. Defaults to -1.
 #' 
-#' @return a list of object which constitute a sparse matrix representation of the observation data provided as input:
-#' - the maximum number of detections for any individual (maxDetNums)
-#' - a vector of the number of detections per individual (detNums).
-#' - a matrix of dimensions n.individuals * maxDetNums which contains the IDs of the detectors 
+#' @return a list of objects which constitute a sparse matrix representation of the observation data provided as input:
+#' - a vector with the number of detectors at which each individual was detected (detNums).
+#' - the maximum number of detectors at which an individual was detected (maxDetNums; i.e, the maximum of detNums)
+#' - a matrix with dimensions n.individuals * maxDetNums which contains the IDs of the detectors 
 #' where each individuals was detected (detIndices).
-#' - a matrix of dimensions n.individuals * maxDetNums which contains the number of observations of each individual
-#' at the detectors it was detected (y).
+#' - a matrix with dimensions n.individuals * maxDetNums which contains the number of detection of each individual
+#' at each detector at which it was detected (y).
 #'
 #' @author Cyril Milleret
 #'

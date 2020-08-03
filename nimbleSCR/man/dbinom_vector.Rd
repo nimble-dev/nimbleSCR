@@ -10,15 +10,15 @@ dbinom_vector(x, size, prob, log = 0)
 rbinom_vector(n = 1, size, prob)
 }
 \arguments{
-\item{x}{vector of quantiles.}
+\item{x}{Vector of quantiles.}
 
-\item{size}{vector of number of trials (zero or more).}
+\item{size}{Vector of number of trials (zero or more).}
 
-\item{prob}{vector of success probabilities on each trial}
+\item{prob}{Vector of success probabilities on each trial}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
-\item{n}{number of observations. Only n = 1 is supported.}
+\item{n}{Number of observations. Only n = 1 is supported.}
 }
 \value{
 The log-likelihood value associated with the vector of binomial observations.
@@ -55,7 +55,7 @@ code <- nimbleCode({
 })
 
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code)
+Rmodel <- nimbleModel(code,data=list(y=y,trials=trials),constants = list(J=length(y)))
 
 ## use model object for MCMC, etc.
 }

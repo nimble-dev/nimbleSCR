@@ -7,11 +7,11 @@
 #'
 #' @name dbinom_vector
 #'
-#' @param x vector of quantiles.
-#' @param prob vector of success probabilities on each trial
-#' @param size vector of number of trials (zero or more).
+#' @param x Vector of quantiles.
+#' @param prob Vector of success probabilities on each trial
+#' @param size Vector of number of trials (zero or more).
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
-#' @param n number of observations. Only n = 1 is supported.
+#' @param n Number of observations. Only n = 1 is supported.
 #'
 #' @return The log-likelihood value associated with the vector of binomial observations.
 #'
@@ -46,7 +46,7 @@
 #' })
 #'
 #' ## create NIMBLE model object
-#' Rmodel <- nimbleModel(code)
+#' Rmodel <- nimbleModel(code,data=list(y=y,trials=trials),constants = list(J=length(y)))
 #'
 #' ## use model object for MCMC, etc.
 #' }

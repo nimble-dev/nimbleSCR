@@ -39,32 +39,32 @@ rbinom_sparseLocalSCR(
 )
 }
 \arguments{
-\item{x}{vector of individual detection frequencies, as returned by the getSparseY function 
+\item{x}{Vector of individual detection frequencies, as returned by the \code{getSparseY} function 
 (padded with -1's to maintain the square structure of the observation data).}
 
-\item{detNums}{number of detections recorded in x, as returned by the getSparseY function.}
+\item{detNums}{Number of detections recorded in x, as returned by the \code{getSparseY} function.}
 
-\item{detIndices}{vector of the detector indices where the detections in x were recorded, as returned by the getSparseY function.}
+\item{detIndices}{Vector of the detector indices where the detections in x were recorded, as returned by the \code{getSparseY} function.}
 
-\item{size}{vector of number of trials (zero or more).}
+\item{size}{Vector of the number of trials (zero or more).}
 
 \item{p0}{Baseline detection probability used in the half-normal detection function.}
 
 \item{sigma}{Scale parameter of the half-normal detection function.}
 
-\item{s}{Bivariate activity center coords.}
+\item{s}{Bivariate activity center coordinates.}
 
-\item{trapCoords}{matrix of x- and y-coordinate locations of all traps}
+\item{trapCoords}{Matrix of x- and y-coordinates of all traps.}
 
-\item{localTrapsIndices}{Matrix of indices of local traps around all habitat grid cells, as returned by the getLocalTraps function.}
+\item{localTrapsIndices}{Matrix of indices of local traps around all habitat grid cells, as returned by the \code{getLocalTraps} function.}
 
 \item{localTrapsNum}{Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalTraps function.}
 
-\item{resizeFactor}{aggregation factor used in the getLocalTraps function to reduce the number of habitat grid cells to retrieve local traps for.}
+\item{resizeFactor}{Aggregation factor used in the \code{getLocalTraps} function to reduce the number of habitat grid cells to retrieve local traps for.}
 
-\item{habitatGrid}{matrix of habitat grid cells indices.}
+\item{habitatGrid}{Matrix of habitat grid cells indices.}
 
-\item{indicator}{Logical argument, specifying whether the current individual is available or not for detection.}
+\item{indicator}{Logical argument, specifying whether the individual is available for detection.}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
@@ -120,7 +120,7 @@ nimModel <- nimbleCode({
 })
  
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code)
+## Rmodel <- nimbleModel(code,data = ...,constants = ...)
  
 ## use model object for MCMC, etc.
 }

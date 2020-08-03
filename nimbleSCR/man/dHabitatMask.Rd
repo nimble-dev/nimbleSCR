@@ -3,24 +3,24 @@
 \name{dHabitatMask}
 \alias{dHabitatMask}
 \alias{rHabitatMask}
-\title{Zero's trick distribution for irregular habitat shapes}
+\title{One's trick distribution for irregular habitat shapes}
 \usage{
 dHabitatMask(x, s, xmax, xmin, ymax, ymin, habitatMask, log = 0)
 
 rHabitatMask(n, s, xmax, xmin, ymax, ymin, habitatMask)
 }
 \arguments{
-\item{x}{Zero's trick data (==1).}
+\item{x}{One's trick data.}
 
 \item{s}{Bivariate activity center coordinates.}
 
-\item{xmax}{Maximal value among all trap location x-coordinates}
+\item{xmax}{Maximum of trap location x-coordinates}
 
-\item{xmin}{Minimal value among all trap location x-coordinates}
+\item{xmin}{Minimum of trap location x-coordinates}
 
-\item{ymax}{Maximal value among all trap location y-coordinates}
+\item{ymax}{Maximum of trap location y-coordinates}
 
-\item{ymin}{Minimal value among all trap location y-coordinates}
+\item{ymin}{Minimum of trap location y-coordinates}
 
 \item{habitatMask}{two-dimensional binary habitat mask matrix}
 
@@ -30,7 +30,7 @@ rHabitatMask(n, s, xmax, xmin, ymax, ymin, habitatMask)
 }
 \value{
 The log-likelihood value associated with the bivariate activity center location s being in the suitable habitat
-(i.e. 0 if it falls within the habitat mask and -Inf otherwise)
+(i.e. 0 if it falls within the habitat mask and -Inf otherwise).
 }
 \description{
 The dHabitatMask distribution checks that the proposed activity center location (s) falls
@@ -42,6 +42,7 @@ The rHabitatMask function returns the value of the habitat mask cell (0 or 1) wh
 \examples{
 \donttest{
 
+N <- 100
 OK <- rep(1, N)
 
 habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
@@ -62,7 +63,7 @@ code <- nimbleCode({
 })
 
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code)
+## Rmodel <- nimbleModel(code,data = ...,constants = ...)
 
 ## use model object for MCMC, etc.
 }

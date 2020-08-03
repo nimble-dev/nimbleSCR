@@ -12,21 +12,21 @@
 #'
 #' @name dbinom_sparseLocalSCR
 #'
-#' @param x vector of individual detection frequencies, as returned by the getSparseY function 
+#' @param x Vector of individual detection frequencies, as returned by the \code{getSparseY} function 
 #' (padded with -1's to maintain the square structure of the observation data).
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
-#' @param detIndices vector of the detector indices where the detections in x were recorded, as returned by the getSparseY function.
-#' @param detNums number of detections recorded in x, as returned by the getSparseY function.
-#' @param size vector of number of trials (zero or more).
+#' @param detIndices Vector of the detector indices where the detections in x were recorded, as returned by the \code{getSparseY} function.
+#' @param detNums Number of detections recorded in x, as returned by the \code{getSparseY} function.
+#' @param size Vector of the number of trials (zero or more).
 #' @param p0 Baseline detection probability used in the half-normal detection function.
 #' @param sigma Scale parameter of the half-normal detection function.
-#' @param s Bivariate activity center coords.
-#' @param trapCoords matrix of x- and y-coordinate locations of all traps
-#' @param localTrapsIndices Matrix of indices of local traps around all habitat grid cells, as returned by the getLocalTraps function.
+#' @param s Bivariate activity center coordinates.
+#' @param trapCoords Matrix of x- and y-coordinates of all traps.
+#' @param localTrapsIndices Matrix of indices of local traps around all habitat grid cells, as returned by the \code{getLocalTraps} function.
 #' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalTraps function.
-#' @param resizeFactor aggregation factor used in the getLocalTraps function to reduce the number of habitat grid cells to retrieve local traps for.
-#' @param habitatGrid matrix of habitat grid cells indices.
-#' @param indicator Logical argument, specifying whether the current individual is available or not for detection.
+#' @param resizeFactor Aggregation factor used in the \code{getLocalTraps} function to reduce the number of habitat grid cells to retrieve local traps for.
+#' @param habitatGrid Matrix of habitat grid cells indices.
+#' @param indicator Logical argument, specifying whether the individual is available for detection.
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of SCR observations, given the current activity center (s),
@@ -71,7 +71,7 @@
 #' })
 #'  
 #' ## create NIMBLE model object
-#' Rmodel <- nimbleModel(code)
+#' ## Rmodel <- nimbleModel(code,data = ...,constants = ...)
 #'  
 #' ## use model object for MCMC, etc.
 #' }
@@ -120,7 +120,7 @@ dbinom_sparseLocalSCR <- nimbleFunction(
     ## Retrieve the total number of traps
     nDetectors <- length(size)
     
-    ## Recreate the full detection vector (NOT NECESSARY ; COULD BE OPTIMIZED IN A LATER VERSION)
+    ## Recreate the full detection vector (NOT NECESSARY; COULD BE OPTIMIZED IN A LATER VERSION)
     y <- nimNumeric(length = nDetectors, value = 0, init = TRUE)
     if(detNums > 0){
       for(r in 1:detNums){

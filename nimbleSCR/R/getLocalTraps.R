@@ -1,26 +1,26 @@
 #' Local Trap Identification
 #'
-#' R utility function to find the traps/detector locations within a given radius of all the cells in a habitat mask.
+#' R utility function to identify all traps/detectors within a given radius dmax of each cells in a habitat mask.
 #' Used in the implementation of the local evaluation approach in SCR models. The distance to the activity center and the 
 #' detection probability are then calculated for these local traps only (i.e. the detection probability is assumed to be 0 
-#' for all other detectors as they are far enoughfrom the considered activity center).
+#' for all other detectors as they are far enough from the activity center).
 #'
 #' The \code{getLocalTraps} function is used in advance of model building.
 #'
 #' @param habitatMask a binary matrix object indicating which cells are considered as suitable habitat.
-#' @param trapCoords A matrix giving the x- and y-coordinate locations of all traps.
-#' @param dmax The maximal radius from a cell center for performing local trap calculations
-#' @param resizeFactor An aggregation factor to reduce the number of habitat cells to retrieve local traps for. 
+#' @param trapCoords A matrix giving the x- and y-coordinate of each trap/detector.
+#' @param dmax The maximal radius from a habitat cell center within which detection probability is evaluated locally for each trap/detector.
+#' @param resizeFactor An aggregation factor to reduce the number of habitat cells to retrieve local traps for. Defaults to 1; no aggregation.
 #' @param plot.check A visualization option (if TRUE); displays which traps are considered "local traps"
 #' around one randomly selected habitat grid cell.
 #'
-#' @return It returns a list of objects:
-#' - localTrapIndices : a matrix with number of rows equal to the reduced number of habitat grid cells.
-#' Each row gives the id numbers of the local traps for this grid cell.
+#' @return This function returns a list of objects:
+#' - localTrapIndices : a matrix with number of rows equal to the reduced number of habitat grid cells (following aggregation).
+#' Each row gives the id numbers of the local traps associated with this grid cell.
 #' - habitatGrid : a matrix of habitat grid cells ID corresponding to the row indices in localTrapIndices. 
 #' - numLocalTraps: a vector of the number of local traps for each habitat grid cell in habitatGrid.
 #' - numLocalTrapsMax: the maximum number of local traps for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
-#' - resizeFactor: the aggregation fatcor used to reduce the number of habitat grid cells ; default = 1 means no aggregation.
+#' - resizeFactor: the aggregation factor used to reduce the number of habitat grid cells.
 #' 
 #' @author Pierre Dupont
 #'

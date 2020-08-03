@@ -201,7 +201,7 @@ code <- nimbleCode({
 \begin{singlespace}
 \begin{small}
 \begin{verbatim}
-dDispersal <- nimbleFunction(
+dDispersal_exp <- nimbleFunction(
     run = function(x = double(1), S = double(1), lam = double(), log = double()) {
         dist <- sqrt(sum((x-S)^2))
         lp <- dexp(dist, rate = lam, log = TRUE) - log(dist)
@@ -236,7 +236,7 @@ code <- nimbleCode({
             G[i, k] <- sum(g[i, k, 1:R])
         }
         for(k in first[i]:(last[i]-1)) {
-            S[i, 1:2, k+1] ~ dDispersal(S[i, 1:2, k], dlambda[gr[i]])
+            S[i, 1:2, k+1] ~ dDispersal_exp(S[i, 1:2, k], dlambda[gr[i]])
         }
         H[i, 1:nSecondary, 1:nPrimary] ~ dLikelihood(
             first = first[i], last = last[i], J = J[i,1:nPrimary],
@@ -414,7 +414,7 @@ code <- nimbleCode({
             G[i, k] <- sum(g[i, k, 1:R])
         }
         for(k in first[i]:(last[i]-1)) {
-            S[i, 1:2, k+1] ~ dDispersal(S[i, 1:2, k], dlambda[gr[i]])
+            S[i, 1:2, k+1] ~ dDispersal_exp(S[i, 1:2, k], dlambda[gr[i]])
             Sdiscrete[i, 1:2, k+1] <- round(S[i, 1:2, k+1]/7) * 7
         }
         H[i, 1:nSecondary, 1:nPrimary] ~ dLikelihood(
