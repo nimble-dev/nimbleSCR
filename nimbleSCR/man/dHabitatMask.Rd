@@ -3,14 +3,14 @@
 \name{dHabitatMask}
 \alias{dHabitatMask}
 \alias{rHabitatMask}
-\title{One's trick distribution for irregular habitat shapes}
+\title{Ones trick distribution for irregular habitat shapes}
 \usage{
 dHabitatMask(x, s, xmax, xmin, ymax, ymin, habitatMask, log = 0)
 
 rHabitatMask(n, s, xmax, xmin, ymax, ymin, habitatMask)
 }
 \arguments{
-\item{x}{One's trick data.}
+\item{x}{Ones trick data.}
 
 \item{s}{Bivariate activity center coordinates.}
 
@@ -37,7 +37,8 @@ The dHabitatMask distribution checks that the proposed activity center location 
 within the suitable habitat (defined in the binary matrix habitatMask).
 }
 \details{
-The rHabitatMask function returns the value of the habitat mask cell (0 or 1) where the proposed activity center falls.
+The rHabitatMask function returns the value of the habitat mask cell (0 or 1) where the proposed activity center falls. 
+See also \href{http://mikemeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{M. Meredith: SECR in BUGS/JAGS with patchy habitat}.
 }
 \examples{
 \donttest{
