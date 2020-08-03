@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Cyril Milleret, Daniel Turek and Pierre Dupont" />
 
@@ -21,41 +20,67 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 
 </style>
 <script>
@@ -82,7 +107,187 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -103,197 +308,207 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>This vignette demonstrates the wolverine spatial capture recapture model, as in “Efficient MCMC for Spatial Capture-Recapture Models” (Turek <em>et al</em>, <em>submitted</em>). Specifically, we implement the final version of the wolverine model and MCMC using nimble <span class="citation">(de Valpine et al. 2017; NIMBLE Development Team 2020)</span>. Details of the functions and procedure are provided therein.</p>
 <div id="load-libraries" class="section level3">
 <h3>Load Libraries</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nimble)
-<span class="kw">library</span>(basicMCMCplots)
-<span class="kw">library</span>(coda)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(nimble)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(basicMCMCplots)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(coda)</a></code></pre></div>
 </div>
 <div id="load-nimblescr-package" class="section level3">
 <h3>Load nimbleSCR package</h3>
-<p>We compiled all functions in the nimbleSCR package version 0.1.0 <span class="citation">(R. Bischof et al. 2020)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nimbleSCR)</code></pre></div>
+<p>We compiled all functions in the nimbleSCR package version 0.1.0 <span class="citation">(Bischof et al. 2020)</span>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(nimbleSCR)</a></code></pre></div>
 </div>
 <div id="define-model-structure" class="section level3">
 <h3>Define Model Structure</h3>
 <p>Here, we define the <code>nimble</code> model structure.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">code &lt;-<span class="st"> </span><span class="kw">nimbleCode</span>({
-  ## priors
-  psi <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)
-  sigma <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">50</span>)
-  p0 <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)
-  ## loop over individuals
-  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n.individuals) {
-    ## AC coordinates
-    sxy[i,<span class="dv">1</span>] <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, x.max)
-    sxy[i,<span class="dv">2</span>] <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, y.max)
-    ## habitat constraint 
-    ones[i] <span class="op">~</span><span class="st"> </span><span class="kw">dHabitatMask</span>( <span class="dt">s =</span> sxy[i,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
-                            <span class="dt">xmin =</span> lowerCoords[<span class="dv">1</span>],
-                            <span class="dt">xmax =</span> upperCoords[<span class="dv">1</span>],
-                            <span class="dt">ymin =</span> lowerCoords[<span class="dv">2</span>],
-                            <span class="dt">ymax =</span> upperCoords[<span class="dv">2</span>],
-                            <span class="dt">habitat =</span> habitat.mx[<span class="dv">1</span><span class="op">:</span>y.max,<span class="dv">1</span><span class="op">:</span>x.max])
-    ## latent dead/alive indicators
-    z[i] <span class="op">~</span><span class="st"> </span><span class="kw">dbern</span>(psi)
-    ## likelihood
-    y[i, <span class="dv">1</span><span class="op">:</span>nMaxDetectors] <span class="op">~</span><span class="st"> </span><span class="kw">dbinom_sparseLocalSCR</span>( <span class="dt">detNums =</span> nbDetections[i],
-                                                   <span class="dt">detIndices =</span> yDets[i,<span class="dv">1</span><span class="op">:</span>nMaxDetectors],
-                                                   <span class="dt">size =</span> trials[<span class="dv">1</span><span class="op">:</span>n.detectors],
-                                                   <span class="dt">p0 =</span> p0,
-                                                   <span class="dt">s =</span> sxy[i,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
-                                                   <span class="dt">sigma =</span> sigma,
-                                                   <span class="dt">trapCoords =</span> detector.xy[<span class="dv">1</span><span class="op">:</span>n.detectors,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
-                                                   <span class="dt">localTrapsIndices =</span> detectorIndex[<span class="dv">1</span><span class="op">:</span>n.cells,<span class="dv">1</span><span class="op">:</span>maxNBDets],
-                                                   <span class="dt">localTrapsNum =</span> nDetectors[<span class="dv">1</span><span class="op">:</span>n.cells],
-                                                   <span class="dt">resizeFactor =</span> ResizeFactor,
-                                                   <span class="dt">habitatGrid =</span> habitatIDDet[<span class="dv">1</span><span class="op">:</span>y.maxDet,<span class="dv">1</span><span class="op">:</span>x.maxDet],
-                                                   <span class="dt">indicator =</span> z[i])
-  }
-  ## derived quantity: total population size
-  N &lt;-<span class="st"> </span><span class="kw">sum</span>(z[<span class="dv">1</span><span class="op">:</span>n.individuals])
-})</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">code &lt;-<span class="st"> </span><span class="kw">nimbleCode</span>({</a>
+<a class="sourceLine" id="cb3-2" title="2">  <span class="co">## priors</span></a>
+<a class="sourceLine" id="cb3-3" title="3">  psi <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4">  sigma <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">  p0 <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb3-6" title="6">  <span class="co">## loop over individuals</span></a>
+<a class="sourceLine" id="cb3-7" title="7">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n.individuals) {</a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="co">## AC coordinates</span></a>
+<a class="sourceLine" id="cb3-9" title="9">    sxy[i,<span class="dv">1</span>] <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, x.max)</a>
+<a class="sourceLine" id="cb3-10" title="10">    sxy[i,<span class="dv">2</span>] <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, y.max)</a>
+<a class="sourceLine" id="cb3-11" title="11">    <span class="co">## habitat constraint </span></a>
+<a class="sourceLine" id="cb3-12" title="12">    ones[i] <span class="op">~</span><span class="st"> </span><span class="kw">dHabitatMask</span>( <span class="dt">s =</span> sxy[i,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb3-13" title="13">                            <span class="dt">xmin =</span> lowerCoords[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb3-14" title="14">                            <span class="dt">xmax =</span> upperCoords[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb3-15" title="15">                            <span class="dt">ymin =</span> lowerCoords[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb3-16" title="16">                            <span class="dt">ymax =</span> upperCoords[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb3-17" title="17">                            <span class="dt">habitat =</span> habitat.mx[<span class="dv">1</span><span class="op">:</span>y.max,<span class="dv">1</span><span class="op">:</span>x.max])</a>
+<a class="sourceLine" id="cb3-18" title="18">    <span class="co">## latent dead/alive indicators</span></a>
+<a class="sourceLine" id="cb3-19" title="19">    z[i] <span class="op">~</span><span class="st"> </span><span class="kw">dbern</span>(psi)</a>
+<a class="sourceLine" id="cb3-20" title="20">    <span class="co">## likelihood</span></a>
+<a class="sourceLine" id="cb3-21" title="21">    y[i, <span class="dv">1</span><span class="op">:</span>nMaxDetectors] <span class="op">~</span><span class="st"> </span><span class="kw">dbinom_sparseLocalSCR</span>( <span class="dt">detNums =</span> nbDetections[i],</a>
+<a class="sourceLine" id="cb3-22" title="22">                                                   <span class="dt">detIndices =</span> yDets[i,<span class="dv">1</span><span class="op">:</span>nMaxDetectors],</a>
+<a class="sourceLine" id="cb3-23" title="23">                                                   <span class="dt">size =</span> trials[<span class="dv">1</span><span class="op">:</span>n.detectors],</a>
+<a class="sourceLine" id="cb3-24" title="24">                                                   <span class="dt">p0 =</span> p0,</a>
+<a class="sourceLine" id="cb3-25" title="25">                                                   <span class="dt">s =</span> sxy[i,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb3-26" title="26">                                                   <span class="dt">sigma =</span> sigma,</a>
+<a class="sourceLine" id="cb3-27" title="27">                                                   <span class="dt">trapCoords =</span> detector.xy[<span class="dv">1</span><span class="op">:</span>n.detectors,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb3-28" title="28">                                                   <span class="dt">localTrapsIndices =</span> detectorIndex[<span class="dv">1</span><span class="op">:</span>n.cells,<span class="dv">1</span><span class="op">:</span>maxNBDets],</a>
+<a class="sourceLine" id="cb3-29" title="29">                                                   <span class="dt">localTrapsNum =</span> nDetectors[<span class="dv">1</span><span class="op">:</span>n.cells],</a>
+<a class="sourceLine" id="cb3-30" title="30">                                                   <span class="dt">resizeFactor =</span> ResizeFactor,</a>
+<a class="sourceLine" id="cb3-31" title="31">                                                   <span class="dt">habitatGrid =</span> habitatIDDet[<span class="dv">1</span><span class="op">:</span>y.maxDet,<span class="dv">1</span><span class="op">:</span>x.maxDet],</a>
+<a class="sourceLine" id="cb3-32" title="32">                                                   <span class="dt">indicator =</span> z[i])</a>
+<a class="sourceLine" id="cb3-33" title="33">  }</a>
+<a class="sourceLine" id="cb3-34" title="34">  <span class="co">## derived quantity: total population size</span></a>
+<a class="sourceLine" id="cb3-35" title="35">  N &lt;-<span class="st"> </span><span class="kw">sum</span>(z[<span class="dv">1</span><span class="op">:</span>n.individuals])</a>
+<a class="sourceLine" id="cb3-36" title="36">})</a></code></pre></div>
 </div>
 <div id="load-and-process-data" class="section level3">
 <h3>Load and Process Data</h3>
-<p>We load the Wolverine example data available from the Dryad Digital Repository <span class="citation">(C. Milleret et al. 2018)</span> (see <span class="citation">Milleret et al. (2019)</span> for a complete description of the data):</p>
-<p>The data file can be downloaded here [<a href="https://doi.org/10.5061/dryad.42m96c8" class="uri">https://doi.org/10.5061/dryad.42m96c8</a>].</p>
-<p>We also create the <code>code</code>, <code>constants</code>, <code>data</code>, and <code>inits</code> for later use in the function <code>nimbleModel</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">this.path&lt;-<span class="kw">file.path</span>(<span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">PROJECTS</span><span class="ch">\\</span><span class="st">Rgit</span><span class="ch">\\</span><span class="st">nimbleSCR</span><span class="ch">\\</span><span class="st">DATA</span><span class="ch">\\</span><span class="st">DataScript&quot;</span>,<span class="st">&quot;WolverineData.RData&quot;</span>)
-<span class="co"># load(this.path)</span>
-<span class="co"># setwd(&quot;C:/Users/cymi/Downloads&quot;)</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#load(&quot;wolverine_data.RData&quot;)</span>
-<span class="kw">load</span>(this.path)
-
-wolverine_input &lt;-<span class="st"> </span>my.jags.input
-wolverine_inits &lt;-<span class="st"> </span>inits.<span class="dv">1</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">y =</span> wolverine_input<span class="op">$</span>y,
-             <span class="dt">z =</span> wolverine_input<span class="op">$</span>z,
-             <span class="dt">detector.xy =</span> wolverine_input<span class="op">$</span>detector.xy,
-             <span class="dt">habitat.mx =</span> wolverine_input<span class="op">$</span>habitat.mx,
-             <span class="dt">ones =</span> wolverine_input<span class="op">$</span>OK,
-             <span class="dt">lowerCoords =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),
-             <span class="dt">upperCoords =</span> <span class="kw">c</span>(
-               <span class="kw">dim</span>(wolverine_input<span class="op">$</span>habitat.mx)[<span class="dv">2</span>],
-               <span class="kw">dim</span>(wolverine_input<span class="op">$</span>habitat.mx)[<span class="dv">1</span>]),
-             <span class="dt">trials =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">dim</span>(wolverine_input<span class="op">$</span>detector.xy)[<span class="dv">1</span>]))
-constants &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">n.individuals =</span> wolverine_input<span class="op">$</span>n.individuals,
-                  <span class="dt">n.detectors =</span> <span class="kw">dim</span>(wolverine_input<span class="op">$</span>detector.xy)[<span class="dv">1</span>],
-                  <span class="dt">y.max =</span> <span class="kw">dim</span>(wolverine_input<span class="op">$</span>habitat.mx)[<span class="dv">1</span>],
-                  <span class="dt">x.max =</span> <span class="kw">dim</span>(wolverine_input<span class="op">$</span>habitat.mx)[<span class="dv">2</span>])
-inits &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">sxy =</span> wolverine_inits<span class="op">$</span>sxy,
-              <span class="dt">z =</span> wolverine_inits<span class="op">$</span>z,
-              <span class="dt">p0 =</span> <span class="fl">0.05</span>,
-              <span class="dt">psi =</span> <span class="fl">0.5</span>,
-              <span class="dt">sigma =</span> <span class="dv">6</span>)</code></pre></div>
-<p>Now we do some processing of the data, for use in this version of the model.</p>
-<p>The function <code>getLocalTraps</code> identifies the set of detectors that are within a certain distance <span class="math inline">\(d_{max}\)</span> of each habitat cell center (<span style="color: blue;">blue points</span> in the plot below). These reduced set of detectors are stored in the <code>localTrapIndices</code> matrix and later used in the local evaluation of the detection model to speed-up calculations. The value of <span class="math inline">\(d_{max}\)</span> should be as small as possible but always large enough so that for any particular individual, the <code>sxy</code> values of the initial activity center location restrict the calculation of <span class="math inline">\(p_{0}\)</span> to all detectors with positive detections. The <span class="math inline">\(d_{max}\)</span> value will therefore affect the number of columns in <code>localTrapIndices</code> Here, we use <span class="math inline">\(d_{max}=38\)</span>.</p>
+<p>We load the wolverine example data available from the Dryad Digital Repository <span class="citation">(Milleret et al. 2018)</span>. See <span class="citation">Milleret et al. (2019)</span> for a complete description of the data.</p>
+<p>The data file can be downloaded at [<a href="https://doi.org/10.5061/dryad.42m96c8" class="uri">https://doi.org/10.5061/dryad.42m96c8</a>].</p>
+<p>We also create objects <code>code</code>, <code>constants</code>, <code>data</code>, and <code>inits</code> for later use in the function <code>nimbleModel</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">load</span>(<span class="st">&quot;WolverineData.RData&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">y =</span> my.jags.input<span class="op">$</span>y,</a>
+<a class="sourceLine" id="cb5-2" title="2">             <span class="dt">z =</span> my.jags.input<span class="op">$</span>z,</a>
+<a class="sourceLine" id="cb5-3" title="3">             <span class="dt">detector.xy =</span> my.jags.input<span class="op">$</span>detector.xy,</a>
+<a class="sourceLine" id="cb5-4" title="4">             <span class="dt">habitat.mx =</span> my.jags.input<span class="op">$</span>habitat.mx,</a>
+<a class="sourceLine" id="cb5-5" title="5">             <span class="dt">ones =</span> my.jags.input<span class="op">$</span>OK,</a>
+<a class="sourceLine" id="cb5-6" title="6">             <span class="dt">lowerCoords =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-7" title="7">             <span class="dt">upperCoords =</span> <span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb5-8" title="8">               <span class="kw">dim</span>(my.jags.input<span class="op">$</span>habitat.mx)[<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb5-9" title="9">               <span class="kw">dim</span>(my.jags.input<span class="op">$</span>habitat.mx)[<span class="dv">1</span>]),</a>
+<a class="sourceLine" id="cb5-10" title="10">             <span class="dt">trials =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">dim</span>(my.jags.input<span class="op">$</span>detector.xy)[<span class="dv">1</span>]))</a>
+<a class="sourceLine" id="cb5-11" title="11">constants &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">n.individuals =</span> my.jags.input<span class="op">$</span>n.individuals,</a>
+<a class="sourceLine" id="cb5-12" title="12">                  <span class="dt">n.detectors =</span> <span class="kw">dim</span>(my.jags.input<span class="op">$</span>detector.xy)[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb5-13" title="13">                  <span class="dt">y.max =</span> <span class="kw">dim</span>(my.jags.input<span class="op">$</span>habitat.mx)[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb5-14" title="14">                  <span class="dt">x.max =</span> <span class="kw">dim</span>(my.jags.input<span class="op">$</span>habitat.mx)[<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb5-15" title="15">inits &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">sxy =</span> inits<span class="fl">.1</span><span class="op">$</span>sxy,</a>
+<a class="sourceLine" id="cb5-16" title="16">              <span class="dt">z =</span> inits<span class="fl">.1</span><span class="op">$</span>z,</a>
+<a class="sourceLine" id="cb5-17" title="17">              <span class="dt">p0 =</span> <span class="fl">0.05</span>,</a>
+<a class="sourceLine" id="cb5-18" title="18">              <span class="dt">psi =</span> <span class="fl">0.5</span>,</a>
+<a class="sourceLine" id="cb5-19" title="19">              <span class="dt">sigma =</span> <span class="dv">6</span>)</a></code></pre></div>
+</div>
+<div id="create-custom-distribution-to-increase-mcmc-efficiency" class="section level2">
+<h2>Create custom distribution to increase MCMC efficiency</h2>
+<p>The <code>dbinom_sparseLocalSCR()</code> distribution incorporates three features to increase computation efficiency.</p>
+<div id="local-detector-evaluation" class="section level3">
+<h3>1. Local detector evaluation</h3>
+<p>This step consists in restricting calculations linked to detection function (here a halfnormal function) to detectors within a maximum realistic radius <span class="citation">(Milleret et al. 2019)</span>. We use the function <code>getLocalTraps</code> to identify the set of detectors that are within a certain distance <span class="math inline">\(d_{max}\)</span> of each habitat cell center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the <code>localTrapIndices</code> matrix and are later used in the local evaluation of the detection model to speed-up calculations. The value of <span class="math inline">\(d_{max}\)</span> should be as small as possible but always large enough so that for any particular individual, the <code>sxy</code> values of the initial activity center location restrict the calculation of <span class="math inline">\(p\)</span> to all detectors with positive detections. The <span class="math inline">\(d_{max}\)</span> value will therefore affect the number of columns in <code>localTrapIndices</code> Here, we use <span class="math inline">\(d_{max}=38\)</span>.</p>
 <p>We also resize the habitat matrix to lower dimensions before identifying the local detectors. This reduces the number of habitat cells for which we have to identify the set of detectors that are within <span class="math inline">\(d_{max}\)</span> of the cell center. The goal is to create the object <code>localTrapsIndices</code> of the smallest dimension possible for a more efficient processing of the model.<br />
 Here, we resize the habitat matrix by a factor of 24, which corresponds to the the <code>resizeFactor</code> argument. This value will affect how many rows will compose <code>localTrapIndices</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DetectorIndex &lt;-<span class="st"> </span><span class="kw">getLocalTraps</span>(<span class="dt">habitatMask =</span> data<span class="op">$</span>habitat.mx,
-                               <span class="dt">trapCoords =</span> data<span class="op">$</span>detector.xy,
-                               <span class="dt">dmax =</span> <span class="dv">38</span>,
-                               <span class="dt">resizeFactor =</span> <span class="dv">24</span>)</code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">constants<span class="op">$</span>y.maxDet &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>habitatGrid)[<span class="dv">1</span>]
-constants<span class="op">$</span>x.maxDet &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>habitatGrid)[<span class="dv">2</span>]
-constants<span class="op">$</span>ResizeFactor &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>resizeFactor
-constants<span class="op">$</span>n.cells &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>localTrapsIndices)[<span class="dv">1</span>]
-constants<span class="op">$</span>maxNBDets &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>numLocalTrapsMax
-data<span class="op">$</span>detectorIndex &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>localTrapsIndices
-data<span class="op">$</span>nDetectors &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>numLocalTraps
-data<span class="op">$</span>habitatIDDet &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>habitatGrid</code></pre></div>
-<p>Last, we re-express the detection matrix <code>y</code> as a sparse matrix, to reduce its size. In this representation, we turn <code>y</code> the detection matrix into three objects:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">DetectorIndex &lt;-<span class="st"> </span><span class="kw">getLocalTraps</span>(<span class="dt">habitatMask =</span> data<span class="op">$</span>habitat.mx,</a>
+<a class="sourceLine" id="cb6-2" title="2">                               <span class="dt">trapCoords =</span> data<span class="op">$</span>detector.xy,</a>
+<a class="sourceLine" id="cb6-3" title="3">                               <span class="dt">dmax =</span> <span class="dv">38</span>,</a>
+<a class="sourceLine" id="cb6-4" title="4">                               <span class="dt">resizeFactor =</span> <span class="dv">24</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">constants<span class="op">$</span>y.maxDet &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>habitatGrid)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb7-2" title="2">constants<span class="op">$</span>x.maxDet &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>habitatGrid)[<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb7-3" title="3">constants<span class="op">$</span>ResizeFactor &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>resizeFactor</a>
+<a class="sourceLine" id="cb7-4" title="4">constants<span class="op">$</span>n.cells &lt;-<span class="st"> </span><span class="kw">dim</span>(DetectorIndex<span class="op">$</span>localTrapsIndices)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb7-5" title="5">constants<span class="op">$</span>maxNBDets &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>numLocalTrapsMax</a>
+<a class="sourceLine" id="cb7-6" title="6">data<span class="op">$</span>detectorIndex &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>localTrapsIndices</a>
+<a class="sourceLine" id="cb7-7" title="7">data<span class="op">$</span>nDetectors &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>numLocalTraps</a>
+<a class="sourceLine" id="cb7-8" title="8">data<span class="op">$</span>habitatIDDet &lt;-<span class="st"> </span>DetectorIndex<span class="op">$</span>habitatGrid</a></code></pre></div>
+</div>
+<div id="sparse-observation-matrix" class="section level3">
+<h3>2. Sparse observation matrix</h3>
+<p>We re-express the detection matrix <code>y</code> as a sparse matrix, to reduce its size. In this representation, we turn the detection matrix <code>y</code> into three objects:</p>
 <ul>
 <li><code>detIndices</code>: where each row (corresponding to one individual) contains the detector identification numbers where that individual was detected.</li>
-<li><code>y</code>: A second matrix of identical dimension, containing the number of detections occurring at each detector. This second matrix is necessary for modelling non-binary detections (e.g. <span class="math inline">\(binomial\)</span> or <span class="math inline">\(Poisson\)</span> observation models)</li>
-<li><code>detNums</code>: a vector containing the number of detectors where each individual was designated.</li>
+<li><code>y</code>: a second matrix of identical dimension, containing the number of detections occurring at each detector. This second matrix is necessary for modelling non-binary detections (e.g. <span class="math inline">\(binomial\)</span> observation models)</li>
+<li><code>detNums</code>: a vector containing the number of detectors where each individual was detected.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ySparse &lt;-<span class="st"> </span><span class="kw">getSparseY</span>(<span class="dt">x =</span> wolverine_input<span class="op">$</span>y)
-data<span class="op">$</span>y &lt;-<span class="st"> </span>ySparse<span class="op">$</span>y[,,<span class="dv">1</span>]  
-data<span class="op">$</span>yDets &lt;-<span class="st"> </span>ySparse<span class="op">$</span>detIndices[,,<span class="dv">1</span>]
-data<span class="op">$</span>nbDetections &lt;-<span class="st"> </span>ySparse<span class="op">$</span>detNums[,<span class="dv">1</span>]
-constants<span class="op">$</span>nMaxDetectors &lt;-<span class="st"> </span>ySparse<span class="op">$</span>maxDetNums</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">ySparse &lt;-<span class="st"> </span><span class="kw">getSparseY</span>(<span class="dt">x =</span> my.jags.input<span class="op">$</span>y)</a>
+<a class="sourceLine" id="cb8-2" title="2">data<span class="op">$</span>y &lt;-<span class="st"> </span>ySparse<span class="op">$</span>y[,,<span class="dv">1</span>]  </a>
+<a class="sourceLine" id="cb8-3" title="3">data<span class="op">$</span>yDets &lt;-<span class="st"> </span>ySparse<span class="op">$</span>detIndices[,,<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb8-4" title="4">data<span class="op">$</span>nbDetections &lt;-<span class="st"> </span>ySparse<span class="op">$</span>detNums[,<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb8-5" title="5">constants<span class="op">$</span>nMaxDetectors &lt;-<span class="st"> </span>ySparse<span class="op">$</span>maxDetNums</a></code></pre></div>
 </div>
-<div id="create-nimble-model" class="section level3">
-<h3>Create NIMBLE Model</h3>
+<div id="skip-unnecessary-calculations" class="section level3">
+<h3>3. Skip unnecessary calculations</h3>
+<p>The function <code>dbinom_sparseLocalSCR()</code> takes the <code>logical</code> argument <code>indicator</code> that specifies whether the individual <code>i</code> is available (<span class="math inline">\(z_i\)</span> = 1) for detection or not (<span class="math inline">\(z_i\)</span> = 0). When <span class="math inline">\(z_i\)</span> = 0, calculations of <span class="math inline">\(p_i\)</span> are not performed and therefore increases MCMC efficiency.</p>
+</div>
+</div>
+<div id="create-nimble-model" class="section level2">
+<h2>Create NIMBLE Model</h2>
 <p>Now, we can create the <code>nimble</code> model object, using the model structure defined in <code>code</code>, and the constants, data, and initial values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rmodel &lt;-<span class="st"> </span><span class="kw">nimbleModel</span>(code, constants, data, inits)</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">Rmodel &lt;-<span class="st"> </span><span class="kw">nimbleModel</span>(code, constants, data, inits)</a></code></pre></div>
 <pre><code>## defining model...</code></pre>
 <pre><code>## building model...</code></pre>
 <pre><code>## setting data and initial values...</code></pre>
 <pre><code>## running calculate on model (any error reports that follow may simply reflect missing values in model variables) ... 
 ## checking model sizes and dimensions...
 ## model building finished.</code></pre>
-</div>
-<div id="configure-and-build-mcmc" class="section level3">
-<h3>Configure and Build MCMC</h3>
+<div id="configure-and-build-mcmc" class="section level4">
+<h4>Configure and Build MCMC</h4>
 <p>We configure an MCMC algorithm to the <code>Rmodel</code> model object.</p>
 <p>We assign MCMC monitors to <span class="math inline">\(N\)</span>, <span class="math inline">\(\sigma\)</span>, and <span class="math inline">\(p_0\)</span>.</p>
-<p>We also remove the univariate Metropolis-Hastings samplers which were assigned (by default) to each AC component, the <code>sxy</code> variables. Rather, we add joint Metropolis-Hastings samplers (<code>RW_block</code>) samplers to each <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> coordinate pair <code>sxy[i, 1:2]</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">conf &lt;-<span class="st"> </span><span class="kw">configureMCMC</span>(Rmodel, <span class="dt">monitors =</span> <span class="kw">c</span>(<span class="st">&quot;N&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;p0&quot;</span>), <span class="dt">print =</span> <span class="ot">FALSE</span>)
-conf<span class="op">$</span><span class="kw">removeSamplers</span>(<span class="st">&quot;sxy&quot;</span>)
-ACnodes &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;sxy[&quot;</span>, <span class="dv">1</span><span class="op">:</span>constants<span class="op">$</span>n.individuals, <span class="st">&quot;, 1:2]&quot;</span>)
-<span class="cf">for</span>(node <span class="cf">in</span> ACnodes) {
-  conf<span class="op">$</span><span class="kw">addSampler</span>(<span class="dt">target =</span> node,
-                  <span class="dt">type =</span> <span class="st">&quot;RW_block&quot;</span>,
-                  <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adaptScaleOnly =</span> <span class="ot">TRUE</span>),
-                  <span class="dt">silent =</span> <span class="ot">TRUE</span>)
-}
-Rmcmc &lt;-<span class="st"> </span><span class="kw">buildMCMC</span>(conf)</code></pre></div>
 </div>
-<div id="compile-and-run-mcmc" class="section level3">
-<h3>Compile and Run MCMC</h3>
+<div id="block-sampling-to-increase-mcmc-efficiency" class="section level4">
+<h4>Block sampling to increase MCMC efficiency</h4>
+<p>We also remove the univariate Metropolis-Hastings samplers which were assigned (by default) to each AC component, the <code>sxy</code> variables. Instead, we add joint Metropolis-Hastings samplers (<code>RW_block</code>) samplers to each <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> coordinate pair <code>sxy[i, 1:2]</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">conf &lt;-<span class="st"> </span><span class="kw">configureMCMC</span>(Rmodel, <span class="dt">monitors =</span> <span class="kw">c</span>(<span class="st">&quot;N&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;p0&quot;</span>), <span class="dt">print =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb14-2" title="2">conf<span class="op">$</span><span class="kw">removeSamplers</span>(<span class="st">&quot;sxy&quot;</span>)</a>
+<a class="sourceLine" id="cb14-3" title="3">ACnodes &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;sxy[&quot;</span>, <span class="dv">1</span><span class="op">:</span>constants<span class="op">$</span>n.individuals, <span class="st">&quot;, 1:2]&quot;</span>)</a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="cf">for</span>(node <span class="cf">in</span> ACnodes) {</a>
+<a class="sourceLine" id="cb14-5" title="5">  conf<span class="op">$</span><span class="kw">addSampler</span>(<span class="dt">target =</span> node,</a>
+<a class="sourceLine" id="cb14-6" title="6">                  <span class="dt">type =</span> <span class="st">&quot;RW_block&quot;</span>,</a>
+<a class="sourceLine" id="cb14-7" title="7">                  <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adaptScaleOnly =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb14-8" title="8">                  <span class="dt">silent =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb14-9" title="9">}</a>
+<a class="sourceLine" id="cb14-10" title="10">Rmcmc &lt;-<span class="st"> </span><span class="kw">buildMCMC</span>(conf)</a></code></pre></div>
+</div>
+<div id="compile-and-run-mcmc" class="section level4">
+<h4>Compile and Run MCMC</h4>
 <p>Finally, we compile both the model and MCMC objects and execute the compiled MCMC for 10 000 iterations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Cmodel &lt;-<span class="st"> </span><span class="kw">compileNimble</span>(Rmodel)</code></pre></div>
-<pre><code>## compiling... this may take a minute. Use 'showCompilerOutput = TRUE' to see C++ compilation details.</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">Cmodel &lt;-<span class="st"> </span><span class="kw">compileNimble</span>(Rmodel)</a></code></pre></div>
+<pre><code>## compiling... this may take a minute. Use &#39;showCompilerOutput = TRUE&#39; to see C++ compilation details.</code></pre>
 <pre><code>## compilation finished.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Cmcmc &lt;-<span class="st"> </span><span class="kw">compileNimble</span>(Rmcmc, <span class="dt">project =</span> Rmodel)</code></pre></div>
-<pre><code>## compiling... this may take a minute. Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">Cmcmc &lt;-<span class="st"> </span><span class="kw">compileNimble</span>(Rmcmc, <span class="dt">project =</span> Rmodel)</a></code></pre></div>
+<pre><code>## compiling... this may take a minute. Use &#39;showCompilerOutput = TRUE&#39; to see C++ compilation details.
 ## compilation finished.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MCMC_runtime &lt;-<span class="st"> </span><span class="kw">system.time</span>(
-  samples &lt;-<span class="st"> </span><span class="kw">runMCMC</span>(Cmcmc, <span class="dt">niter =</span> <span class="dv">1000</span>)
-)</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">MCMC_runtime &lt;-<span class="st"> </span><span class="kw">system.time</span>(</a>
+<a class="sourceLine" id="cb20-2" title="2">  samples &lt;-<span class="st"> </span><span class="kw">runMCMC</span>(Cmcmc, <span class="dt">niter =</span> <span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb20-3" title="3">)</a></code></pre></div>
 <pre><code>## running chain 1...</code></pre>
-<pre><code>## |-------------|-------------|-------------|-------------|
-## |-------------------------------------------------------|</code></pre>
 </div>
-<div id="results" class="section level3">
-<h3>Results</h3>
-<p>First, we can look at the MCMC runtime: 2minutes.</p>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>First, we can extract the MCMC runtime (0.1 minutes in this case):</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">round</span>(MCMC_runtime[<span class="dv">3</span>] <span class="op">/</span><span class="st"> </span><span class="dv">60</span>, <span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## elapsed 
+##     0.1</code></pre>
 <p>Next, we can check the posterior effective sample size (ESS) resulting from our 10 000 posterior samples for the three parameters we tracked (<span class="math inline">\(N\)</span>, <span class="math inline">\(\sigma\)</span>, and <span class="math inline">\(p_0\)</span>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">effectiveSize</span>(samples),<span class="dv">2</span>) </code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">round</span>(<span class="kw">effectiveSize</span>(samples),<span class="dv">2</span>) </a></code></pre></div>
 <pre><code>##     N    p0 sigma 
-##  2.86 15.13 25.44</code></pre>
+##  5.00  1.52  5.52</code></pre>
 <p>We can also calculate the MCMC efficiency for each parameter; this corresponds to the rate of generating effectively independent posterior samples, per second of MCMC runtime :</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> <span class="kw">round</span>(<span class="kw">effectiveSize</span>(samples)<span class="op">/</span>MCMC_runtime[<span class="dv">3</span>],<span class="dv">2</span>)  </code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"> <span class="kw">round</span>(<span class="kw">effectiveSize</span>(samples)<span class="op">/</span>MCMC_runtime[<span class="dv">3</span>],<span class="dv">2</span>)  </a></code></pre></div>
 <pre><code>##     N    p0 sigma 
-##  0.02  0.13  0.21</code></pre>
+##  1.21  0.37  1.34</code></pre>
 <p>Summary of posterior distributions for each parameter:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">samplesSummary</span>(samples), <span class="dv">2</span>)</code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">round</span>(<span class="kw">samplesSummary</span>(samples), <span class="dv">2</span>)</a></code></pre></div>
 <pre><code>##         Mean Median St.Dev. 95%CI_low 95%CI_upp
-## N     433.99 394.00   98.34    343.98    669.00
-## p0      0.05   0.05    0.00      0.05      0.06
-## sigma   5.80   5.79    0.26      5.39      6.27</code></pre>
+## N     421.80 421.50   27.91    372.02    469.32
+## p0      0.04   0.03    0.01      0.03      0.05
+## sigma   7.41   7.48    0.43      6.07      7.92</code></pre>
 <p>Examine traceplots and posterior distributions:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">basicMCMCplots<span class="op">::</span><span class="kw">chainsPlot</span>(samples)</code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">basicMCMCplots<span class="op">::</span><span class="kw">chainsPlot</span>(samples)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
-<div id="references" class="section level3 unnumbered">
-<h3>References</h3>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
 <div id="refs" class="references">
 <div id="ref-nimbleSCR">
-<p>Bischof, Richard, Daniel Turek, Cyril Milleret, Torbjørn Ergon, Pierre Dupont, and Perry de Valpine. 2020. <em>NimbleSCR: Spatial Capture-Recapture (Scr) Methods Using ’Nimble’</em>.</p>
+<p>Bischof, Richard, Daniel Turek, Cyril Milleret, Torbjørn Ergon, Pierre Dupont, and de Valpine Perry. 2020. <em>NimbleSCR: Spatial Capture-Recapture (Scr) Methods Using ’Nimble’</em>.</p>
 </div>
 <div id="ref-de2017programming">
-<p>de Valpine, Perry, Daniel Turek, Christopher J Paciorek, Clifford Anderson-Bergman, Duncan Temple Lang, and Rastislav Bodik. 2017. “Programming with Models: Writing Statistical Algorithms for General Model Structures with NIMBLE.” <em>J. Comput. Graph. Stat.</em> 26 (2). Taylor &amp; Francis: 403–13.</p>
+<p>de Valpine, Perry, Daniel Turek, Christopher J Paciorek, Clifford Anderson-Bergman, Duncan Temple Lang, and Rastislav Bodik. 2017. “Programming with Models: Writing Statistical Algorithms for General Model Structures with NIMBLE.” <em>J. Comput. Graph. Stat.</em> 26 (2): 403–13.</p>
 </div>
 <div id="ref-Milleret2019Dryad">
-<p>Milleret, C, P Dupont, C Bonenfant, H Brøseth, Ø Flagstad, C Sutherland, and R Bischof. 2018. “Data from: A Local Evaluation of the Individual State-Space to Scale up Bayesian Spatial Capture Recapture.” <em>Ecology and Evolution</em>. Dryad Digital Repository. doi:<a href="https://doi.org/doi:10.5061/dryad.42m96c8">doi:10.5061/dryad.42m96c8</a>.</p>
+<p>Milleret, C, P Dupont, C Bonenfant, H Brøseth, Ø Flagstad, C Sutherland, and R Bischof. 2018. “Data from: A Local Evaluation of the Individual State-Space to Scale up Bayesian Spatial Capture Recapture.” <em>Ecology and Evolution</em>. Dryad Digital Repository. <a href="https://doi.org/doi:10.5061/dryad.42m96c8">https://doi.org/doi:10.5061/dryad.42m96c8</a>.</p>
 </div>
 <div id="ref-Milleret2019">
-<p>Milleret, Cyril, Pierre Dupont, Christophe Bonenfant, Henrik Brøseth, Øystein Flagstad, Chris Sutherland, and Richard Bischof. 2019. “A Local Evaluation of the Individual State-Space to Scale up Bayesian Spatial Capture–recapture.” <em>Ecology and Evolution</em> 9 (1): 352–63. doi:<a href="https://doi.org/10.1002/ece3.4751">10.1002/ece3.4751</a>.</p>
+<p>Milleret, Cyril, Pierre Dupont, Christophe Bonenfant, Henrik Brøseth, Øystein Flagstad, Chris Sutherland, and Richard Bischof. 2019. “A Local Evaluation of the Individual State-Space to Scale up Bayesian Spatial Capture–Recapture.” <em>Ecology and Evolution</em> 9 (1): 352–63. <a href="https://doi.org/10.1002/ece3.4751">https://doi.org/10.1002/ece3.4751</a>.</p>
 </div>
 <div id="ref-nimbleSoftware2020">
-<p>NIMBLE Development Team. 2020. “NIMBLE: MCMC, Particle Filtering, and Programmable Hierarchical Modeling.” doi:<a href="https://doi.org/10.5281/zenodo.1211190">10.5281/zenodo.1211190</a>.</p>
+<p>NIMBLE Development Team. 2020. “NIMBLE: MCMC, Particle Filtering, and Programmable Hierarchical Modeling.” <a href="https://doi.org/10.5281/zenodo.1211190">https://doi.org/10.5281/zenodo.1211190</a>.</p>
 </div>
 </div>
 </div>

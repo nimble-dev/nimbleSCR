@@ -10,6 +10,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
 This vignette demonstrates the wolverine spatial capture recapture model, as in
 "Efficient MCMC for Spatial Capture-Recapture Models" (Turek *et al*, *submitted*).
 Specifically, we implement the final version of the wolverine
@@ -87,12 +88,12 @@ We also create objects `code`, `constants`, `data`, and `inits` for later use in
 #load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
 ```
 
-```{r eval = TRUE echo=FALSE}
-setwd("C:/Users/cymi/Downloads")
+```{r echo = F}
+load("C:/Users/cymi/Downloads/WolverineData.RData")
 ```
 
-```{r eval = T}
-load("wolverine_data.RData")
+```{r eval = F}
+load("WolverineData.RData")
 ```
 
 ```{r }
@@ -117,15 +118,15 @@ inits <- list(sxy = inits.1$sxy,
               sigma = 6)
 ```
 
+## Create custom distribution to increase MCMC efficiency 
+The `dbinom_sparseLocalSCR()` distribution incorporates three features to increase computation efficiency.
 
-Now we do some processing of the data, for use in this version
-of the model.
+### 1. Local detector evaluation
 
-The function `getLocalTraps` identifies the set of detectors that
-are within a certain distance $d_{max}$ of each habitat cell
+This step consists in restricting calculations linked to detection function (here a halfnormal function) to detectors within a maximum realistic radius [@Milleret2019]. 
+We use the function `getLocalTraps` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
 center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed-up calculations.
-The value of $d_{max}$ should be as small as possible but always large enough so that for any particular individual, the `sxy` values of the initial activity center location
-restrict the calculation of $p_{0}$ to all detectors with positive detections.
+The value of $d_{max}$ should be as small as possible but always large enough so that for any particular individual, the `sxy` values of the initial activity center location restrict the calculation of $p$ to all detectors with positive detections.
 The $d_{max}$ value will therefore affect the number of columns in `localTrapIndices`
 Here, we use $d_{max}=38$. 
 
@@ -150,11 +151,12 @@ data$habitatIDDet <- DetectorIndex$habitatGrid
 
 ```
 
+### 2. Sparse observation matrix
 
-Last, we re-express the detection matrix `y` as a sparse matrix, to reduce its size. In this representation, we turn the detection matrix `y` into three objects:
+We re-express the detection matrix `y` as a sparse matrix, to reduce its size. In this representation, we turn the detection matrix `y` into three objects:
 
 * `detIndices`: where each row (corresponding to one individual) contains the detector identification numbers where that individual was detected. 
-* `y`: a second matrix of identical dimension, containing the number of detections occurring at each detector. This second matrix is necessary for modelling non-binary detections (e.g. $binomial$ or $Poisson$ observation models)
+* `y`: a second matrix of identical dimension, containing the number of detections occurring at each detector. This second matrix is necessary for modelling non-binary detections (e.g. $binomial$ observation models)
 * `detNums`: a vector containing the number of detectors where each individual was detected.
 
 ```{r }
@@ -167,7 +169,12 @@ constants$nMaxDetectors <- ySparse$maxDetNums
 ```
 
 
-### Create NIMBLE Model
+### 3. Skip unnecessary calculations
+
+The function `dbinom_sparseLocalSCR()` takes the `logical` argument `indicator` that specifies whether the individual `i` is available ($z_i$ = 1) for detection or not ($z_i$ = 0). When $z_i$ = 0, calculations of $p_i$ are not performed and therefore increases MCMC efficiency.   
+
+
+## Create NIMBLE Model
 
 Now, we can create the `nimble` model object, using the model structure
 defined in `code`, and the constants, data, and initial values.
@@ -176,11 +183,14 @@ Rmodel <- nimbleModel(code, constants, data, inits)
 ```
 
 
-### Configure and Build MCMC
+#### Configure and Build MCMC
 
 We configure an MCMC algorithm to the `Rmodel` model object.
 
 We assign MCMC monitors to $N$, $\sigma$, and $p_0$.
+
+
+#### Block sampling to increase MCMC efficiency
 
 We also remove the univariate Metropolis-Hastings samplers which were
 assigned (by default) to each AC component, the `sxy` variables.
@@ -201,7 +211,7 @@ Rmcmc <- buildMCMC(conf)
 ```
 
 
-### Compile and Run MCMC
+#### Compile and Run MCMC
 
 
 Finally, we compile both the model and MCMC objects and
@@ -211,7 +221,7 @@ execute the compiled MCMC for 10 000 iterations.
 Cmodel <- compileNimble(Rmodel)
 Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
 MCMC_runtime <- system.time(
-  samples <- runMCMC(Cmcmc, niter = 10000)
+  samples <- runMCMC(Cmcmc, niter = 50)
 )
 ```
 ```{r eval = FALSE, echo = FALSE}
@@ -222,7 +232,7 @@ MCMC_runtime <- system.time(
 ```
 
 
-### Results
+## Results
 
 First, we can extract the MCMC runtime (`r round(MCMC_runtime[3] / 60, 1)` minutes in this case): 
 ```{r }
@@ -249,6 +259,6 @@ Examine traceplots and posterior distributions:
 basicMCMCplots::chainsPlot(samples)
 ```
 
-### References
+## References
 
 

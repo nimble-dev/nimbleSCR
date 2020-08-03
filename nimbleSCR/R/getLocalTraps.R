@@ -22,7 +22,7 @@
 #' - numLocalTrapsMax: the maximum number of local traps for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
 #' - resizeFactor: the aggregation factor used to reduce the number of habitat grid cells.
 #' 
-#' @author Pierre Dupont
+#' @author Cyril Milleret and Pierre Dupont
 #'
 #' @importFrom graphics plot points
 #'
