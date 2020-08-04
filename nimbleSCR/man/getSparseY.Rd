@@ -12,26 +12,24 @@ getSparseY(x, noDetections = -1)
 \item{noDetections}{The value indicating no detection. Defaults to -1.}
 }
 \value{
-a list of objects which constitute a sparse matrix representation of the observation data provided as input:
-- a vector with the number of detectors at which each individual was detected (detNums).
-- the maximum number of detectors at which an individual was detected (maxDetNums; i.e, the maximum of detNums)
-- a matrix with dimensions n.individuals * maxDetNums which contains the IDs of the detectors 
-where each individuals was detected (detIndices).
-- a matrix with dimensions n.individuals * maxDetNums which contains the number of detection of each individual
-at each detector at which it was detected (y).
+a list of objects which constitute a sparse matrix representation of the observation data:
+
+\itemize{
+\item \emph{detNums} a vector of the number of traps at which each individual was detected.
+\item \emph{maxDetNums} the maximum number of traps at which any individual was detected (i.e, the maximum of detNums).
+\item \emph{detIndices} a matrix of dimensions n.individuals * maxDetNums which contains the IDs of the traps. 
+where each individuals was detected.
+\item \emph{y} a matrix of dimensions n.individuals * maxDetNums which contains the number of observations of each individual
+at the traps it was detected at.
+}
 }
 \description{
 R utility function to turn a two or three-dimensional detection array into a sparse matrix representation.
+Used in the implementation of the \code{\link{dbinom_sparseLocalSCR}} function.
 }
 \details{
-The \code{getSparseY} function is used in advance of model building.
+The \code{getSparseY} function is used in advance of model building to create a sparse matrix representation of the observation data. 
 It creates and returns a list of objects:
-- the maximum number of detections for any individual in the dataset (maxDetNums)
-- a vector of the number of detections per individual (detNums).
-- a matrix of dimensions n.individuals * maxDetNums which contains the IDs of the detectors 
-where each individuals was detected (detIndices).
-- a matrix of dimensions n.individuals * maxDetNums which contains the number of observations of each individual
-at the detectors it was detected (y).
 }
 \examples{
 \donttest{

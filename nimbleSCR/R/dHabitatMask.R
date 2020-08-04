@@ -1,7 +1,7 @@
 
 #' Ones trick distribution for irregular habitat shapes
 #'
-#' The dHabitatMask distribution checks that the proposed activity center location (s) falls
+#' The dHabitatMask distribution checks and ensures that the proposed activity center location (s) falls
 #' within the suitable habitat (defined in the binary matrix habitatMask).
 #'
 #' The rHabitatMask function returns the value of the habitat mask cell (0 or 1) where the proposed activity center falls. 
@@ -11,18 +11,18 @@
 #'
 #' @param x Ones trick data.
 #' @param s Bivariate activity center coordinates.
-#' @param xmin Minimum of trap location x-coordinates
-#' @param xmax Maximum of trap location x-coordinates
-#' @param ymin Minimum of trap location y-coordinates
-#' @param ymax Maximum of trap location y-coordinates
-#' @param habitatMask two-dimensional binary habitat mask matrix 
+#' @param xmin Minimum of trap location x-coordinates.
+#' @param xmax Maximum of trap location x-coordinates.
+#' @param ymin Minimum of trap location y-coordinates.
+#' @param ymax Maximum of trap location y-coordinates.
+#' @param habitatMask A binary matrix object indicating which cells are considered as suitable habitat. 
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #'
 #' @return The log-likelihood value associated with the bivariate activity center location s being in the suitable habitat
 #' (i.e. 0 if it falls within the habitat mask and -Inf otherwise). 
 #'
-#' @author Pierre Dupont
+#' @author Daniel Turek
 #'
 #' @import nimble
 #'

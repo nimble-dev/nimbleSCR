@@ -20,27 +20,27 @@
 #'
 #' @name localTrapCalculations
 #'
-#' @param xmin Minimal value among all trap location x-coordinates
-#' @param xmax Maximal value among all trap location x-coordinates
-#' @param ymin Minimal value among all trap location y-coordinates
-#' @param ymax Maximal value among all trap location y-coordinates
-#' @param resolution Desired resolution (in both x and y directions) of discretized grid
-#' @param buffer Horizontal and vertical buffer for discretized grid, specifying how much it should extend (above, below, left, and right) of the maximal trap locations
-#' @param grid The grid object returned from the makeGrid function
-#' @param trapCoords An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps
-#' @param dmax The maximal radius from an activity center for performing trap calculations (dmax)
-#' @param idarg A grid id, returned from the makeID function inside model code
-#' @param nLocalTraps The number of local traps to all grid cells, which is given by the first column of the localTraps array
-#' @param LTD1arg The number of columns in the localTraps array
-#' @param MAXNUM The maximum number of local traps among all grid cells.  This is given by the (number of rows)-1 of the localTraps array
-#' @param localTraps The array returned from the findLocalTraps function
-#' @param n The number of local traps to a specified grid cell, as return
-#' @param localTrapInd The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function
-#' @param s A length-2 vector giving the activity center of an indiviual
-#' @param R The total number of traps
-#' @param d A vector of distances from an activity center to the local traps
-#' @param sigma Scale of decay for detection probability
-#' @param p0 Baseline detection probability
+#' @param xmin Minimal value among all trap location x-coordinates.
+#' @param xmax Maximal value among all trap location x-coordinates.
+#' @param ymin Minimal value among all trap location y-coordinates.
+#' @param ymax Maximal value among all trap location y-coordinates.
+#' @param resolution Desired resolution (in both x and y directions) of discretized grid.
+#' @param buffer Horizontal and vertical buffer for discretized grid, specifying how much it should extend (above, below, left, and right) of the maximal trap locations.
+#' @param grid The grid object returned from the makeGrid function.
+#' @param trapCoords An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps.
+#' @param dmax The maximal radius from an activity center for performing trap calculations (dmax).
+#' @param idarg A grid id, returned from the makeID function inside model code.
+#' @param nLocalTraps The number of local traps to all grid cells, which is given by the first column of the localTraps array.
+#' @param LTD1arg The number of columns in the localTraps array.
+#' @param MAXNUM The maximum number of local traps among all grid cells.  This is given by the (number of rows)-1 of the localTraps array.
+#' @param localTraps The array returned from the findLocalTraps function.
+#' @param n The number of local traps to a specified grid cell, as return.
+#' @param localTrapInd The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function.
+#' @param s A length-2 vector giving the activity center of an indiviual.
+#' @param R The total number of traps.
+#' @param d A vector of distances from an activity center to the local traps.
+#' @param sigma Scale of decay for detection probability.
+#' @param p0 Baseline detection probability.
 #'
 #' @author Daniel Turek
 #'

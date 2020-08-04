@@ -123,7 +123,7 @@ The `dbinom_sparseLocalSCR()` distribution incorporates three features to increa
 
 ### 1. Local detector evaluation
 
-This step consists in restricting calculations linked to detection function (here a halfnormal function) to detectors within a maximum realistic radius [@Milleret2019]. 
+This step restricts calculations linked to detection function (here a halfnormal function) to detectors within a maximum realistic radius [@Milleret2019]. 
 We use the function `getLocalTraps` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
 center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed-up calculations.
 The value of $d_{max}$ should be as small as possible but always large enough so that for any particular individual, the `sxy` values of the initial activity center location restrict the calculation of $p$ to all detectors with positive detections.
@@ -221,7 +221,7 @@ execute the compiled MCMC for 10 000 iterations.
 Cmodel <- compileNimble(Rmodel)
 Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
 MCMC_runtime <- system.time(
-  samples <- runMCMC(Cmcmc, niter = 50)
+  samples <- runMCMC(Cmcmc, niter = 10000)
 )
 ```
 ```{r eval = FALSE, echo = FALSE}

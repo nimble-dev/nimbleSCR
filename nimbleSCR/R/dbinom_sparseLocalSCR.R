@@ -6,10 +6,12 @@
 #' follows a half-normal function of the distance between the individual's activity center (s) and the detector location.
 #'
 #' The dbinom_sparseLocalSCR distribution incorporates three features to increase computation efficiency:
-#' 1 - A local evaluation of the detection probability calculation (see Milleret et al., 2019 for more details)
-#' 2 - It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
-#' 3 - It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
-#'
+#' \enumerate{
+#' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 \url{https://doi.org/10.1002/ece3.4751} for more details)
+#' \item It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
+#' \item It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
+#' }
+#' 
 #' @name dbinom_sparseLocalSCR
 #'
 #' @param x Vector of individual detection frequencies, as returned by the \code{getSparseY} function 
@@ -17,20 +19,20 @@
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #' @param detIndices Vector of the detector indices where the detections in x were recorded, as returned by the \code{getSparseY} function.
 #' @param detNums Number of detections recorded in x, as returned by the \code{getSparseY} function.
-#' @param size Vector of the number of trials (zero or more).
+#' @param size Vector of the number of trials (zero or more) for each trap (trapCoords).
 #' @param p0 Baseline detection probability used in the half-normal detection function.
 #' @param sigma Scale parameter of the half-normal detection function.
-#' @param s Bivariate activity center coordinates.
+#' @param s Bivariate individual activity center coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
-#' @param localTrapsIndices Matrix of indices of local traps around all habitat grid cells, as returned by the \code{getLocalTraps} function.
+#' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{getLocalTraps} function.
 #' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalTraps function.
 #' @param resizeFactor Aggregation factor used in the \code{getLocalTraps} function to reduce the number of habitat grid cells to retrieve local traps for.
 #' @param habitatGrid Matrix of habitat grid cells indices.
 #' @param indicator Logical argument, specifying whether the individual is available for detection.
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
-#' @return The log-likelihood value associated with the vector of SCR observations, given the current activity center (s),
-#'  and the half-normal detection function : p = p0 * exp(-d^2 / sigma^2).
+#' @return The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
+#'  and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / \sigma^2)}.
 #'
 #' @author Cyril Milleret
 #'

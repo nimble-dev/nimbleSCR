@@ -23,47 +23,47 @@ calcLocalTrapDists(MAXNUM, n, localTrapInd, s, trapCoords)
 calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 }
 \arguments{
-\item{xmin}{Minimal value among all trap location x-coordinates}
+\item{xmin}{Minimal value among all trap location x-coordinates.}
 
-\item{ymin}{Minimal value among all trap location y-coordinates}
+\item{ymin}{Minimal value among all trap location y-coordinates.}
 
-\item{xmax}{Maximal value among all trap location x-coordinates}
+\item{xmax}{Maximal value among all trap location x-coordinates.}
 
-\item{ymax}{Maximal value among all trap location y-coordinates}
+\item{ymax}{Maximal value among all trap location y-coordinates.}
 
-\item{resolution}{Desired resolution (in both x and y directions) of discretized grid}
+\item{resolution}{Desired resolution (in both x and y directions) of discretized grid.}
 
-\item{buffer}{Horizontal and vertical buffer for discretized grid, specifying how much it should extend (above, below, left, and right) of the maximal trap locations}
+\item{buffer}{Horizontal and vertical buffer for discretized grid, specifying how much it should extend (above, below, left, and right) of the maximal trap locations.}
 
-\item{grid}{The grid object returned from the makeGrid function}
+\item{grid}{The grid object returned from the makeGrid function.}
 
-\item{trapCoords}{An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps}
+\item{trapCoords}{An nTraps x 2 array giving giving the x- and y-coordinate locations of all traps.}
 
-\item{dmax}{The maximal radius from an activity center for performing trap calculations (dmax)}
+\item{dmax}{The maximal radius from an activity center for performing trap calculations (dmax).}
 
-\item{idarg}{A grid id, returned from the makeID function inside model code}
+\item{idarg}{A grid id, returned from the makeID function inside model code.}
 
-\item{nLocalTraps}{The number of local traps to all grid cells, which is given by the first column of the localTraps array}
+\item{nLocalTraps}{The number of local traps to all grid cells, which is given by the first column of the localTraps array.}
 
-\item{LTD1arg}{The number of columns in the localTraps array}
+\item{LTD1arg}{The number of columns in the localTraps array.}
 
-\item{MAXNUM}{The maximum number of local traps among all grid cells.  This is given by the (number of rows)-1 of the localTraps array}
+\item{MAXNUM}{The maximum number of local traps among all grid cells.  This is given by the (number of rows)-1 of the localTraps array.}
 
-\item{localTraps}{The array returned from the findLocalTraps function}
+\item{localTraps}{The array returned from the findLocalTraps function.}
 
-\item{n}{The number of local traps to a specified grid cell, as return}
+\item{n}{The number of local traps to a specified grid cell, as return.}
 
-\item{localTrapInd}{The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function}
+\item{localTrapInd}{The indices of the local traps to a grid cell, as returned by the getLocalTrapIndices function.}
 
-\item{s}{A length-2 vector giving the activity center of an indiviual}
+\item{s}{A length-2 vector giving the activity center of an indiviual.}
 
-\item{R}{The total number of traps}
+\item{R}{The total number of traps.}
 
-\item{d}{A vector of distances from an activity center to the local traps}
+\item{d}{A vector of distances from an activity center to the local traps.}
 
-\item{sigma}{Scale of decay for detection probability}
+\item{sigma}{Scale of decay for detection probability.}
 
-\item{p0}{Baseline detection probability}
+\item{p0}{Baseline detection probability.}
 }
 \description{
 Utility functions to enable local trap calculations in SCR models

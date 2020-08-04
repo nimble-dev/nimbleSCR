@@ -14,15 +14,15 @@ rHabitatMask(n, s, xmax, xmin, ymax, ymin, habitatMask)
 
 \item{s}{Bivariate activity center coordinates.}
 
-\item{xmax}{Maximum of trap location x-coordinates}
+\item{xmax}{Maximum of trap location x-coordinates.}
 
-\item{xmin}{Minimum of trap location x-coordinates}
+\item{xmin}{Minimum of trap location x-coordinates.}
 
-\item{ymax}{Maximum of trap location y-coordinates}
+\item{ymax}{Maximum of trap location y-coordinates.}
 
-\item{ymin}{Minimum of trap location y-coordinates}
+\item{ymin}{Minimum of trap location y-coordinates.}
 
-\item{habitatMask}{two-dimensional binary habitat mask matrix}
+\item{habitatMask}{A binary matrix object indicating which cells are considered as suitable habitat.}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
@@ -33,7 +33,7 @@ The log-likelihood value associated with the bivariate activity center location 
 (i.e. 0 if it falls within the habitat mask and -Inf otherwise).
 }
 \description{
-The dHabitatMask distribution checks that the proposed activity center location (s) falls
+The dHabitatMask distribution checks and ensures that the proposed activity center location (s) falls
 within the suitable habitat (defined in the binary matrix habitatMask).
 }
 \details{
@@ -71,5 +71,5 @@ code <- nimbleCode({
 
 }
 \author{
-Pierre Dupont
+Daniel Turek
 }

@@ -1,31 +1,3 @@
-
-
-
-### # ' One phrase description of function.
-### # ' 
-### # ' \code{exampleFunction} returns the sum of the two arguments.  This paragraph, and subsequent paragraphs, contain the longer description of the function.
-### # ' 
-### # ' @param a Description of first argument here
-### # ' @param b Description of second argument here
-### # ' 
-### # ' @return Returns the sum of first two arguments
-### # ' 
-### # ' @examples
-### # ' x <- exampleFunction(1, 2)
-### # '
-### # ' @export
-### # ' 
-### exampleFunction <- function(a, b) {
-###     c <- a + b
-###     return(c)
-### }
-
-
-
-
-
-
-
 #' Bivariate exponential dispersal distribution for activity centers
 #'
 #' The dDispersal_exp distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.

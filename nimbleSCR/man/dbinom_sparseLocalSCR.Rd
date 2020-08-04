@@ -46,17 +46,17 @@ rbinom_sparseLocalSCR(
 
 \item{detIndices}{Vector of the detector indices where the detections in x were recorded, as returned by the \code{getSparseY} function.}
 
-\item{size}{Vector of the number of trials (zero or more).}
+\item{size}{Vector of the number of trials (zero or more) for each trap (trapCoords).}
 
 \item{p0}{Baseline detection probability used in the half-normal detection function.}
 
 \item{sigma}{Scale parameter of the half-normal detection function.}
 
-\item{s}{Bivariate activity center coordinates.}
+\item{s}{Bivariate individual activity center coordinates.}
 
 \item{trapCoords}{Matrix of x- and y-coordinates of all traps.}
 
-\item{localTrapsIndices}{Matrix of indices of local traps around all habitat grid cells, as returned by the \code{getLocalTraps} function.}
+\item{localTrapsIndices}{Matrix of indices of local traps around each habitat grid cell, as returned by the \code{getLocalTraps} function.}
 
 \item{localTrapsNum}{Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalTraps function.}
 
@@ -71,8 +71,8 @@ rbinom_sparseLocalSCR(
 \item{n}{Integer specifying the number of realisations to generate.  Only n = 1 is supported.}
 }
 \value{
-The log-likelihood value associated with the vector of SCR observations, given the current activity center (s),
- and the half-normal detection function : p = p0 * exp(-d^2 / sigma^2).
+The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
+ and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / \sigma^2)}.
 }
 \description{
 The \code{dbinom_sparseLocalSCR} distribution is a NIMBLE custom distribution which can be used to model 
@@ -82,9 +82,11 @@ follows a half-normal function of the distance between the individual's activity
 }
 \details{
 The dbinom_sparseLocalSCR distribution incorporates three features to increase computation efficiency:
-1 - A local evaluation of the detection probability calculation (see Milleret et al., 2019 for more details)
-2 - It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
-3 - It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
+\enumerate{
+\item A local evaluation of the detection probability calculation (see Milleret et al., 2019 \url{https://doi.org/10.1002/ece3.4751} for more details)
+\item It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
+\item It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
+}
 }
 \examples{
 \donttest{
