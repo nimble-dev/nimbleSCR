@@ -123,7 +123,7 @@ The `dbinom_sparseLocalSCR()` distribution incorporates three features to increa
 
 ### 1. Local detector evaluation
 
-This step restricts calculations linked with the detection function (here a halfnormal function) to detectors within a maximum radius within which detections are realistically possible [@Milleret2019]. 
+This step restricts calculations linked with the detection function (here a halfnormal function) to detectors (traps) within a maximum radius within which detections are realistically possible [@Milleret2019]. 
 We use the function `getLocalTraps` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
 center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed-up calculations.
 The value of $d_{max}$ should be as small as possible in order to reduce computation but always large enough so that for any particular individual, the set of local traps associated with the initial `sxy` values of the activity center location include all detectors at which that individual was detected.
