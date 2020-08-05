@@ -14,8 +14,6 @@ Description: Provides utility functions and methods for improving MCMC sampling 
   Turek et al. <doi:10.1101/2020.05.07.081182>.
 License: GPL-3
 Depends: R (>= 3.4.0), nimble
-Suggests: knitr, rmarkdown, coda, basicMCMCplots
-VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
