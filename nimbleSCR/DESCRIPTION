@@ -9,7 +9,7 @@ Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Torbjørn", "Ergon", role = "aut"),
              person("Pierre", "Dupont", role = "aut"),
            person("Perry", "de Valpine", role = "aut"))
-Date: 2020-06-16
+Date: 2020-08-06
 Description: Provides utility functions and methods for improving MCMC sampling efficiency of Spatial Capture-Recapture (SCR) and Open Population SCR (OPSCR) ecological models.  Some of the distributions and functions provided rely on the 'nimble' R package.
   Turek et al. <doi:10.1101/2020.05.07.081182>.
 License: GPL-3
