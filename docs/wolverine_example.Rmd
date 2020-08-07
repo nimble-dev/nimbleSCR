@@ -119,20 +119,21 @@ inits <- list(sxy = inits.1$sxy,
 ```
 
 ## Create custom distribution to increase MCMC efficiency 
-The `dbinom_sparseLocalSCR()` distribution incorporates three features to increase computation efficiency.
+The `dbinom_sparseLocalSCR()` distribution incorporates three features to increase computational efficiency.
 
 ### 1. Local detector evaluation
 
 This step restricts calculations linked with the detection function (here a halfnormal function) to detectors (traps) within a maximum radius within which detections are realistically possible [@Milleret2019]. 
 We use the function `getLocalTraps` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
-center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed-up calculations.
+center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed up calculations.
 The value of $d_{max}$ should be as small as possible in order to reduce computation but always large enough so that for any particular individual, the set of local traps associated with the initial `sxy` values of the activity center location include all detectors at which that individual was detected.
 The $d_{max}$ value will therefore affect the number of columns in `localTrapIndices`
 Here, we use $d_{max}=38$. 
 
-We also resize the habitat matrix to lower dimensions before identifying the local detectors. This reduces the number of habitat cells for which we have to identify the set of detectors that are within $d_{max}$ of the cell center. 
-The goal is to create the object `localTrapsIndices` of the smallest dimension possible for a more efficient processing of the model.  
-Here, we resize the habitat matrix by a factor of 24, which corresponds to the the `resizeFactor` argument. This value will affect how many rows  `localTrapIndices` will be composed of.
+We also aggregated the habitat matrix to obtain larger habitat cells (lower resolution) and obtain objects with smaller dimensions. This reduces the number of habitat cells for which we have to identify the set of detectors that are within $d_{max}$ of the cell center. 
+The goal is to create the object `localTrapsIndices` of the smallest dimension possible, that balances the cost of looking up relevant grid cells and reducing calculations for each grid cell.
+
+Here, we resize the habitat matrix by a factor of 24, which corresponds to the `resizeFactor` argument. This means that 24x24 cells are aggregated into a single cell.  The `resizeFactor` value will affect how many rows  `localTrapIndices` will be composed of.
 
 ```{r, fig.width = 6, fig.height = 7}
 DetectorIndex <- getLocalTraps(habitatMask = data$habitat.mx,
@@ -151,9 +152,9 @@ data$habitatIDDet <- DetectorIndex$habitatGrid
 
 ```
 
-### 2. Sparse observation matrix
+### 2. Sparse representation of the observation matrix
 
-We re-express the detection matrix `y` as a sparse matrix, to reduce its size. In this representation, we turn the detection matrix `y` into three objects:
+We re-express  `y` as a sparse representation of the detection matrix to reduce its size. In this representation, we turn the detection matrix `y` into three objects:
 
 * `detIndices`: where each row (corresponding to one individual) contains the identification numbers of detectors at which that individual was detected. 
 * `y`: a second matrix of identical dimension, containing the number of detections of a given individual at each detector. This second matrix is necessary for modelling non-binary detections (e.g. $binomial$ observation models)
@@ -192,8 +193,7 @@ We assign MCMC monitors to $N$, $\sigma$, and $p_0$.
 
 #### Block sampling to increase MCMC efficiency
 
-We also remove the univariate Metropolis-Hastings samplers which were
-assigned by default to each AC component, the `sxy` variables.
+We also remove the univariate Metropolis-Hastings samplers that were assigned by default to each dimension of the `sxy` variables (ACs).
 Instead, we add joint Metropolis-Hastings samplers (`RW_block`)
 samplers to each $x$ and $y$ coordinate pair `sxy[i, 1:2]`.
 

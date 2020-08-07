@@ -12,7 +12,7 @@ getSparseY(x, noDetections = -1)
 \item{noDetections}{The value indicating no detection. Defaults to -1.}
 }
 \value{
-a list of objects which constitute a sparse matrix representation of the observation data:
+a list of objects which constitute a sparse representation of the observation data:
 
 \itemize{
 \item \emph{detNums} a vector of the number of traps at which each individual was detected.

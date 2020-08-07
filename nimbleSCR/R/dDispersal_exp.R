@@ -12,7 +12,7 @@
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #'
-#' @return The log-likelihood value associated with the bivariate activity center location x, given the current activity center s, and the rate parameter of the exponential dispersal distance distribution.
+#' @return The log-probability value associated with the bivariate activity center location x, given the current activity center s, and the rate parameter of the exponential dispersal distance distribution.
 #'
 #' @author Daniel Turek
 #'

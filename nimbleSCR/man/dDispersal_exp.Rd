@@ -21,7 +21,7 @@ rDispersal_exp(n, s, rate)
 \item{n}{Integer specifying the number of realisations to generate.  Only n = 1 is supported.}
 }
 \value{
-The log-likelihood value associated with the bivariate activity center location x, given the current activity center s, and the rate parameter of the exponential dispersal distance distribution.
+The log-probability value associated with the bivariate activity center location x, given the current activity center s, and the rate parameter of the exponential dispersal distance distribution.
 }
 \description{
 The dDispersal_exp distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.

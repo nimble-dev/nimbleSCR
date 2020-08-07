@@ -10,7 +10,7 @@
 #' @param x A two- or three-dimensional observation data array.
 #' @param noDetections The value indicating no detection. Defaults to -1.
 #' 
-#' @return a list of objects which constitute a sparse matrix representation of the observation data:
+#' @return a list of objects which constitute a sparse representation of the observation data:
 #' 
 #' \itemize{
 #' \item \emph{detNums} a vector of the number of traps at which each individual was detected.
