@@ -66,7 +66,7 @@ calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 \item{p0}{Baseline detection probability.}
 }
 \description{
-Utility functions to enable local trap calculations in SCR models
+Utility functions to enable local trap calculations in SCR models.  See details section for more information.
 }
 \details{
 The makeGrid function is used in advance of model building.  It creates and returns a list of two objects: a table (grid) corresponding to the discretized grid, where each row gives the x-coordinate, the y-coordinate, and the id number for a grid cell; and second, a function (makeID) to be used in the model code which operates on a discretized AC location, and returns the id number of the corresponding grid cell.
@@ -80,7 +80,6 @@ The getNumLocalTraps function is used inside the model code.  It operates on an 
 The getLocalTrapIndices function is used inside the model code.  It returns a vector containing the ids of the local traps to a particular grid cell.
 
 The calcLocalTrapDists function is used inside the model code.  It calculates the distances from an activity center, to the local traps relative to the grid cell nearest that activity center.
-
 
 The calcLocalTrapExposure function is specific to the detection probability calculations used in this example.  This function should be modified specifically to the detection function, exposure function, or otherwise calculations to be done only for the traps in the vicinity of individual activity center locations
 }
