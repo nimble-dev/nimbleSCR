@@ -4,7 +4,7 @@
         registerDistributions(
             list(
                 dDispersal_exp = list(
-                    BUGSdist = 'dDispersal_exp(S, rate)',
+                    BUGSdist = 'dDispersal_exp(s, rate)',
                     types = c('value = double(1)', 's = double(1)', 'rate = double()'),
                     discrete = FALSE,
                     mixedSizes = FALSE,
