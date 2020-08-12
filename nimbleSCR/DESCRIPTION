@@ -1,17 +1,16 @@
 Package: nimbleSCR
 Type: Package
 Title: Spatial Capture-Recapture (SCR) Methods Using 'nimble'
-Version: 0.1.1
-Maintainer: Daniel Turek <dbt1@williams.edu>
+Version: 0.1.0
+Maintainer: Daniel Turek <danielturek@gmail.com>
 Authors@R: c(person("Richard", "Bischof", role = "aut"),
-             person("Daniel", "Turek", role = c("aut", "cre"), email = "dbt1@williams.edu"),
+             person("Daniel", "Turek", role = c("aut", "cre"), email = "danielturek@gmail.com"),
              person("Cyril", "Milleret", role = "aut"),
              person("Torbjørn", "Ergon", role = "aut"),
              person("Pierre", "Dupont", role = "aut"),
            person("Perry", "de Valpine", role = "aut"))
-Date: 2020-08-06
-Description: Provides utility functions and methods for improving MCMC sampling efficiency of Spatial Capture-Recapture (SCR) and Open Population SCR (OPSCR) ecological models.  Some of the distributions and functions provided rely on the 'nimble' R package.
-  Turek et al. <doi:10.1101/2020.05.07.081182>.
+Date: 2020-08-12
+Description: Provides utility functions, distributions, and methods for improving Markov chain Monte Carlo (MCMC) sampling efficiency for ecological Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) models.  The methods provided implement the techniques presented in "Estimation of Large-Scale Spatial Capture-Recapture Models" (Turek, et al (2020) <doi:10.1101/2020.05.07.081182>).
 License: GPL-3
 Depends: R (>= 3.4.0), nimble
 Encoding: UTF-8
