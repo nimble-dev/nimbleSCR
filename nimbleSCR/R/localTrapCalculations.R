@@ -48,7 +48,6 @@
 #' @import nimble
 #'
 #' @examples
-#' \donttest{
 #' ## generate random trap locations
 #' nTraps <- 1000
 #' traps_xmin <- 0
@@ -154,10 +153,10 @@
 #'               S = Sinit)
 #'  
 #' ## create NIMBLE model object
-#' Rmodel <- nimbleModel(code, constants, data, inits)
+#' Rmodel <- nimbleModel(code, constants, data, inits,
+#'                       calculate = FALSE, check = FALSE)
 #'  
 #' ## use model object for MCMC, etc.
-#' }
 #'
 NULL
 

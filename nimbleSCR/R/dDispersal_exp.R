@@ -20,7 +20,6 @@
 #' @importFrom stats dexp rexp runif
 #'
 #' @examples
-#' \donttest{
 #' ## define model code
 #' code <- nimbleCode({
 #'     lambda ~ dgamma(0.001, 0.001)
@@ -33,11 +32,12 @@
 #'     }
 #' })
 #'
+#' constants <- list(N = 10, T = 6)
+#'
 #' ## create NIMBLE model object
-#' Rmodel <- nimbleModel(code)
+#' Rmodel <- nimbleModel(code, constants)
 #'
 #' ## use model object for MCMC, etc.
-#' }
 #'
 #' @export
 NULL

@@ -24,11 +24,9 @@
 #' @author Cyril Milleret
 #'
 #' @examples
-#' \donttest{
 #' y.full <- matrix(rbinom(5000, 5, 0.02), ncol = 100)
 #' 
 #' y <- getSparseY(y.full)
-#' }
 #' 
 #' @export
 getSparseY <- function( x,

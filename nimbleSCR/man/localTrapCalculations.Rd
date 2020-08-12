@@ -84,7 +84,6 @@ The calcLocalTrapDists function is used inside the model code.  It calculates th
 The calcLocalTrapExposure function is specific to the detection probability calculations used in this example.  This function should be modified specifically to the detection function, exposure function, or otherwise calculations to be done only for the traps in the vicinity of individual activity center locations
 }
 \examples{
-\donttest{
 ## generate random trap locations
 nTraps <- 1000
 traps_xmin <- 0
@@ -190,10 +189,10 @@ inits <- list(sigma = 1,
               S = Sinit)
  
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code, constants, data, inits)
+Rmodel <- nimbleModel(code, constants, data, inits,
+                      calculate = FALSE, check = FALSE)
  
 ## use model object for MCMC, etc.
-}
 
 }
 \author{

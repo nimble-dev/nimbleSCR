@@ -30,7 +30,6 @@ The dDispersal_exp distribution is a bivariate distribution which can be used to
 The dDispersal_exp distribution models the location of an AC at time (t+1), conditional on the previous AC location at time (t) and the rate parameter (rate) of the exponential distribution for dispersal distance.
 }
 \examples{
-\donttest{
 ## define model code
 code <- nimbleCode({
     lambda ~ dgamma(0.001, 0.001)
@@ -43,11 +42,12 @@ code <- nimbleCode({
     }
 })
 
+constants <- list(N = 10, T = 6)
+
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code)
+Rmodel <- nimbleModel(code, constants)
 
 ## use model object for MCMC, etc.
-}
 
 }
 \author{

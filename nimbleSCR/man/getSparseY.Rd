@@ -32,11 +32,9 @@ The \code{getSparseY} function is used in advance of model building to create a 
 It creates and returns a list of objects:
 }
 \examples{
-\donttest{
 y.full <- matrix(rbinom(5000, 5, 0.02), ncol = 100)
 
 y <- getSparseY(y.full)
-}
 
 }
 \author{

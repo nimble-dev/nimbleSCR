@@ -30,35 +30,29 @@ is beneficial only when the entire joint likelihood of the vector of binomial re
 is calculated simultaneously.
 }
 \examples{
-\donttest{
-# simulate binomial data
-p <- rep(0.21, 1000)
-trials <- sample(x = 10, size = 1000, replace = T)
-y <- rbinom_vector(n = 1000, size = trials, prob = p)
-
-## define model code
-code <- nimbleCode({
-    p ~ dunif(0,1)
-    for(j in 1:J) {
-      p_vector[i] <- p
-      y[j] ~ dbinom( size = trials[i],
-                     prob = p_vector[i])
-    }
-})
-
 ## define vectorized model code
 code <- nimbleCode({
     p ~ dunif(0,1)
     p_vector[1:J] <- p
-    y[1:J] ~ dbinom_vector( size = trials[1:J],
-                            prob = p_vector[1:J])
+    y[1:J] ~ dbinom_vector(size = trials[1:J],
+                           prob = p_vector[1:J])
 })
-
+ 
+## simulate binomial data
+J <- 1000
+trials <- sample(x = 10, size = J, replace = TRUE)
+y <- rbinom_vector(J, size = trials, prob = 0.21)
+ 
+constants <- list(J = J, trials = trials)
+ 
+data <- list(y = y)
+ 
+inits <- list(p = 0.5)
+ 
 ## create NIMBLE model object
-Rmodel <- nimbleModel(code,data=list(y=y,trials=trials),constants = list(J=length(y)))
-
+Rmodel <- nimbleModel(code, constants, data, inits)
+ 
 ## use model object for MCMC, etc.
-}
 
 }
 \author{

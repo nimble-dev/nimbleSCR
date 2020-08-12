@@ -44,7 +44,6 @@ for all other traps as they are far enough from the activity center).
 The \code{getLocalTraps} function is used in advance of model building.
 }
 \examples{
-\donttest{
 colNum <- sample(20:100,1)
 rowNum <- sample(20:100,1)
 trapCoords <- expand.grid(list(x = seq(0.5, colNum, 1),
@@ -53,7 +52,6 @@ trapCoords <- expand.grid(list(x = seq(0.5, colNum, 1),
 habitatMask <- matrix(rbinom(colNum*rowNum, 1, 0.8), ncol = colNum, nrow = rowNum)
 
 localTraps.list <- getLocalTraps(habitatMask, trapCoords, resizeFactor = 1, dmax = 7)
-}
 
 }
 \author{

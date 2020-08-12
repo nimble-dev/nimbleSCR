@@ -89,23 +89,17 @@ The dbinom_sparseLocalSCR distribution incorporates three features to increase c
 }
 }
 \examples{
-\donttest{
 ## define model code
-nimModel <- nimbleCode({
- 
+code <- nimbleCode({
     psi ~ dunif(0,1)
     p0 ~ dunif(0,1)
     sigma ~ dunif(0,100)
- 
     N <- sum(z[1:M])
- 
     for(i in 1:M) {
         s[i, 1] ~ dunif(0, 100)
         s[i, 2] ~ dunif(0, 100)
-        
         z[i] ~ dbern(psi)
-        
-        y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR( detNums,
+        y[i,1:maxDetNum] ~ dbinom_sparseLocalSCR(detNums,
                                                  detIndices,
                                                  size,
                                                  p0,
@@ -116,16 +110,14 @@ nimModel <- nimbleCode({
                                                  localTrapsNum,
                                                  resizeFactor,
                                                  habitatGrid,
-                                                 z[i]
-                                                 )
+                                                 z[i])
     }
 })
  
 ## create NIMBLE model object
-## Rmodel <- nimbleModel(code,data = ...,constants = ...)
+## Rmodel <- nimbleModel(code, ...)
  
 ## use model object for MCMC, etc.
-}
 
 }
 \author{

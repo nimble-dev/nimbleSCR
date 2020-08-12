@@ -41,33 +41,34 @@ The rHabitatMask function returns the value of the habitat mask cell (0 or 1) wh
 See also \href{http://mikemeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{M. Meredith: SECR in BUGS/JAGS with patchy habitat}.
 }
 \examples{
-\donttest{
-
-N <- 100
-OK <- rep(1, N)
-
-habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
-
 ## define model code
 code <- nimbleCode({
     for(i in 1:N) {
         s[i, 1] ~ dunif(0, 100)
         s[i, 2] ~ dunif(0, 100)
-        
         OK[i] ~ dHabitatMask( s = s[i,1:2],
                               xmax = 100,
                               xmin = 0,
                               ymax = 100,
                               ymin = 0,
-                              habitatMask = habMask[1:100,1:100])
+                              habitatMask = habitatMask[1:100,1:100])
     }
 })
-
+ 
+N <- 20
+ 
+habitatMask <- matrix(rbinom(10000,1,0.75), nrow = 100)
+ 
+constants <- list(N = N, habitatMask = habitatMask)
+ 
+data <- list(OK = rep(1, N))
+ 
+inits <- list(s = array(runif(2*N, 0, 100), c(N,2)))
+ 
 ## create NIMBLE model object
-## Rmodel <- nimbleModel(code,data = ...,constants = ...)
-
+Rmodel <- nimbleModel(code, constants, data, inits)
+ 
 ## use model object for MCMC, etc.
-}
 
 }
 \author{
