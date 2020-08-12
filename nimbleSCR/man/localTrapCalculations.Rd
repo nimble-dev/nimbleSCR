@@ -85,7 +85,7 @@ The calcLocalTrapExposure function is specific to the detection probability calc
 }
 \examples{
 ## generate random trap locations
-nTraps <- 1000
+nTraps <- 200
 traps_xmin <- 0
 traps_ymin <- 0
 traps_xmax <- 100
