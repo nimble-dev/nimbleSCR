@@ -114,31 +114,36 @@ dbinom_sparseLocalSCR <- nimbleFunction(
     ## Retrieve the total number of traps
     nDetectors <- length(size)
     
-    ## Recreate the full detection vector (NOT NECESSARY; COULD BE OPTIMIZED IN A LATER VERSION)
-    y <- nimNumeric(length = nDetectors, value = 0, init = TRUE)
+    ## CHECK IF DETECTIONS ARE WITHIN THE LIST OF  LOCAL TRAPS
     if(detNums > 0){
       for(r in 1:detNums){
-        y[detIndices[r]] <- x[r] 
         if(sum(detIndices[r] == theseLocalTraps) == 0){
           if(log == 0) return(0.0)
           else return(-Inf)
-        } 
-      } 
+        }
+      }
     }
     
     ## Calculate the log-probability of the vector of detections
     alpha <- -1.0 / (2.0 * sigma * sigma)
     logProb <- 0.0 
+    detIndices1 <- c(detIndices,0)
     count <- 1 
-    theseLocalTraps1 <- c(theseLocalTraps,0) 
-    for(r in 1:nDetectors){
-      if(theseLocalTraps1[count] == r){ 
-        d2 <- pow(trapCoords[r,1] - s[1], 2) + pow(trapCoords[r,2] - s[2], 2)
+    
+    for(r in 1:length(theseLocalTraps)){
+      if(theseLocalTraps[r] == detIndices1[count]){ 
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
         p <- p0 * exp(alpha * d2)
-        logProb <- logProb + dbinom(y[r], prob = p, size = size[r], log = TRUE)
+        logProb <- logProb + dbinom(x[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
         count <- count + 1
+      }else{
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+        p <- p0 * exp(alpha * d2)
+        logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+        
       }
     }
+    
     
     ## Return the probability of the vector of detections (or log-probability if required)
     if(log)return(logProb)
