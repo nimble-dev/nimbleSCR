@@ -106,6 +106,12 @@ getLocalTraps <- function( habitatMask,
     }
   }
   
+  ## FOR ALL HABITAT GRIDS, THE LOCAL EVALUATION SHOULD BE LARGE ENOUGH TO OVERLAP WITH >0 TRAP
+  if(any(numLocalTraps %in% 0 )){
+    stop("dmax value too small or habitat buffer to large. All habitat grids should overlap with at least one trap")
+  }
+  
+  
   ## PLOT CHECK 
   if(plot.check){
     SXY <- as.numeric(habitatCoords[sample(1:dim(habitatCoords)[1], size = 1), ])
@@ -118,6 +124,8 @@ getLocalTraps <- function( habitatMask,
     points(trapCoords[index,2] ~ trapCoords[index,1], pch = 16, cex = 0.4, col = "blue")
     points(SXY[2] ~ SXY[1], bg = "red", pch = 21, cex = 1.2)
   }
+  
+  
   
   ## OUTPUT LIST
   output <-list( habitatGrid = habitatID,
