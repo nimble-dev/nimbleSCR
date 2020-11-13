@@ -111,9 +111,6 @@ dbinom_sparseLocalSCR <- nimbleFunction(
     ## Retrieve the indices of the local traps surrounding the selected habita grid cell
     theseLocalTraps <- localTrapsIndices[sID,1:localTrapsNum[sID]]
     
-    ## Retrieve the total number of traps
-    nDetectors <- length(size)
-    
     ## CHECK IF DETECTIONS ARE WITHIN THE LIST OF  LOCAL TRAPS
     if(detNums > 0){
       for(r in 1:detNums){
@@ -130,7 +127,7 @@ dbinom_sparseLocalSCR <- nimbleFunction(
     detIndices1 <- c(detIndices,0)
     count <- 1 
     
-    for(r in 1:length(theseLocalTraps)){
+    for(r in 1:localTrapsNum[sID]){
       if(theseLocalTraps[r] == detIndices1[count]){ 
         d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
         p <- p0 * exp(alpha * d2)
