@@ -108,7 +108,7 @@ getLocalTraps <- function( habitatMask,
   
   ## FOR ALL HABITAT GRIDS, THE LOCAL EVALUATION SHOULD BE LARGE ENOUGH TO OVERLAP WITH >0 TRAP
   if(any(numLocalTraps %in% 0 )){
-    stop("dmax value too small or habitat buffer to large. All habitat grids should overlap with at least one trap")
+    stop("dmax value too small or habitat buffer too large. All habitat grids should overlap with at least one trap")
   }
   
   
