@@ -37,6 +37,19 @@
                 )
             ),
             verbose = FALSE)
+        
+        registerDistributions(
+            list(
+                dbinomLocal_normal = list(
+                    BUGSdist = 'dbinomLocal_normal(detNums, detIndices, size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor, habitatGrid, indicator)',
+                    types = c('value = double(1)', 'detIndices = double(1)', 'size = double(1)', 's = double(1)', 'trapCoords = double(2)', 'localTrapsIndices = double(2)', 'localTrapsNum = double(1)', 'habitatGrid = double(2)'),
+                    discrete = TRUE,
+                    mixedSizes = TRUE,
+                    pqAvail = FALSE
+                )
+            ),
+            verbose = FALSE)
+        
 
         registerDistributions(
             list(

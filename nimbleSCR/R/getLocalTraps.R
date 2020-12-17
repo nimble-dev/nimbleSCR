@@ -44,6 +44,8 @@ getLocalTraps <- function( habitatMask,
                            resizeFactor = 1,
                            plot.check = TRUE
 ){
+  
+  .Deprecated("getLocalObjects")
   ## STORE THE COORDINATES OF THE ORIGINAL HABITAT CELLS
   oldCoords <- which(habitatMask == 1, arr.ind = T) - 0.5
   oldCoords <- cbind(oldCoords[,2], oldCoords[,1])

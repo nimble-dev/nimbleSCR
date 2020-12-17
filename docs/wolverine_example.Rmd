@@ -57,7 +57,7 @@ code <- nimbleCode({
     ## latent dead/alive indicators
     z[i] ~ dbern(psi)
     ## likelihood
-    y[i, 1:nMaxDetectors] ~ dbinom_sparseLocalSCR( detNums = nbDetections[i],
+    y[i, 1:nMaxDetectors] ~ dbinomLocal_normal( detNums = nbDetections[i],
                                                    detIndices = yDets[i,1:nMaxDetectors],
                                                    size = trials[1:n.detectors],
                                                    p0 = p0,
@@ -119,35 +119,35 @@ inits <- list(sxy = inits.1$sxy,
 ```
 
 ## Create custom distribution to increase MCMC efficiency 
-The `dbinom_sparseLocalSCR()` distribution incorporates three features to increase computational efficiency.
+The `dbinomLocal_normal()` distribution incorporates three features to increase computational efficiency.
 
 ### 1. Local detector evaluation
 
 This step restricts calculations linked with the detection function (here a halfnormal function) to detectors (traps) within a maximum radius within which detections are realistically possible [@Milleret2019]. 
-We use the function `getLocalTraps` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
-center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localTrapIndices` matrix and are later used in the local evaluation of the detection model to speed up calculations.
+We use the function `getLocalObjects` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
+center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localIndices` matrix and are later used in the local evaluation of the detection model to speed up calculations.
 The value of $d_{max}$ should be as small as possible in order to reduce computation but always large enough so that for any particular individual, the set of local traps associated with the initial `sxy` values of the activity center location include all detectors at which that individual was detected.
-The $d_{max}$ value will therefore affect the number of columns in `localTrapIndices`
+The $d_{max}$ value will therefore affect the number of columns in `localIndices`
 Here, we use $d_{max}=38$. 
 
 We also aggregated the habitat matrix to obtain larger habitat cells (lower resolution) and obtain objects with smaller dimensions. This reduces the number of habitat cells for which we have to identify the set of detectors that are within $d_{max}$ of the cell center. 
-The goal is to create the object `localTrapsIndices` of the smallest dimension possible, that balances the cost of looking up relevant grid cells and reducing calculations for each grid cell.
+The goal is to create the object `localIndices` of the smallest dimension possible, that balances the cost of looking up relevant grid cells and reducing calculations for each grid cell.
 
-Here, we resize the habitat matrix by a factor of 24, which corresponds to the `resizeFactor` argument. This means that 24x24 cells are aggregated into a single cell.  The `resizeFactor` value will affect how many rows  `localTrapIndices` will be composed of.
+Here, we resize the habitat matrix by a factor of 24, which corresponds to the `resizeFactor` argument. This means that 24x24 cells are aggregated into a single cell.  The `resizeFactor` value will affect how many rows  `localIndices` will be composed of.
 
 ```{r, fig.width = 6, fig.height = 7}
-DetectorIndex <- getLocalTraps(habitatMask = data$habitat.mx,
-                               trapCoords = data$detector.xy,
+DetectorIndex <- getLocalObjects(habitatMask = data$habitat.mx,
+                               coords = data$detector.xy,
                                dmax = 38,
                                resizeFactor = 24)
 
 constants$y.maxDet <- dim(DetectorIndex$habitatGrid)[1]
 constants$x.maxDet <- dim(DetectorIndex$habitatGrid)[2]
 constants$ResizeFactor <- DetectorIndex$resizeFactor
-constants$n.cells <- dim(DetectorIndex$localTrapsIndices)[1]
-constants$maxNBDets <- DetectorIndex$numLocalTrapsMax
-data$detectorIndex <- DetectorIndex$localTrapsIndices
-data$nDetectors <- DetectorIndex$numLocalTraps
+constants$n.cells <- dim(DetectorIndex$localIndices)[1]
+constants$maxNBDets <- DetectorIndex$numLocalIndicesMax
+data$detectorIndex <- DetectorIndex$localIndices
+data$nDetectors <- DetectorIndex$numLocalIndices
 data$habitatIDDet <- DetectorIndex$habitatGrid
 
 ```
@@ -172,7 +172,7 @@ constants$nMaxDetectors <- ySparse$maxDetNums
 
 ### 3. Skip unnecessary calculations
 
-The function `dbinom_sparseLocalSCR()` takes the `logical` argument `indicator` that specifies whether the individual `i` is available ($z_i$ = 1) for detection or not ($z_i$ = 0). When $z_i$ = 0, calculations of $p_i$ are not performed and therefore increases MCMC efficiency.   
+The function `dbinomLocal_normal()` takes the `logical` argument `indicator` that specifies whether the individual `i` is available ($z_i$ = 1) for detection or not ($z_i$ = 0). When $z_i$ = 0, calculations of $p_i$ are not performed and therefore increases MCMC efficiency.   
 
 
 ## Create NIMBLE Model
