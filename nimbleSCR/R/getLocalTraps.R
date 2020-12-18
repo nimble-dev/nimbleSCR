@@ -1,7 +1,7 @@
-#' Local Trap Identification
+#' Local Trap Identification. This function is deprecated, use \code{getLocalObjects} instead.
 #'
 #' R utility function to identify all traps within a given radius dmax of each cell in a habitat mask.
-#' Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinom_sparseLocalSCR}}). The distance to the activity center and the 
+#' Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}}). The distance to the activity center and the 
 #' detection probability are then calculated for these local traps only (i.e. the detection probability is assumed to be 0 
 #' for all other traps as they are far enough from the activity center).
 #'
@@ -100,17 +100,17 @@ getLocalTraps <- function( habitatMask,
   numLocalTraps <- unlist(lapply(localTrapsIndices, function(x) length(x)))
   maxLocalTraps <- max(numLocalTraps)
   
+  ## FOR ALL HABITAT GRIDS, THE LOCAL EVALUATION SHOULD BE LARGE ENOUGH TO OVERLAP WITH >0 TRAP
+  if(any(numLocalTraps %in% 0 )){
+    stop("dmax value too small. All habitat grid cells should have at least one local traps within a radius of dmax.")
+  }
+  
   ## STORE LOCAL DETECTOR INDICES IN A MATRIX 
   detectorIndex <- matrix(0, nrow = length(localTrapsIndices), ncol = maxLocalTraps)
   for(j in 1:length(localTrapsIndices)){
     if(length(localTrapsIndices[[j]])!=0){
       detectorIndex[j, 1:numLocalTraps[j]] <- localTrapsIndices[[j]]
     }
-  }
-  
-  ## FOR ALL HABITAT GRIDS, THE LOCAL EVALUATION SHOULD BE LARGE ENOUGH TO OVERLAP WITH >0 TRAP
-  if(any(numLocalTraps %in% 0 )){
-    stop("dmax value too small or habitat buffer too large. All habitat grids should overlap with at least one trap")
   }
   
   

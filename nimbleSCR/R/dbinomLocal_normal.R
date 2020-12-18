@@ -5,12 +5,14 @@
 #' coordinates (trapCoords). The distribution assumes that the detection probability at any detector 
 #' follows a half-normal function of the distance between the individual's activity center (s) and the detector location.
 #'
-#' The dbinomLocal_normal distribution incorporates three features to increase computation efficiency:
+#' The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency:
 #' \enumerate{
 #' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 \url{https://doi.org/10.1002/ece3.4751} for more details)
 #' \item It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
 #' \item It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
 #' }
+#' 
+#' The \code{dbinomLocal_normal} distribution requires that the x- and y- coordinates should be scaled to the habitat (\code{\link{scaleCoordsToHabitatGrid}})
 #' 
 #' @name dbinomLocal_normal
 #'
@@ -22,11 +24,11 @@
 #' @param size Vector of the number of trials (zero or more) for each trap (trapCoords).
 #' @param p0 Baseline detection probability used in the half-normal detection function.
 #' @param sigma Scale parameter of the half-normal detection function.
-#' @param s Bivariate individual activity center coordinates.
+#' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
-#' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{getLocalTraps} function.
-#' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalTraps function.
-#' @param resizeFactor Aggregation factor used in the \code{getLocalTraps} function to reduce the number of habitat grid cells to retrieve local traps for.
+#' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{getLocalObjects} function.
+#' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the getLocalObjects function.
+#' @param resizeFactor Aggregation factor used in the \code{getLocalObjects} function to reduce the number of habitat grid cells to retrieve local traps for.
 #' @param habitatGrid Matrix of habitat grid cells indices.
 #' @param indicator Logical argument, specifying whether the individual is available for detection.
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.

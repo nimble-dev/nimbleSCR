@@ -9,30 +9,30 @@ getLocalObjects(habitatMask, coords, dmax, resizeFactor = 1, plot.check = TRUE)
 \arguments{
 \item{habitatMask}{a binary matrix object indicating which cells are considered as suitable habitat.}
 
-\item{coords}{A matrix giving the x- and y-coordinate of each point (i.e. trap). x- and y- coordinates should be rescaled to the habitat ((\code{\link{FUNCTION}})).}
+\item{coords}{A matrix giving the x- and y-coordinate of each object (i.e. trap). x- and y- coordinates should be scaled to the habitat (\code{\link{scaleCoordsToHabitatGrid}}).}
 
 \item{dmax}{The maximal radius from a habitat cell center within which detection probability is evaluated locally for each trap.}
 
-\item{resizeFactor}{An aggregation factor to reduce the number of habitat cells to retrieve local points for. Defaults to 1; no aggregation.}
+\item{resizeFactor}{An aggregation factor to reduce the number of habitat cells to retrieve local objects for. Defaults to 1; no aggregation.}
 
-\item{plot.check}{A visualization option (if TRUE); displays which points are considered "local points" for a randomly chosen habitat cell.}
+\item{plot.check}{A visualization option (if TRUE); displays which objects are considered "local objects" for a randomly chosen habitat cell.}
 }
 \value{
 This function returns a list of objects:
 \itemize{
 \item localIndices: a matrix with number of rows equal to the reduced number of habitat grid cells (following aggregation).
-Each row gives the id numbers of the local points associated with this grid cell.
+Each row gives the id numbers of the local objects associated with this grid cell.
 \item habitatGrid: a matrix of habitat grid cells ID corresponding to the row indices in localIndices. 
-\item numLocalIndices: a vector of the number of local points for each habitat grid cell in habitatGrid.
-\item numLocalIndicesMax: the maximum number of local points for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
+\item numLocalIndices: a vector of the number of local objects for each habitat grid cell in habitatGrid.
+\item numLocalIndicesMax: the maximum number of local objects for any habitat grid cell ; corresponds to the number of columns in habitatGrid.
 \item resizeFactor: the aggregation factor used to reduce the number of habitat grid cells.
 }
 }
 \description{
-R utility function to identify all points (e.g. traps) within a given radius dmax of each cell in a habitat mask.
+R utility function to identify all objects (e.g. traps) within a given radius dmax of each cell in a habitat mask.
 Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}}). The distance to the activity center and the 
-detection probability are then calculated for local points only (i.e. the detection probability is assumed to be 0 
-for all other points as they are far enough from the activity center).
+detection probability are then calculated for local objects only (i.e. the detection probability is assumed to be 0 
+for all other objects as they are far enough from the activity center).
 }
 \details{
 The \code{getLocalObjects} function is used in advance of model building.

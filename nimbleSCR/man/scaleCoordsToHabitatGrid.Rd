@@ -2,7 +2,7 @@
 % Please edit documentation in R/scaleCoordsToHabitatGrid.R
 \name{scaleCoordsToHabitatGrid}
 \alias{scaleCoordsToHabitatGrid}
-\title{Scale x and y coordinates to the habitat grid}
+\title{Scale x- and y-coordinates to grid cells coordinates.}
 \usage{
 scaleCoordsToHabitatGrid(
   coordsData = coordsData,
@@ -11,28 +11,25 @@ scaleCoordsToHabitatGrid(
 )
 }
 \arguments{
-\item{coordsData}{A matrix or an array of the x and y data to scale to the habitat grid. Is is necessary to provide the dimnames of the x and y data such as c("x", "y")}
+\item{coordsData}{A matrix or array of x- and y-coordinates to be scaled to the habitat grid. x- and y- coordinates must be identified using "x" and "y" dimnames.}
 
-\item{coordsHabitatGridCenter}{A matrix with the x and y coordinates of each habitat  grid cell center.}
+\item{coordsHabitatGridCenter}{A matrix of x- and y-coordinates for each habitat grid cell center.}
 
-\item{scaleToGrid}{If FALSE, the coordsData are already scaled and will be rescaled to its original coordinates.}
+\item{scaleToGrid}{If FALSE, coordsData are already scaled and will be rescaled to its original coordinates.}
 }
 \value{
 This function returns a list of objects:
 \itemize{
-\item coordsDataScaled: A matrix or an array of the scaled (rescaled if scaleToGrid==FALSE) x and y coordinates coordsData
-\item coordsHabitatGridCenterScaled: A matrix of the scaled x and y cell coordinate centers coordsHabitatGridCenter
+\item coordsDataScaled: A matrix or array of scaled (rescaled if scaleToGrid==FALSE) x- and y-coordinates for coordsData.
+\item coordsHabitatGridCenterScaled: A matrix of scaled x- and y-cell coordinates for coordsHabitatGridCenter.
 }
 }
 \description{
-R utility function to scale x and y coordinates to the habitat grid.
-Rescaling the coordinates to the habitat allows a fast look up of a matrix of habitat cellID from x and y coordinates. 
-This technique was first applied by Mike Meredith in SCR (\href{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}).
-Rescaling the entire coordinate system of the data input is a requirement to run SCR models with the (\code{\link{nimbleSCR}}) package.  
-This square grid cells and utm projection (units in meters or km; not latlong!)
-}
-\details{
-Using \code{scaleCoordsToHabitatGrid} to rescale the entire coordinate system of the data input is a requirement to run SCR models with the (\code{\link{nimbleSCR}}) package.
+R utility function to scale x- and y- coordinates to the habitat grid.
+Scaling the coordinates to the habitat grid allows a fast look-up approach to identify in which habitat grid cell a point falls. 
+This technique was first applied by Mike Meredith in SCR (\href{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}).
+Scaling the entire coordinate system of the data input is a requirement to run SCR models with the local evaluation approach. 
+This function requires square grid cells and coordinates using projection with units in meters or km (e.g. UTM but not latlong!)
 }
 \examples{
 coordsGridCenter <- expand.grid(list(x = seq(50.5, 100, 1),

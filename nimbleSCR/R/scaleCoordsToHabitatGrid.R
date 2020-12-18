@@ -1,21 +1,19 @@
-#' Scale x and y coordinates to the habitat grid  
+#' Scale x- and y-coordinates to grid cells coordinates.
 #'
-#' R utility function to scale x and y coordinates to the habitat grid.
-#' Rescaling the coordinates to the habitat allows a fast look up of a matrix of habitat cellID from x and y coordinates. 
-#' This technique was first applied by Mike Meredith in SCR (\href{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}).
-#' Rescaling the entire coordinate system of the data input is a requirement to run SCR models with the (\code{\link{nimbleSCR}}) package.  
-#' This square grid cells and utm projection (units in meters or km; not latlong!)
-#' 
-#' Using \code{scaleCoordsToHabitatGrid} to rescale the entire coordinate system of the data input is a requirement to run SCR models with the (\code{\link{nimbleSCR}}) package.  
+#' R utility function to scale x- and y- coordinates to the habitat grid.
+#' Scaling the coordinates to the habitat grid allows a fast look-up approach to identify in which habitat grid cell a point falls. 
+#' This technique was first applied by Mike Meredith in SCR (\href{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}).
+#' Scaling the entire coordinate system of the data input is a requirement to run SCR models with the local evaluation approach. 
+#' This function requires square grid cells and coordinates using projection with units in meters or km (e.g. UTM but not latlong!)
 #'
-#' @param coordsData A matrix or an array of the x and y data to scale to the habitat grid. Is is necessary to provide the dimnames of the x and y data such as c("x", "y")
-#' @param coordsHabitatGridCenter A matrix with the x and y coordinates of each habitat  grid cell center. 
-#' @param scaleToGrid If FALSE, the coordsData are already scaled and will be rescaled to its original coordinates.
+#' @param coordsData A matrix or array of x- and y-coordinates to be scaled to the habitat grid. x- and y- coordinates must be identified using "x" and "y" dimnames.
+#' @param coordsHabitatGridCenter A matrix of x- and y-coordinates for each habitat grid cell center. 
+#' @param scaleToGrid If FALSE, coordsData are already scaled and will be rescaled to its original coordinates.
 #'
 #' @return This function returns a list of objects:
 #' \itemize{
-#' \item coordsDataScaled: A matrix or an array of the scaled (rescaled if scaleToGrid==FALSE) x and y coordinates coordsData
-#' \item coordsHabitatGridCenterScaled: A matrix of the scaled x and y cell coordinate centers coordsHabitatGridCenter
+#' \item coordsDataScaled: A matrix or array of scaled (rescaled if scaleToGrid==FALSE) x- and y-coordinates for coordsData.
+#' \item coordsHabitatGridCenterScaled: A matrix of scaled x- and y-cell coordinates for coordsHabitatGridCenter.
 #' }
 #'
 #' @author Richard Bischof, Cyril Milleret
@@ -35,13 +33,10 @@
 #'points(scaled$coordsDataScaled[,1]~scaled$coordsDataScaled[,2], col="red")
 #'
 #' @export
-scaleCoordsToHabitatGrid <- function(coordsData = coordsData
-                             ,
-                              coordsHabitatGridCenter = coordsHabitatGridCenter
-                             ,
-                              scaleToGrid = TRUE
-                             
-){
+scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
+                                     coordsHabitatGridCenter = coordsHabitatGridCenter,
+                                     scaleToGrid = TRUE
+                             ){
   
   ## check that arrays have a x and y dimnames 
   whereXYdata <- unlist(lapply(dimnames(coordsData), function(x) any(x %in% c("x","y"))))

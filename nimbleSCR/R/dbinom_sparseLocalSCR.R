@@ -1,4 +1,4 @@
-#' Local evaluation of a binomial SCR observation process 
+#' Local evaluation of a binomial SCR observation process. This function is deprecated, use \code{dbinomLocal_normal} instead.
 #'
 #' The \code{dbinom_sparseLocalSCR} distribution is a NIMBLE custom distribution which can be used to model 
 #' the binomial observations (x) of a single individual over a set of detectors defined by their 

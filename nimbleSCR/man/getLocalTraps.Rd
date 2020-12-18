@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLocalTraps.R
 \name{getLocalTraps}
 \alias{getLocalTraps}
-\title{Local Trap Identification}
+\title{Local Trap Identification. This function is deprecated, use \code{getLocalObjects} instead.}
 \usage{
 getLocalTraps(
   habitatMask,
@@ -36,7 +36,7 @@ Each row gives the id numbers of the local traps associated with this grid cell.
 }
 \description{
 R utility function to identify all traps within a given radius dmax of each cell in a habitat mask.
-Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinom_sparseLocalSCR}}). The distance to the activity center and the 
+Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}}). The distance to the activity center and the 
 detection probability are then calculated for these local traps only (i.e. the detection probability is assumed to be 0 
 for all other traps as they are far enough from the activity center).
 }

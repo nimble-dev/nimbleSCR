@@ -118,18 +118,17 @@ inits <- list(sxy = inits.1$sxy,
               sigma = 6)
 ```
 
-## Create custom distribution to increase MCMC efficiency 
+## Use of custom distribution to increase MCMC efficiency 
 The `dbinomLocal_normal()` distribution incorporates three features to increase computational efficiency.
 
 ### 1. Local detector evaluation
-
-This step restricts calculations linked with the detection function (here a halfnormal function) to detectors (traps) within a maximum radius within which detections are realistically possible [@Milleret2019]. 
+This step restricts calculations of the detection probabilities (here using a halfnormal function) to detectors (traps) within a radius where detections are realistically possible [@Milleret2019].
 We use the function `getLocalObjects` to identify the set of detectors that are within a certain distance $d_{max}$ of each habitat cell
 center (<span style="color: blue;">blue points</span> in the plot below). These reduced sets of detectors are stored in the `localIndices` matrix and are later used in the local evaluation of the detection model to speed up calculations.
-The value of $d_{max}$ should be as small as possible in order to reduce computation but always large enough so that for any particular individual, the set of local traps associated with the initial `sxy` values of the activity center location include all detectors at which that individual was detected.
+The value of $d_{max}$ should be as small as possible in order to reduce computation but always large enough so that for any particular individual, the set of local traps associated with the coordinates of the activity center `s` include all detectors at which that individual was detected.
 The $d_{max}$ value will therefore affect the number of columns in `localIndices`
 Here, we use $d_{max}=38$. 
-
+with the coordinates of the activity center s  …
 We also aggregated the habitat matrix to obtain larger habitat cells (lower resolution) and obtain objects with smaller dimensions. This reduces the number of habitat cells for which we have to identify the set of detectors that are within $d_{max}$ of the cell center. 
 The goal is to create the object `localIndices` of the smallest dimension possible, that balances the cost of looking up relevant grid cells and reducing calculations for each grid cell.
 
@@ -172,7 +171,7 @@ constants$nMaxDetectors <- ySparse$maxDetNums
 
 ### 3. Skip unnecessary calculations
 
-The function `dbinomLocal_normal()` takes the `logical` argument `indicator` that specifies whether the individual `i` is available ($z_i$ = 1) for detection or not ($z_i$ = 0). When $z_i$ = 0, calculations of $p_i$ are not performed and therefore increases MCMC efficiency.   
+The function `dbinomLocal_normal()` takes the `logical` argument `indicator` that specifies whether the individual `i` is available ($z_i$ = 1) for detection or not ($z_i$ = 0). When $z_i$ = 0, calculations of $p_{ij}$ are not performed and therefore increases MCMC efficiency.   
 
 
 ## Create NIMBLE Model

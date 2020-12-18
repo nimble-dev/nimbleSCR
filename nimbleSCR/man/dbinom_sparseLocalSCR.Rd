@@ -3,7 +3,7 @@
 \name{dbinom_sparseLocalSCR}
 \alias{dbinom_sparseLocalSCR}
 \alias{rbinom_sparseLocalSCR}
-\title{Local evaluation of a binomial SCR observation process}
+\title{Local evaluation of a binomial SCR observation process. This function is deprecated, use \code{dbinomLocal_normal} instead.}
 \usage{
 dbinom_sparseLocalSCR(
   x,
