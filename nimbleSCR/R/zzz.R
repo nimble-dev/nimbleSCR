@@ -1,4 +1,7 @@
 .onAttach <- function(libname, pkgname) {
+    
+    packageStartupMessage("Warning message:\n'getLocalTraps' and 'dbinom_sparseLocalSCR' are deprecated.\nUse 'getLocalObjects' and 'dbinomLocal_normal' instead.")
+    
     suppressMessages({
 
         registerDistributions(
