@@ -1,14 +1,14 @@
 #' Scale x- and y-coordinates to grid cells coordinates.
 #'
 #' R utility function to scale x- and y- coordinates to the habitat grid.
-#' Scaling the coordinates to the habitat grid allows a fast look-up approach to identify in which habitat grid cell a point falls. 
+#' Scaling the coordinates to the habitat grid allows implementation of the fast look-up approach to identify the habitat grid cell in which a point is located. 
 #' This technique was first applied by Mike Meredith in SCR (\href{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{https://mmeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}).
-#' Scaling the entire coordinate system of the data input is a requirement to run SCR models with the local evaluation approach. 
-#' This function requires square grid cells and coordinates using projection with units in meters or km (e.g. UTM but not latlong!)
+#' Re-scaling the entire coordinate system of the data input is a requirement to run SCR models with the local evaluation approach. 
+#' This function requires square grid cells and coordinates using projection with units in meters or km (e.g., UTM but not latitude/longitude)
 #'
 #' @param coordsData A matrix or array of x- and y-coordinates to be scaled to the habitat grid. x- and y- coordinates must be identified using "x" and "y" dimnames.
 #' @param coordsHabitatGridCenter A matrix of x- and y-coordinates for each habitat grid cell center. 
-#' @param scaleToGrid If FALSE, coordsData are already scaled and will be rescaled to its original coordinates.
+#' @param scaleToGrid Defaults to TRUE. If FALSE, coordsData are already scaled and will be rescaled to its original coordinates.
 #'
 #' @return This function returns a list of objects:
 #' \itemize{
@@ -38,15 +38,14 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
                                      scaleToGrid = TRUE
                              ){
   
-  ## check that arrays have a x and y dimnames 
+  ## check that arrays have x and y dimnames 
   whereXYdata <- unlist(lapply(dimnames(coordsData), function(x) any(x %in% c("x","y"))))
   if(sum(whereXYdata)==0){stop("Provide the dimnames 'x' and 'y' for coordsData")}
   whereXYGrid <- unlist(lapply(dimnames(coordsHabitatGridCenter), function(x) any(x %in% c("x","y"))))
   if(sum(whereXYGrid)==0){stop("Provide the dimnames 'x' and 'y' for coordsHabitatGridCenter")}
   
   
-  ## Find automatically on which dimension are x and y
-  ## when there are more than 2 dimensions, it may not be obvious (using posterior sxy coordinates...)
+  ## Identify the dimension coding for x and y (coordsData may be vastly different depending on the application)
   whereYdataList <- lapply(1:length(dimnames(coordsData)), function(x){
     where <- dimnames(coordsData)[[x]] == c("y")
     if(length(where)==0){where <- 1:dim(coordsData)[x]}
@@ -86,7 +85,7 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
     
   }
   
-  ## If coordsData== 3 dimensions    
+  ## If coordsData has 3 dimensions    
   if(length(dim(coordsData))==3){
       if(scaleToGrid==T){
         Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] 
@@ -100,7 +99,7 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
       }
   }
   
-  ## If coordsData== 4 dimensions    
+  ## If coordsData has 4 dimensions    
   if(length(dim(coordsData))==4){
     if(scaleToGrid==T){
       Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]]] 
@@ -113,7 +112,7 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
       coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]]] <- start0.x + X * resolution 
     }
   }
-  ## If coordsData== 5 dimensions    
+  ## If coordsData has 5 dimensions    
   if(length(dim(coordsData))==5){
     if(scaleToGrid==T){
       Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]], whereYdataList[[5]]] 
