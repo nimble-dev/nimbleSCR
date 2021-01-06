@@ -5,7 +5,7 @@
 #' within the suitable habitat (defined in the binary matrix habitatMask).
 #'
 #' The rHabitatMask function returns the value of the habitat mask cell (0 or 1) where the proposed activity center falls. 
-#' See also \href{http://mikemeredith.net/blog/1309_SECR_in_JAGS_patchy_habitat.htm}{M. Meredith: SECR in BUGS/JAGS with patchy habitat}.
+#' See also \href{http://mmeredith.net/blog/2016/SECR_patchy_habitat_makeJAGSmask.htm}{M. Meredith: SECR in BUGS/JAGS with patchy habitat}.
 #' 
 #' @name dHabitatMask
 #'
