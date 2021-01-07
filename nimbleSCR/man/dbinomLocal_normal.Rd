@@ -83,7 +83,7 @@ follows a half-normal function of the distance between the individual's activity
 \details{
 The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency:
 \enumerate{
-\item A local evaluation of the detection probability calculation (see Milleret et al., 2019 \url{https://doi.org/10.1002/ece3.4751} for more details)
+\item A local evaluation of the detection probability calculation (see Milleret et al. (2019) <doi:10.1002/ece3.4751> for more details).
 \item It uses a sparse matrix representation (x, detIndices, detNums) of the observation data to reduce the size of objects to be processed.
 \item It uses an indicator (indicator) to shortcut calculations for individuals unavailable for detection.
 }
