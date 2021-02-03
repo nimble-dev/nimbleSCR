@@ -71,11 +71,11 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
   coordsHabitatGridCenterScaled[ ,"y"] <- (start0.y - coordsHabitatGridCenter[ ,"y"])/resolution
   coordsHabitatGridCenterScaled[ ,"x"] <- (coordsHabitatGridCenter[ ,"x"] - start0.x)/resolution
   
+  coordsDataScaled <- coordsData
   
   ## reprojecting sxy 
   if(length(dim(coordsData))==2){
     if(scaleToGrid==T){
-      coordsDataScaled <- coordsData
       coordsDataScaled[ ,"y"] <- (start0.y - coordsDataScaled[ ,"y"])/resolution
       coordsDataScaled[ ,"x"] <- (coordsDataScaled[ ,"x"] - start0.x)/resolution 
     }else{
