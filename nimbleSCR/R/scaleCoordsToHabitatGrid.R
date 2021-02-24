@@ -36,7 +36,7 @@
 scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
                                      coordsHabitatGridCenter = coordsHabitatGridCenter,
                                      scaleToGrid = TRUE
-                             ){
+){
   
   ## check that arrays have x and y dimnames 
   whereXYdata <- unlist(lapply(dimnames(coordsData), function(x) any(x %in% c("x","y"))))
@@ -85,24 +85,22 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
   
   ## If data has 3 dimensions    
   if(length(dim(coordsData)) == 3){
-      if(scaleToGrid){
-        Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] 
-        X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]]  
-        
-        coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] <- (start0.y - Y)/resolution
-        coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]] <- (X - start0.x)/resolution 
-      } else {
-        coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] <- start0.y - Y * resolution 
-        coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]] <- start0.x + X * resolution 
-      }
+    Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] 
+    X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]]  
+    if(scaleToGrid){
+      coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] <- (start0.y - Y)/resolution
+      coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]] <- (X - start0.x)/resolution 
+    } else {
+      coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]]] <- start0.y - Y * resolution 
+      coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]]] <- start0.x + X * resolution 
+    }
   }
   
   ## If data has 4 dimensions    
   if(length(dim(coordsData)) == 4){
+    Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]]] 
+    X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]]]  
     if(scaleToGrid){
-      Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]]] 
-      X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]]]  
-      
       coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]]] <- (start0.y - Y)/resolution
       coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]]] <- (X - start0.x)/resolution 
     } else {
@@ -110,12 +108,12 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
       coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]]] <- start0.x + X * resolution 
     }
   }
+  
   ## If data has 5 dimensions    
   if(length(dim(coordsData)) == 5){
+    Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]], whereYdataList[[5]]] 
+    X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]], whereYdataList[[5]]]  
     if(scaleToGrid){
-      Y <- coordsData[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]], whereYdataList[[5]]] 
-      X <- coordsData[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]], whereYdataList[[5]]]  
-      
       coordsDataScaled[whereYdataList[[1]], whereYdataList[[2]], whereYdataList[[3]], whereYdataList[[4]], whereYdataList[[5]]] <- (start0.y - Y)/resolution
       coordsDataScaled[whereXdataList[[1]], whereXdataList[[2]], whereXdataList[[3]], whereXdataList[[4]], whereYdataList[[5]]] <- (X - start0.x)/resolution 
     } else {
@@ -124,10 +122,10 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
     }
   }
   
-  if(length(dim(coordsData)) >= 6){stop("The function can only handle arrays of up to 5 dimensions for now...sorry")}
-    
+  if(length(dim(coordsData)) >= 6){
+    stop("The function can only handle arrays of up to 5 dimensions for now...sorry")
+  }
   
   return(list(coordsDataScaled = coordsDataScaled,
               coordsHabitatGridCenterScaled = coordsHabitatGridCenterScaled))
-
 }
