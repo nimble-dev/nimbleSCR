@@ -23,7 +23,7 @@
 #' \item \emph{maxDetNums} The maximum number of traps at which an individual was detected (i.e., the maximum of \emph{detNums}).
 #' \item \emph{detIndices} An array of dimensions n.individuals, maxDetNums, and number of occasions/sessions, which contains the IDs of the traps where each individual was detected.
 #' \item \emph{y} An array of dimensions n.individuals, maxDetNums, and occasions/sessions, which contains the number of observations of each individual at the traps it was detected at.
-#' \item \emph{lengthYCombined} An array that combines \emph{detNums}, \emph{y}, and \emph{detIndices} by columns (in that specific order). 
+#' \item \emph{yCombined} An array that combines \emph{detNums}, \emph{y}, and \emph{detIndices} by columns (in that specific order). 
 #' Note that  \emph{y}, and \emph{detIndices} are augmented before combining, such that the maximum number of detectors at which an individual can be detected is equal to \emph{nMaxTraps}
 #' Consequently, the number of columns of \emph{lengthYCombined} is 2*nMaxTraps + 1.
 #' \item \emph{lengthYCombined} Dimension of the augmented lengthYCombined object to be specified as the argument \emph{lengthYCombined} of the \code{\link{dbinomLocal_normal}}  or \code{\link{dpoisLocal_normal}} functions when simulating detection data.
