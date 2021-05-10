@@ -4,28 +4,37 @@
 \alias{getSparseY}
 \title{Sparse Matrix Preparation}
 \usage{
-getSparseY(x, noDetections = -1)
+getSparseY(x, noDetections = -1, nMaxTraps = NULL)
 }
 \arguments{
-\item{x}{A two- or three-dimensional observation data array.}
+\item{x}{A two- or three-dimensional observation data array with dimensions : number of  individuals, number of traps, (and number of detection occasions/sessions).}
 
 \item{noDetections}{The value indicating no detection. Defaults to -1.}
+
+\item{nMaxTraps}{The maximum number of traps at which detections can occur. 
+It is necessary to artificially augment the sparse detection array when using the random generation functionality of the \link{dbinomLocal_normal} or \link{dpoisLocal_normal} functions.
+When simulating detection data, augmenting the size of the detection array avoids bounding  the number of detectors at which individuals can be detected.
+Default value is maxDetNums * 2, which doubles the maximum number of traps at which an individual can be detected. 
+We generally recommend using \emph{numLocalIndicesMax} obtained from \code{\link{getLocalObjects}} when aiming at randomly generating detections from \link{dbinomLocal_normal} or \link{dpoisLocal_normal}.}
 }
 \value{
-a list of objects which constitute a sparse representation of the observation data:
-
+A list of objects which constitute a sparse representation of the observation data:
+ 
 \itemize{
-\item \emph{detNums} a vector of the number of traps at which each individual was detected.
-\item \emph{maxDetNums} the maximum number of traps at which any individual was detected (i.e, the maximum of detNums).
-\item \emph{detIndices} a matrix of dimensions n.individuals * maxDetNums which contains the IDs of the traps. 
-where each individuals was detected.
-\item \emph{y} a matrix of dimensions n.individuals * maxDetNums which contains the number of observations of each individual
-at the traps it was detected at.
+\item \emph{detNums} A matrix with number of traps at which each individual (in rows) was detected at each occasions/sessions (in columns).
+\item \emph{maxDetNums} The maximum number of traps at which an individual was detected (i.e., the maximum of \emph{detNums}).
+\item \emph{detIndices} An array of dimensions n.individuals, maxDetNums, and number of occasions/sessions, which contains the IDs of the traps where each individual was detected.
+\item \emph{y} An array of dimensions n.individuals, maxDetNums, and occasions/sessions, which contains the number of observations of each individual at the traps it was detected at.
+\item \emph{lengthYCombined} An array that combines \emph{detNums}, \emph{y}, and \emph{detIndices} by columns (in that specific order). 
+Note that  \emph{y}, and \emph{detIndices} are augmented before combining, such that the maximum number of detectors at which an individual can be detected is equal to \emph{nMaxTraps}
+Consequently, the number of columns of \emph{lengthYCombined} is 2*nMaxTraps + 1.
+\item \emph{lengthYCombined} Dimension of the augmented lengthYCombined object to be specified as the argument \emph{lengthYCombined} of the \code{\link{dbinomLocal_normal}}  or \code{\link{dpoisLocal_normal}} functions when simulating detection data.
+
 }
 }
 \description{
-R utility function to turn a two or three-dimensional detection array into a sparse matrix representation.
-Used in the implementation of the \code{\link{dbinom_sparseLocalSCR}} function.
+R utility function to turn a two or three-dimensional detection array into a sparse matrix representation (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details).
+Used in the implementation of the \code{\link{dbinomLocal_normal}} and \code{\link{dpoisLocal_normal}} functions.
 }
 \details{
 The \code{getSparseY} function is used in advance of model building to create a sparse matrix representation of the observation data. 

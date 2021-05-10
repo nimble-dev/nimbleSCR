@@ -57,8 +57,8 @@ makeGrid
 dbinom_vector
 ?dbinom_vector
 
-dbinom_sparseLocalSCR
-?dbinom_sparseLocalSCR
+dbinomLocal_normal
+?dbinomLocal_normal
 
 getSparseY
 ?getSparseY
@@ -66,3 +66,5 @@ getSparseY
 getLocalTraps
 ?getLocalTraps
 
+getSparseY
+?dbinom_sparseLocalSCR

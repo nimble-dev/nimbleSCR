@@ -1,19 +1,19 @@
-#' Local evaluation of a binomial SCR observation process 
+#' Local evaluation of a Poisson SCR observation process 
 #'
-#' The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
-#' binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 
+#' The \code{dpoisLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' Poisson observations (\emph{x}) of a single individual over a set of detectors defined by their 
 #' coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
 #' follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location.
 #'
 #'
-#' The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
+#' The \code{dpoisLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
 #' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 <doi:10.1002/ece3.4751> for more details)
 #' \item A sparse matrix representation (\emph{x}, \emph{detIndices} and \emph{detNums}) of the observation data to reduce the size of objects to be processed.
 #' \item An indicator (\emph{indicator}) to shortcut calculations for individuals unavailable for detection.
 #' }
 #' 
-#' The \code{dbinomLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
+#' The \code{dpoisLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
 #'
 #' When the aim is to simulate detection data: 
 #' \enumerate{
@@ -24,16 +24,15 @@
 #' 
 #' 
 #' 
-#' @name dbinomLocal_normal
+#' @name dpoisLocal_normal
 #'
 #' @param x Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by the \code{\link{getSparseY}} function; (ii) with the \emph{yCombined} object as returned by \code{\link{getSparseY}}. 
-#' Note that when the random generation functionality is used (\code{rbinomLocal_normal}), only the \emph{yCombined} format can be used. 
+#' Note that when the random generation functionality is used (\code{rpoisLocal_normal}), only the \emph{yCombined} format can be used. 
 #' The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order).  When such consolidated representation of the detection data \emph{x} is used, \emph{detIndices} and \emph{detNums} arguments shouldn’t be specified.
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
 #' @param detIndices Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.
 #' @param detNums Number of detections recorded in \emph{x}, as returned by the \emph{detNums} object from the \code{\link{getSparseY}} function. This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x}, and when detection data are simulated.
-#' @param size Vector of the number of trials (zero or more) for each trap (\emph{trapCoords}).
-#' @param p0 Baseline detection probability used in the half-normal detection function.
+#' @param lambda Baseline detection rate used in the half-normal detection function.
 #' @param sigma Scale parameter of the half-normal detection function.
 #' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
@@ -47,12 +46,13 @@
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
-#'  and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / \sigma^2)}.
+#'  and the half-normal detection function : \eqn{p = lambda * exp(-d^2 / \sigma^2)}.
 #'
 #' @author Cyril Milleret, Soumen Dey
 #'
 #' @import nimble
-#' @importFrom stats dbinom
+#' @importFrom stats dpois
+#' @importFrom stats rpois
 #'
 #' @examples
 #' # I. DATA SET UP 
@@ -81,7 +81,7 @@
 #' points(trapCoords[,"y"]~trapCoords[,"x"],col="red",pch=16) 
 #' 
 #' # PARAMETERS
-#' p0 <- 0.2
+#' lambda <- 0.2
 #' sigma <- 2
 #' indicator <- 1 
 #' # WE CONSIDER 2 INDIVIDUALS
@@ -112,11 +112,10 @@
 #'  # WE TAKE THE FIRST INDIVIDUAL
 #' i=1
 #'   # OPTION 1: USING THE RANDOM GENERATION FUNCTIONNALITY 
-#' dbinomLocal_normal(x=SparseY$y[i,,1],
+#' dpoisLocal_normal(x=SparseY$y[i,,1],
 #'                    detNums=SparseY$detNums[i],
 #'                    detIndices=SparseY$detIndices[i,,1],
-#'                    size=rep(1,4),
-#'                    p0 = p0,
+#'                    lambda = lambda,
 #'                    sigma= sigma, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
@@ -128,9 +127,8 @@
 #'                                                                 
 #'   # OPTION 2: USING RANDOM GENERATION FUNCTIONNALITY 
 #'   # WE DO NOT PROVIDE THE detNums AND detIndices ARGUMENTS
-#' dbinomLocal_normal(x=SparseY$yCombined[i,,1],
-#'                    size=rep(1,4),
-#'                    p0 = p0,
+#' dpoisLocal_normal(x=SparseY$yCombined[i,,1],
+#'                    lambda = lambda,
 #'                    sigma= sigma, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
@@ -142,9 +140,8 @@
 #'                    lengthYCombined = SparseY$lengthYCombined)
 #' 
 #' # III. USING THE RANDOM GENERATION FUNCTION 
-#' rbinomLocal_normal(n=1,
-#'                    size=rep(1,4),
-#'                    p0 = p0,
+#' rpoisLocal_normal(n=1,
+#'                    lambda = lambda,
 #'                    sigma= sigma, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
@@ -158,14 +155,14 @@
 #' @export
 NULL
 
-#' @rdname dbinomLocal_normal
+
+#' @rdname dpoisLocal_normal
 #' @export
-dbinomLocal_normal <- nimbleFunction(
+dpoisLocal_normal <- nimbleFunction(
   run = function( x = double(1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
-                  size = double(1),
-                  p0 = double(0),
+                  lambda = double(0),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -221,20 +218,19 @@ dbinomLocal_normal <- nimbleFunction(
     ## Calculate the log-probability of the vector of detections
     alpha <- -1.0 / (2.0 * sigma * sigma)
     logProb <- 0.0 
-    detIndices1 <- c(detIndices1, 0)
+    detIndices1 <- c(detIndices1,0)
     count <- 1 
-    
     
     for(r in 1:localTrapsNum[sID]){
       if(theseLocalTraps[r] == detIndices1[count]){ 
         d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- p0 * exp(alpha * d2)
-        logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+        p <- lambda * exp(alpha * d2)
+        logProb <- logProb + dpois(x1[count], p, log = TRUE)
         count <- count + 1
       }else{
         d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- p0 * exp(alpha * d2)
-        logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+        p <- lambda * exp(alpha * d2)
+        logProb <- logProb + dpois(0, p, log = TRUE)
         
       }
     }
@@ -246,14 +242,13 @@ dbinomLocal_normal <- nimbleFunction(
   })
 
 
-#' @rdname dbinomLocal_normal
+#' @rdname dpoisLocal_normal
 #' @export
-rbinomLocal_normal <- nimbleFunction(
+rpoisLocal_normal <- nimbleFunction(
   run = function( n = double(0, default = 1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
-                  size = double(1),
-                  p0 = double(0),
+                  lambda = double(0),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -266,11 +261,11 @@ rbinomLocal_normal <- nimbleFunction(
   ) {
     ## Specify return type
     returnType(double(1))
-    if(detNums >= 0) stop("Random generation for the rbinomLocal_normal distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
+    if(detNums >= 0) stop("Random generation for the rpoisLocal_normal distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
     
     #========================================================
     # RETURN TYPE DECLARATION
-    if(n!=1){print("rbinomLocal_normal only allows n = 1; using n = 1")}
+    if(n!=1){print("rpoisLocal_normal only allows n = 1; using n = 1")}
     # returnType(double(3))
     # len <- 2*MAX + 1
     ## GET NECESSARY INFO
@@ -296,9 +291,9 @@ rbinomLocal_normal <- nimbleFunction(
     ## SAMPLE THE DETECTION HISTORY (FOR RELEVANT DETECTORS ONLY)
     for(r in 1:localTrapsNum[sID]){
       d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-      p <- p0 * exp(alpha * d2)
+      p <- lambda * exp(alpha * d2)
       # Draw the observation at detector j from a binomial distribution with probability p
-      detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
+      detectOut[r] <- rpois(1, p)
       if(detectOut[r] >0){
         if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
                                       You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}

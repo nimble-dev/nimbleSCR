@@ -44,15 +44,50 @@
         registerDistributions(
             list(
                 dbinomLocal_normal = list(
-                    BUGSdist = 'dbinomLocal_normal(detNums, detIndices, size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor, habitatGrid, indicator)',
+                    BUGSdist ='dbinomLocal_normal(detNums       , detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                    Rdist = c('dbinomLocal_normal(detNums       , detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums       , detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normal(detNums = -999, detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums = -999, detIndices = s, size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums = -999, detIndices = s, size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums = -999, detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normal(detNums = -999, detIndices = s, size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normal(detNums       , detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums = -999, detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normal(detNums = -999, detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normal(detNums       , detIndices    , size, p0, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)'
+                    ),
                     types = c('value = double(1)', 'detIndices = double(1)', 'size = double(1)', 's = double(1)', 'trapCoords = double(2)', 'localTrapsIndices = double(2)', 'localTrapsNum = double(1)', 'habitatGrid = double(2)'),
                     discrete = TRUE,
                     mixedSizes = TRUE,
                     pqAvail = FALSE
                 )
             ),
-            verbose = FALSE)
+            verbose = F)
         
+        registerDistributions(
+            list(
+                dpoisLocal_normal = list(
+                    BUGSdist ='dpoisLocal_normal(detNums       , detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                    Rdist = c('dpoisLocal_normal(detNums       , detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums       , detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dpoisLocal_normal(detNums = -999, detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums = -999, detIndices = s, lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums = -999, detIndices = s, lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums = -999, detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dpoisLocal_normal(detNums = -999, detIndices = s, lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dpoisLocal_normal(detNums       , detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums = -999, detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dpoisLocal_normal(detNums = -999, detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dpoisLocal_normal(detNums       , detIndices    , lambda, sigma, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)'
+                    ),
+                    types = c('value = double(1)', 'detIndices = double(1)', 's = double(1)', 'trapCoords = double(2)', 'localTrapsIndices = double(2)', 'localTrapsNum = double(1)', 'habitatGrid = double(2)'),
+                    discrete = TRUE,
+                    mixedSizes = TRUE,
+                    pqAvail = FALSE
+                )
+            ),
+            verbose = F)
 
         registerDistributions(
             list(
