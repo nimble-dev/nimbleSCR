@@ -15,6 +15,8 @@ if(Sys.info()['user'] == 'dturek') {
 
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
+
+
 document(paste0(baseDir, 'nimbleSCR'))
 
 if(.Platform$OS.type == "windows") {
@@ -40,6 +42,25 @@ if(.Platform$OS.type == "windows") {
 ## now restart R
 
 library(nimbleSCR)
+
+
+# # Run testthat tests
+# if(Sys.info()['user'] == 'dturek') {
+#     baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
+# } else if(Sys.info()['user'] == 'pidu') {
+#     baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'            ## Pierre
+# } else if(Sys.info()['user'] == 'cymi') {
+#     baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
+# } else if(Sys.info()['user'] == 'arichbi') {
+#     baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+# } else stop('unknown user')
+# 
+# # Utility function (fast!)
+# source(file.path(baseDir,"nimbleSCR/test/testthat/testUtilityFunctions.R"))
+# # distributions (slow)
+# source(file.path(baseDir,"nimbleSCR/test/testthat/testDistributionFunctions.R"))
+library(testthat)
+test_check("nimbleSCR") 
 
 ## inspect package vignettes
 (vignettes <- vignette(package = 'nimbleSCR'))
