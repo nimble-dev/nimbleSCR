@@ -33,6 +33,7 @@
 #' @param detIndices Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.
 #' @param detNums Number of detections recorded in \emph{x}, as returned by the \emph{detNums} object from the \code{\link{getSparseY}} function. This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x}, and when detection data are simulated.
 #' @param lambda Baseline detection rate used in the half-normal detection function.
+#' @param lambdaTraps Vector of baseline detection rate for each trap used in the half-normal detection function. When \emph{lambdaTraps} is used, \emph{lambda} should not be provided. 
 #' @param sigma Scale parameter of the half-normal detection function.
 #' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
@@ -162,7 +163,8 @@ dpoisLocal_normal <- nimbleFunction(
   run = function( x = double(1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
-                  lambda = double(0),
+                  lambda = double(0, default = -999),
+                  lambdaTraps = double(1),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -221,19 +223,38 @@ dpoisLocal_normal <- nimbleFunction(
     detIndices1 <- c(detIndices1,0)
     count <- 1 
     
-    for(r in 1:localTrapsNum[sID]){
-      if(theseLocalTraps[r] == detIndices1[count]){ 
-        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- lambda * exp(alpha * d2)
-        logProb <- logProb + dpois(x1[count], p, log = TRUE)
-        count <- count + 1
-      }else{
-        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- lambda * exp(alpha * d2)
-        logProb <- logProb + dpois(0, p, log = TRUE)
-        
+    
+    if(lambda==-999){# when lambda is provide through lambdaTraps
+      for(r in 1:localTrapsNum[sID]){
+        if(theseLocalTraps[r] == detIndices1[count]){ 
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- lambdaTraps[theseLocalTraps[r]] * exp(alpha * d2)
+          logProb <- logProb + dpois(x1[count], p, log = TRUE)
+          count <- count + 1
+        }else{
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- lambdaTraps[theseLocalTraps[r]] * exp(alpha * d2)
+          logProb <- logProb + dpois(0, p, log = TRUE)
+          
+        }
+      }
+    }else{# when lambda is provide through lambda
+      for(r in 1:localTrapsNum[sID]){
+        if(theseLocalTraps[r] == detIndices1[count]){ 
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- lambda * exp(alpha * d2)
+          logProb <- logProb + dpois(x1[count], p, log = TRUE)
+          count <- count + 1
+        }else{
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- lambda * exp(alpha * d2)
+          logProb <- logProb + dpois(0, p, log = TRUE)
+          
+        }
       }
     }
+    
+  
     
     
     ## Return the probability of the vector of detections (or log-probability if required)
@@ -248,7 +269,8 @@ rpoisLocal_normal <- nimbleFunction(
   run = function( n = double(0, default = 1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
-                  lambda = double(0),
+                  lambda = double(0, default = -999),
+                  lambdaTraps = double(1),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -288,21 +310,38 @@ rpoisLocal_normal <- nimbleFunction(
     ys <- rep(-1, nMAxDetections)
     dets <- rep(-1, nMAxDetections)
     count <- 1
+    
     ## SAMPLE THE DETECTION HISTORY (FOR RELEVANT DETECTORS ONLY)
-    for(r in 1:localTrapsNum[sID]){
-      d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-      p <- lambda * exp(alpha * d2)
-      # Draw the observation at detector j from a binomial distribution with probability p
-      detectOut[r] <- rpois(1, p)
-      if(detectOut[r] >0){
-        if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
-                                      You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
-        ys[count] <- detectOut[r]
-        dets[count] <- theseLocalTraps[r]
-        count <- count + 1
-      }#if
+    if(lambda==-999){# when lambda is provide through lambdaTraps
+      for(r in 1:localTrapsNum[sID]){
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+        p <- lambdaTraps[theseLocalTraps[r]] * exp(alpha * d2)
+        # Draw the observation at detector j from a binomial distribution with probability p
+        detectOut[r] <- rpois(1, p)
+        if(detectOut[r] >0){
+          if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
+                                        You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
+          ys[count] <- detectOut[r]
+          dets[count] <- theseLocalTraps[r]
+          count <- count + 1
+        }#if
+      }#r
+    }else{# when lambda is provide through lambda
+      for(r in 1:localTrapsNum[sID]){
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+        p <- lambda * exp(alpha * d2)
+        # Draw the observation at detector j from a binomial distribution with probability p
+        detectOut[r] <- rpois(1, p)
+        if(detectOut[r] >0){
+          if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
+                                        You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
+          ys[count] <- detectOut[r]
+          dets[count] <- theseLocalTraps[r]
+          count <- count + 1
+        }#if
+      }#r
+    }  
       
-    }#r
     count <- count - 1
     
     

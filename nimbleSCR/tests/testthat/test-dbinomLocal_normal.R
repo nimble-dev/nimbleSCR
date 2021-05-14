@@ -24,7 +24,6 @@ if(Sys.info()['user'] == 'dturek') {
 #----   1.1 Turek et al 2021 Ecosphere ----
 ## REPRODUCE WOLVERINE LIKELIHODD CALCULATION FROM THE WOLVERINE EXAMPLE IN DANIEL'S PAPER
 
-
 # IN R
 test_that("Wolverine LogProb is calculated correctly in R",{
   truthWolverineLikelihood <- "-15726.3284159870"# as calculated in the paper
@@ -307,7 +306,7 @@ expect_equal(as.numeric(sum$statistics[c("p0","psi","sigma"),"Mean"]) ,
 
 
 #----   2.1 dbinomLocal_normal() WITH sxy~dunif() and trap covariates  ----
-test_that("Simulate and fit dbinomLocal_normal ",{
+test_that("Simulate and fit dbinomLocal_normal with trap covariates",{
   
   coordsHabitatGridCenter <- cbind(rep(seq(11.5, 0.5, by=-1), 10),
                                    sort(rep(seq(0.5, 11.5, by=1), 10)))

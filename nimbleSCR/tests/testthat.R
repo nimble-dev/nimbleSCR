@@ -14,6 +14,8 @@ if(Sys.info()['user'] == 'dturek') {
 ## test individual files 
 testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-UtilityFunctions.R"))
 ##
-#testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-DistributionFunctions.R"))
+testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-dpoisLocal_normal.R"))
+testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-dbinomLocal_normal.R"))
+
 #TEST ALL FILES 
 #test_check("nimbleSCR")

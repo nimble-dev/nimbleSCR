@@ -9,7 +9,8 @@ dpoisLocal_normal(
   x,
   detNums = -999,
   detIndices,
-  lambda,
+  lambda = -999,
+  lambdaTraps,
   sigma,
   s,
   trapCoords,
@@ -26,7 +27,8 @@ rpoisLocal_normal(
   n = 1,
   detNums = -999,
   detIndices,
-  lambda,
+  lambda = -999,
+  lambdaTraps,
   sigma,
   s,
   trapCoords,
@@ -48,6 +50,8 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 \item{detIndices}{Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.}
 
 \item{lambda}{Baseline detection rate used in the half-normal detection function.}
+
+\item{lambdaTraps}{Vector of baseline detection rate for each trap used in the half-normal detection function. When \emph{lambdaTraps} is used, \emph{lambda} should not be provided.}
 
 \item{sigma}{Scale parameter of the half-normal detection function.}
 

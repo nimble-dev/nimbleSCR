@@ -34,6 +34,7 @@
 #' @param detNums Number of detections recorded in \emph{x}, as returned by the \emph{detNums} object from the \code{\link{getSparseY}} function. This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x}, and when detection data are simulated.
 #' @param size Vector of the number of trials (zero or more) for each trap (\emph{trapCoords}).
 #' @param p0 Baseline detection probability used in the half-normal detection function.
+#' @param p0Traps Vector of baseline detection probabilities for each trap used in the half-normal detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided. 
 #' @param sigma Scale parameter of the half-normal detection function.
 #' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
@@ -165,7 +166,8 @@ dbinomLocal_normal <- nimbleFunction(
                   detNums = double(0, default = -999),
                   detIndices = double(1),
                   size = double(1),
-                  p0 = double(0),
+                  p0 = double(0, default = -999),
+                  p0Traps = double(1),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -225,17 +227,32 @@ dbinomLocal_normal <- nimbleFunction(
     count <- 1 
     
     
-    for(r in 1:localTrapsNum[sID]){
-      if(theseLocalTraps[r] == detIndices1[count]){ 
-        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- p0 * exp(alpha * d2)
-        logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
-        count <- count + 1
-      }else{
-        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        p <- p0 * exp(alpha * d2)
-        logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
-        
+    if(p0==-999){# when p0 is provide through p0Traps
+      for(r in 1:localTrapsNum[sID]){
+        if(theseLocalTraps[r] == detIndices1[count]){ 
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
+          logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+          count <- count + 1
+        }else{
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
+          logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+          
+        }
+      }
+    }else{# when p0 is provide through p0
+      for(r in 1:localTrapsNum[sID]){
+        if(theseLocalTraps[r] == detIndices1[count]){ 
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- p0 * exp(alpha * d2)
+          logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+          count <- count + 1
+        }else{
+          d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+          p <- p0 * exp(alpha * d2)
+          logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
+        }
       }
     }
     
@@ -253,7 +270,8 @@ rbinomLocal_normal <- nimbleFunction(
                   detNums = double(0, default = -999),
                   detIndices = double(1),
                   size = double(1),
-                  p0 = double(0),
+                  p0 = double(0, default = -999),
+                  p0Traps = double(1),
                   sigma = double(0),
                   s = double(1),
                   trapCoords = double(2),
@@ -293,21 +311,38 @@ rbinomLocal_normal <- nimbleFunction(
     ys <- rep(-1, nMAxDetections)
     dets <- rep(-1, nMAxDetections)
     count <- 1
+    
     ## SAMPLE THE DETECTION HISTORY (FOR RELEVANT DETECTORS ONLY)
-    for(r in 1:localTrapsNum[sID]){
-      d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-      p <- p0 * exp(alpha * d2)
-      # Draw the observation at detector j from a binomial distribution with probability p
-      detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
-      if(detectOut[r] >0){
-        if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
-                                      You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
-        ys[count] <- detectOut[r]
-        dets[count] <- theseLocalTraps[r]
-        count <- count + 1
-      }#if
+    if(p0==-999){## when p0 is provided through p0Traps
+      for(r in 1:localTrapsNum[sID]){
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+        p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
+        # Draw the observation at detector j from a binomial distribution with probability p
+        detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
+        if(detectOut[r] >0){
+          if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
+                                          You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
+          ys[count] <- detectOut[r]
+          dets[count] <- theseLocalTraps[r]
+          count <- count + 1
+        }#if
+      }#r 
+    }else{## when p0 is provided through p0
+      for(r in 1:localTrapsNum[sID]){
+        d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
+        p <- p0 * exp(alpha * d2)
+        # Draw the observation at detector j from a binomial distribution with probability p
+        detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
+        if(detectOut[r] >0){
+          if(nMAxDetections<count){stop("Simulated individual detections occur at more traps than what can be stored within x.\n
+                                          You may need to augment the size of the x object with the argument 'nMaxTraps' from the getSparseY() function")}
+          ys[count] <- detectOut[r]
+          dets[count] <- theseLocalTraps[r]
+          count <- count + 1
+        }#if
+      }#r 
       
-    }#r
+    }
     count <- count - 1
     
     

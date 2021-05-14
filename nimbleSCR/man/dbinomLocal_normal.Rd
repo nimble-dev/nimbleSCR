@@ -10,7 +10,8 @@ dbinomLocal_normal(
   detNums = -999,
   detIndices,
   size,
-  p0,
+  p0 = -999,
+  p0Traps,
   sigma,
   s,
   trapCoords,
@@ -28,7 +29,8 @@ rbinomLocal_normal(
   detNums = -999,
   detIndices,
   size,
-  p0,
+  p0 = -999,
+  p0Traps,
   sigma,
   s,
   trapCoords,
@@ -52,6 +54,8 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 \item{size}{Vector of the number of trials (zero or more) for each trap (\emph{trapCoords}).}
 
 \item{p0}{Baseline detection probability used in the half-normal detection function.}
+
+\item{p0Traps}{Vector of baseline detection probabilities for each trap used in the half-normal detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided.}
 
 \item{sigma}{Scale parameter of the half-normal detection function.}
 
