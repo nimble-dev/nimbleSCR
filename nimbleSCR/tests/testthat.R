@@ -18,4 +18,4 @@ testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-dpoisLocal_
 testthat::test_file(file.path(baseDir,"nimbleSCR/tests/testthat/test-dbinomLocal_normal.R"))
 
 #TEST ALL FILES 
-#test_check("nimbleSCR")
+#test("nimbleSCR")
