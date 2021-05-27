@@ -9,14 +9,14 @@ Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Torbjørn", "Ergon", role = "aut"),
              person("Pierre", "Dupont", role = "aut"),
              person("Soumen", "Dey", role = "aut"),
-           person("Perry", "de Valpine", role = "aut"))
-Date: 2021-01-04
+             person("Perry", "de Valpine", role = "aut"))
+Date: 2021-05-26
 Description: Provides utility functions, distributions, and methods for improving Markov chain Monte Carlo (MCMC) sampling efficiency for ecological Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) models.  The methods provided implement the techniques presented in "Estimation of Large-Scale Spatial Capture-Recapture Models" (Turek, et al (2021); Ecosphere 12(2):e03385. <doi:10.1002/ecs2.3385>).
 License: GPL-3
 Depends: R (>= 3.4.0), nimble
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-Suggests: 
-    testthat (>= 3.0.0)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Config/testthat/edition: 3

@@ -89,7 +89,8 @@ We also create objects `code`, `constants`, `data`, and `inits` for later use in
 ```
 
 ```{r echo = F}
-load("C:/Users/cymi/Downloads/WolverineData.RData")
+##load("C:/Users/cymi/Downloads/WolverineData.RData")
+load("~/Downloads/WolverineData.RData")
 ```
 
 ```{r eval = F}
