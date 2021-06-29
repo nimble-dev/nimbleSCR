@@ -1,0 +1,474 @@
+---
+title: "Using nimbleSCR to simulate and fit Bayesian SCR models"
+author: "Cyril Milleret"
+output:
+  html_document: default
+  word_document: default
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In this vignette, we will use the nimbleSCR [@nimbleSCR] package and NIMBLE [@de2017programming;@nimbleSoftware2020] to simulate and fit an efficient Bayesian SCR model.
+
+```{r, warning = FALSE, message = FALSE}
+# LOAD PACKAGES
+library(nimble)
+library(nimbleSCR)
+```
+
+
+## 1. SIMULATE BINOMIAL SCR DATA
+### 1.1 Habitat and trapping grid
+For this example, we create a $12*12$ habitat grid represented by grid cell centers. We center a $8*8$ trapping grid leaving a buffer area of 2 units around it.  
+
+```{r , warning = FALSE, message = FALSE}
+# CREATE HABITAT GRID 
+coordsHabitatGridCenter <- cbind(rep(seq(11.5, 0.5, by=-1), 12),
+                                 sort(rep(seq(0.5, 11.5, by=1), 12)))
+colnames(coordsHabitatGridCenter) <- c("x","y")
+
+# CREATE TRAP GRID
+trapCoords <- cbind(rep(seq(2.5, 9.5,by=1),8),
+               sort(rep(seq(2.5, 9.5,by=1),8)))
+colnames(trapCoords) <- c("x","y")
+
+# PLOT CHECK
+plot(coordsHabitatGridCenter[,"y"] ~ coordsHabitatGridCenter[,"x"], pch = 1, cex = 1.5) #pch=16) 
+points(trapCoords[,"y"] ~ trapCoords[,"x"], col="red", pch=16 ) 
+par(xpd=TRUE)
+legend(x = 7, y = 13,
+       legend=c("Habitat grid centers", "Traps"),
+       pt.cex = c(1.5,1),
+       horiz = T,
+       pch=c(1,16),
+       col=c("black", "red"),
+       bty = 'n')
+
+```
+
+### 1.2 Rescale coordinates and local evaluation 
+
+Here we rescale the trap coordinates to the habitat to allow a fast habitat cell ID lookup and the local evaluation (see @Milleret2019 and @Turek2021 for further details).
+
+```{r , warning = FALSE, message = FALSE}
+ScaledtrapCoords <- scaleCoordsToHabitatGrid(coordsData =  trapCoords,
+                                             coordsHabitatGridCenter = coordsHabitatGridCenter)$coordsDataScaled
+habitatMask <- matrix(1, nrow = 12, ncol= 12, byrow = TRUE)
+```
+
+We also set up the objects necessary to perform the local evaluation using the 'getLocalObjects' function. Special care should be taken when chosing 'dmax' relative to $\sigma$ [@Milleret2019]. Here we are using a value $>2*\sigma$ (see below for the $\sigma$ chosen.
+
+```{r , warning = FALSE, message = FALSE}
+trapLocal <- getLocalObjects(habitatMask = habitatMask,
+                             coords = ScaledtrapCoords,
+                             dmax = 7,
+                             resizeFactor = 1,
+                             plot.check = F
+)
+```
+
+### 1.3 Define model code
+We use the [model code](https://doi.org/10.1002/ecs2.3385) described in @Turek2021.
+Note that we do not provide 'detNums' and 'detIndices' arguments in the 'dbinomLocal_normal' function as we wish to use this model to simulate data (see '?dbinomLocal_normal' for further details). 
+
+```{r , warning = FALSE, message = FALSE}
+modelCode <- nimbleCode({
+  ## priors
+  psi ~ dunif(0, 1)
+  sigma ~ dunif(0, 50)
+  p0 ~ dunif(0, 1)
+  ## loop over individuals
+  for(i in 1:M) {
+    ## AC coordinates
+    sxy[i,1] ~ dunif(0, x.max)
+    sxy[i,2] ~ dunif(0, y.max)
+    ## habitat constraint 
+    ones[i] ~ dHabitatMask( s = sxy[i,1:2],
+                            xmin = lowerCoords[1],
+                            xmax = upperCoords[1],
+                            ymin = lowerCoords[2],
+                            ymax = upperCoords[2],
+                            habitat = habitat.mx[1:y.max,1:x.max])
+    ## latent dead/alive indicators
+    z[i] ~ dbern(psi)
+    ## likelihood
+    y[i, 1:lengthYCombined] ~ dbinomLocal_normal(size = trials[1:n.traps],
+                                                 p0 = p0,
+                                                 s = sxy[i,1:2],
+                                                 sigma = sigma,
+                                                 trapCoords = trapCoords[1:n.traps,1:2],
+                                                 localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
+                                                 localTrapsNum = nTraps[1:n.cells],
+                                                 resizeFactor = ResizeFactor,
+                                                 habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
+                                                 indicator = z[i],
+                                                 lengthYCombined = lengthYCombined)
+   }
+  ## derived quantity: total population size
+  N <- sum(z[1:M])
+})
+```
+
+
+### 1.4 Define parameter values to simulate
+
+```{r , warning = FALSE, message = FALSE}
+# PARAMETERS
+p0 <- 0.2
+sigma <- 2
+psi <- 0.5
+```
+
+The model formulation uses data augmentation to derive N estimates [@Royle2012]. We therefore need to choose the total number of individuals *M* (detected + augmented). Here we used 200. The expected total number of individuals present in the population is 'M * psi'.
+
+```{r , warning = FALSE, message = FALSE}
+M <- 200
+```
+
+
+When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored in 'y' in that order (See ?dbinomlocal_normal for more details.):
+
+* 'detNums' (total number of individual detections), 
+* 'x' (number of individual detections at each trap), 
+* 'detIndices' (id of the trap at which detections occur). 
+
+We now need to provide the maximum number of spatial recaptures that can be simulated per individual. We recommend using 'trapLocal\$numlocalindicesmax' that defines the maximum number of traps available for detections when local evaluation is used. This will enable the simulation of as many spatial detections as allowed by the restrictions imposed by the local evaluation (defined by the 'dmax' argument from 'getLocalObjects').
+This means that the length of the 'y' observation vector for each individual is equal to the length of $c(detNums, x, detIndices)$ and is therefore equal to $lengthYCombined = 1+ trapLocal\$numLocalIndicesMax * 2$. 
+
+```{r , warning = FALSE, message = FALSE}
+lengthYCombined <- 1 + trapLocal$numLocalIndicesMax*2
+```
+
+
+### 1.5 Create data, constants and inits objects 
+
+```{r , warning = FALSE, message = FALSE}
+nimConstants <- list(M = M,
+                     n.traps = dim(ScaledtrapCoords)[1],
+                     y.max = dim(habitatMask)[1],
+                     x.max = dim(habitatMask)[2],
+                     y.maxDet = dim(trapLocal$habitatGrid)[1],
+                     x.maxDet = dim(trapLocal$habitatGrid)[2],
+                     ResizeFactor = trapLocal$resizeFactor,
+                     n.cells = dim(trapLocal$localIndices)[1],
+                     maxNBDets = trapLocal$numLocalIndicesMax,
+                     trapIndex = trapLocal$localIndices,
+                     nTraps = trapLocal$numLocalIndices,
+                     habitatIDDet = trapLocal$habitatGrid,
+                     lengthYCombined = lengthYCombined)
+
+
+nimData <- list(trapCoords = ScaledtrapCoords,
+                habitat.mx = habitatMask,
+                ones = rep(1, nimConstants$M),
+                lowerCoords = c(min(coordsHabitatGridCenter[,1]) - 0.5, min(coordsHabitatGridCenter[,2]) - 0.5),
+                upperCoords = c(max(coordsHabitatGridCenter[,1]) + 0.5, max(coordsHabitatGridCenter[,2]) + 0.5),
+                trials = rep(1, dim(ScaledtrapCoords)[1])
+                
+)
+# We set the parameter values as inits
+nimInits <- list(p0 = p0,
+                 psi = psi,
+                 sigma = sigma)
+```
+
+
+
+### 1.6 Create NIMBLE model
+
+```{r , warning = FALSE, message = FALSE}
+model <- nimbleModel( code = modelCode,
+                      constants = nimConstants,
+                      data = nimData,
+                      inits = nimInits,
+                      check = F,       
+                      calculate = F)  
+```
+
+
+### 1.7 Simualte SCR data from the NIMBLE model
+
+We first need to obtain the list of nodes that will be simuated. We used the 'getDependencies' function from NIMBLE. Using the 'simulate' function from NIMBLE, we will then simulate the activity center (AC) locations ('sxy'), the state of the individual ('z') and SCR observation data ('y') given the values we provided for 'p0', 'sigma' and 'psi'.
+
+
+```{r , warning = FALSE, message = FALSE}
+# FIRST WE GET THE NODES TO SIMULATE
+nodesToSim <- model$getDependencies(c("sxy", "z"), self=T)
+# THEN WE SIMULATE THOSE NODES 
+set.seed(100)
+model$simulate(nodesToSim, includeData = FALSE)
+```
+
+After running 'simulate', the simulated data are stored in the 'model' object. For example, we can access the simulated 'z' and check how many individuals were considered present:
+
+```{r , warning = FALSE, message = FALSE}
+N <- sum(model$z)
+```
+
+We have simulated `r N` individuals present in the population of which `r sum(model$y[,1]>0)` were detected.
+
+
+Here we also make some plots to check where are located the simulated detections in relation with the simulated location of the activity center for a given individual. 
+
+```{r , warning = FALSE, message = FALSE}
+i=5
+#NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i
+model$y[i,1]
+
+#LET'S PLOT THEM
+plot(coordsHabitatGridCenter[,"y"] ~ coordsHabitatGridCenter[,"x"], pch = 1, cex = 1.5) #pch=16) 
+points(trapCoords[,"y"] ~ trapCoords[,"x"], col="red", pch=16 )  
+# PLOT ITS ACTIVITY CETENR 
+points(model$sxy[i, 2] ~ model$sxy[i, 1],col="orange", pch=16) 
+
+whichdets <- model$y[i, (trapLocal$numLocalIndicesMax + 2):(trapLocal$numLocalIndicesMax+model$y[i, 1] + 1)]
+points(ScaledtrapCoords[whichdets, "y"] ~
+         ScaledtrapCoords[whichdets, "x"], col="blue", pch=16) 
+
+par(xpd=TRUE)
+legend(x = -1, y = 13,
+       legend=c("Habitat grid centers", "Traps", "Simulated AC", "Detections"),
+       pt.cex = c(1.5,1),
+       horiz = T,
+       pch=c(1, 16, 16, 16),
+       col=c("black", "red", "orange", "blue"),
+       bty = 'n')
+
+```
+
+## 2. RUN MCMC WITH NIMBLE
+
+Here, we build the NIMBLE model again using the simulated 'y' as data. For simplicity, we used the simulated 'z' as initial values. Then we can fit the SCR model with the simulated 'y' data set.  
+
+```{r , warning = FALSE, message = FALSE}
+nimData1 <- nimData
+nimData1$y <- model$y
+nimInits1 <- nimInits
+nimInits1$z <- model$z
+nimInits1$sxy <- model$sxy
+
+# CREATE AND COMPILE THE NIMBLE MODEL
+model <- nimbleModel( code = modelCode,
+                      constants = nimConstants,
+                      data = nimData1,
+                      inits = nimInits1,
+                      check = F,
+                      calculate = F)
+model$calculate()
+cmodel <- compileNimble(model)
+cmodel$calculate()
+MCMCconf <- configureMCMC(model = model,
+                          monitors = c("N", "sigma", "p0","psi"),
+                          control = list(reflective = TRUE),
+                          thin = 1)
+
+## Add block sampling of sxy coordinates see Turek et al 2021 for further details 
+MCMCconf$removeSamplers("sxy")
+ACnodes <- paste0("sxy[", 1:nimConstants$M, ", 1:2]")
+for(node in ACnodes) {
+  MCMCconf$addSampler(target = node,
+                  type = "RW_block",
+                  control = list(adaptScaleOnly = TRUE),
+                  silent = TRUE)
+}
+
+MCMC <- buildMCMC(MCMCconf)
+cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
+# RUN THE MCMC 
+MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
+                                                             nburnin = 1000,
+                                                             niter = 5000,
+                                                             nchains = 3,
+                                                             samplesAsCodaMCMC = TRUE))
+#plot check 
+basicMCMCplots::chainsPlot(myNimbleOutput)
+```
+
+
+
+## 3. SIMULATE BINOMIAL SCR DATA WITH TRAP COVARIATES ON $p_0$ 
+Now we imagine a scenario where we would like to build a SCR model with trap covariates on baseline detection probability ($p_0$). 
+Compared to the model in (1.3), the baseline detection probability ($p_0$) is linearly modelled as a function of two covariates on the logistic scale such as:
+
+$logit(p0Traps{_j}) = logit(p_0) + BetaTraps_1 * trapCovs1_j + BetaTraps_2 * trapCovs2_j$
+
+### 3.1 Simulate trap covariates 
+
+First, we simulate values for two independent trap covariates. 
+
+```{r , warning = FALSE, message = FALSE}
+set.seed(1)
+trapCovs <- cbind( runif(nimConstants$n.traps,-1, 1),
+                   runif(nimConstants$n.traps,-1, 1))
+```
+
+We now add the trap covariates to the data object.
+```{r , warning = FALSE, message = FALSE}
+nimData$trapCovs <-  trapCovs
+```
+
+We choose the simulated betaTraps values.
+```{r , warning = FALSE, message = FALSE}
+nimInits$betaTraps <- c(-2, 2)
+```
+
+### 3.2 Define model code
+Because we are modelling the effect of trap covariates on baseline detection probability ($p_0$), this means that we have a $p0Traps$ that varies for each trap *j*. When this is the case, we need to provide the ‘p0Traps’ argument for the ‘dbinomLocal_normal’ function, because the ‘p0’ argument only accepts a scalar.
+
+```{r , warning = FALSE, message = FALSE}
+modelCodeTrap <- nimbleCode({
+  ## priors
+  psi ~ dunif(0, 1)
+  sigma ~ dunif(0, 50)
+  p0 ~ dunif(0, 1)
+  
+  #trap covariates 
+  betaTraps[1] ~ dunif(-5,5)
+  betaTraps[2] ~ dunif(-5,5)
+  p0Traps[1:n.traps] <- ilogit(logit(p0) + betaTraps[1] * trapCovs[1:n.traps, 1] +
+                                           betaTraps[2] * trapCovs[1:n.traps, 2])
+    
+  ## loop over individuals
+  for(i in 1:M) {
+    ## AC coordinates
+    sxy[i,1] ~ dunif(0, x.max)
+    sxy[i,2] ~ dunif(0, y.max)
+    ## habitat constraint 
+    ones[i] ~ dHabitatMask( s = sxy[i,1:2],
+                            xmin = lowerCoords[1],
+                            xmax = upperCoords[1],
+                            ymin = lowerCoords[2],
+                            ymax = upperCoords[2],
+                            habitat = habitat.mx[1:y.max,1:x.max])
+    ## latent dead/alive indicators
+    z[i] ~ dbern(psi)
+    ## likelihood
+    y[i, 1:lengthYCombined] ~ dbinomLocal_normal( size = trials[1:n.traps],
+                                                  p0Traps = p0Traps[1:n.traps],
+                                                  s = sxy[i,1:2],
+                                                  sigma = sigma,
+                                                  trapCoords = trapCoords[1:n.traps,1:2],
+                                                  localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
+                                                  localTrapsNum = nTraps[1:n.cells],
+                                                  resizeFactor = ResizeFactor,
+                                                  habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
+                                                  indicator = z[i],
+                                                  lengthYCombined = lengthYCombined)
+   }
+  ## derived quantity: total population size
+  N <- sum(z[1:M])
+})
+```
+
+
+
+### 3.3 Create NIMBLE model
+
+```{r , warning = FALSE, message = FALSE}
+model <- nimbleModel( code = modelCodeTrap,
+                      constants = nimConstants,
+                      data = nimData,
+                      inits = nimInits,
+                      check = F,       
+                      calculate = T)  
+```
+
+
+### 3.4 Simulate SCR from the nimble model  
+
+```{r , warning = FALSE, message = FALSE}
+# FIRST WE GET THE NODES TO SIMULATE
+nodesToSim <- model$getDependencies(c("sxy", "z"), self=T)
+# THEN WE SIMULATE THOSE NODES 
+set.seed(100)
+model$simulate(nodesToSim, includeData = FALSE)
+```
+
+```{r , warning = FALSE, message = FALSE}
+N <- sum(model$z)
+```
+
+We have simulated `r N` individuals present in the population of which `r sum(model$y[,1]>0)` were detected.
+
+Here we make some plots to check where are located the detections in relation with the location of activity center. 
+
+```{r , warning = FALSE, message = FALSE}
+i=5
+#NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i
+model$y[i,1]
+
+#LET'S PLOT THEM
+plot(coordsHabitatGridCenter[,"y"] ~ coordsHabitatGridCenter[,"x"], pch = 1, cex = 1.5) #pch=16) 
+points(trapCoords[,"y"] ~ trapCoords[,"x"], col="red", pch=16 )  
+# PLOT ITS ACTIVITY CETENR 
+points(model$sxy[i, 2] ~ model$sxy[i, 1],col="orange", pch=16) 
+
+whichdets <- model$y[i, (trapLocal$numLocalIndicesMax + 2):(trapLocal$numLocalIndicesMax+model$y[i, 1] + 1)]
+points(ScaledtrapCoords[whichdets, "y"] ~
+         ScaledtrapCoords[whichdets, "x"], col="blue", pch=16) 
+
+par(xpd=TRUE)
+legend(x = -1, y = 13,
+       legend=c("Habitat grid centers", "Traps", "Activity center", "Detections"),
+       pt.cex = c(1.5,1),
+       horiz = T,
+       pch=c(1, 16, 16, 16),
+       col=c("black", "red", "orange", "blue"),
+       bty = 'n')
+
+
+
+```
+
+## 4. RUN MCMC WITH NIMBLE
+
+```{r , warning = FALSE, message = FALSE}
+nimData1 <- nimData
+nimData1$y <- model$y
+nimInits1 <- nimInits
+nimInits1$z <- model$z
+nimInits1$sxy <- model$sxy
+
+
+# CREATE AND COMPILE THE NIMBLE MODEL
+model <- nimbleModel( code = modelCodeTrap,
+                      constants = nimConstants,
+                      data = nimData1,
+                      inits = nimInits1,
+                      check = F,
+                      calculate = F)
+model$calculate()
+cmodel <- compileNimble(model)
+cmodel$calculate()
+MCMCconf <- configureMCMC(model = model,
+                          monitors = c("N", "sigma", "p0","psi","betaTraps"),
+                          control = list(reflective = TRUE),
+                          thin = 1)
+
+## Add block sampling of sxy coordinates see Turek et al 2021 for further details 
+MCMCconf$removeSamplers("sxy")
+ACnodes <- paste0("sxy[", 1:nimConstants$M, ", 1:2]")
+for(node in ACnodes) {
+  MCMCconf$addSampler(target = node,
+                  type = "RW_block",
+                  control = list(adaptScaleOnly = TRUE),
+                  silent = TRUE)
+}
+
+MCMC <- buildMCMC(MCMCconf)
+cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
+# RUN THE MCMC 
+MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
+                                                             nburnin = 1000,
+                                                             niter = 5000,
+                                                             nchains = 3,
+                                                             samplesAsCodaMCMC = TRUE))
+#plot check 
+basicMCMCplots::chainsPlot(myNimbleOutput)
+```
+
+## REFERENCES

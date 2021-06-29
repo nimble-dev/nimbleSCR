@@ -90,7 +90,19 @@ We also create objects `code`, `constants`, `data`, and `inits` for later use in
 
 ```{r echo = F}
 ##load("C:/Users/cymi/Downloads/WolverineData.RData")
-load("~/Downloads/WolverineData.RData")
+#load("~/Downloads/WolverineData.RData")
+## So it works for everyone
+if(Sys.info()['user'] == 'dturek') {
+  baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
+} else if(Sys.info()['user'] == 'pidu') {
+  baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'            ## Pierre
+} else if(Sys.info()['user'] == 'cymi') {
+  baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
+} else if(Sys.info()['user'] == 'arichbi') {
+  baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else stop('unknown user')
+
+load(file.path(baseDir,"nimbleSCR/tests/testthat/WolverineData.RData"))
 ```
 
 ```{r eval = F}
