@@ -1,10 +1,13 @@
 ---
 title: "Using nimbleSCR to simulate and fit Bayesian SCR models"
 author: "Cyril Milleret"
-output:
-  html_document: default
-  word_document: default
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
 bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Using nimbleSCR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -18,6 +21,7 @@ In this vignette, we will use the nimbleSCR [@nimbleSCR] package and NIMBLE [@de
 # LOAD PACKAGES
 library(nimble)
 library(nimbleSCR)
+library(basicMCMCplots)
 ```
 
 
@@ -67,7 +71,7 @@ trapLocal <- getLocalObjects(habitatMask = habitatMask,
                              coords = ScaledtrapCoords,
                              dmax = 7,
                              resizeFactor = 1,
-                             plot.check = F
+                             plot.check = FALSE
 )
 ```
 
@@ -168,7 +172,6 @@ nimData <- list(trapCoords = ScaledtrapCoords,
                 lowerCoords = c(min(coordsHabitatGridCenter[,1]) - 0.5, min(coordsHabitatGridCenter[,2]) - 0.5),
                 upperCoords = c(max(coordsHabitatGridCenter[,1]) + 0.5, max(coordsHabitatGridCenter[,2]) + 0.5),
                 trials = rep(1, dim(ScaledtrapCoords)[1])
-                
 )
 # We set the parameter values as inits
 nimInits <- list(p0 = p0,
@@ -215,7 +218,7 @@ We have simulated `r N` individuals present in the population of which `r sum(mo
 Here we also make some plots to check where are located the simulated detections in relation with the simulated location of the activity center for a given individual. 
 
 ```{r , warning = FALSE, message = FALSE}
-i=5
+i <- 5
 #NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i
 model$y[i,1]
 
@@ -285,7 +288,7 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
                                                              nchains = 3,
                                                              samplesAsCodaMCMC = TRUE))
 #plot check 
-basicMCMCplots::chainsPlot(myNimbleOutput)
+chainsPlot(myNimbleOutput)
 ```
 
 
@@ -397,7 +400,7 @@ We have simulated `r N` individuals present in the population of which `r sum(mo
 Here we make some plots to check where are located the detections in relation with the location of activity center. 
 
 ```{r , warning = FALSE, message = FALSE}
-i=5
+i <- 5
 #NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i
 model$y[i,1]
 
@@ -468,7 +471,7 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
                                                              nchains = 3,
                                                              samplesAsCodaMCMC = TRUE))
 #plot check 
-basicMCMCplots::chainsPlot(myNimbleOutput)
+chainsPlot(myNimbleOutput)
 ```
 
 ## REFERENCES

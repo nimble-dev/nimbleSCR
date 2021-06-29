@@ -88,7 +88,7 @@ We also create objects `code`, `constants`, `data`, and `inits` for later use in
 #load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
 ```
 
-```{r echo = F}
+```{r echo = FALSE}
 ##load("C:/Users/cymi/Downloads/WolverineData.RData")
 #load("~/Downloads/WolverineData.RData")
 ## So it works for everyone
@@ -105,7 +105,7 @@ if(Sys.info()['user'] == 'dturek') {
 load(file.path(baseDir,"nimbleSCR/tests/testthat/WolverineData.RData"))
 ```
 
-```{r eval = F}
+```{r eval = FALSE}
 load("WolverineData.RData")
 ```
 
@@ -148,6 +148,8 @@ The goal is to create the object `localIndices` of the smallest dimension possib
 Here, we resize the habitat matrix by a factor of 24, which corresponds to the `resizeFactor` argument. This means that 24x24 cells are aggregated into a single cell.  The `resizeFactor` value will affect how many rows  `localIndices` will be composed of.
 
 ```{r, fig.width = 6, fig.height = 7}
+set.seed(2)
+
 DetectorIndex <- getLocalObjects(habitatMask = data$habitat.mx,
                                coords = data$detector.xy,
                                dmax = 38,
@@ -161,7 +163,6 @@ constants$maxNBDets <- DetectorIndex$numLocalIndicesMax
 data$detectorIndex <- DetectorIndex$localIndices
 data$nDetectors <- DetectorIndex$numLocalIndices
 data$habitatIDDet <- DetectorIndex$habitatGrid
-
 ```
 
 ### 2. Sparse representation of the observation matrix
@@ -178,7 +179,6 @@ data$y <- ySparse$y[,,1]
 data$yDets <- ySparse$detIndices[,,1]
 data$nbDetections <- ySparse$detNums[,1]
 constants$nMaxDetectors <- ySparse$maxDetNums
-
 ```
 
 
@@ -191,7 +191,7 @@ The function `dbinomLocal_normal()` takes the `logical` argument `indicator` tha
 
 Now, we can create the `nimble` model object, using the model structure
 defined in `code`, and the constants, data, and initial values.
-```{r }
+```{r eval = FALSE}
 Rmodel <- nimbleModel(code, constants, data, inits)
 ```
 
@@ -209,7 +209,7 @@ We also remove the univariate Metropolis-Hastings samplers that were assigned by
 Instead, we add joint Metropolis-Hastings samplers (`RW_block`)
 samplers to each $x$ and $y$ coordinate pair `sxy[i, 1:2]`.
 
-```{r message = FALSE}
+```{r message = FALSE, eval = FALSE}
 conf <- configureMCMC(Rmodel, monitors = c("N", "sigma", "p0"), print = FALSE)
 conf$removeSamplers("sxy")
 ACnodes <- paste0("sxy[", 1:constants$n.individuals, ", 1:2]")
@@ -229,7 +229,7 @@ Rmcmc <- buildMCMC(conf)
 Finally, we compile both the model and MCMC objects and
 execute the compiled MCMC for 10 000 iterations.
 
-```{r }
+```{r eval = FALSE}
 Cmodel <- compileNimble(Rmodel)
 Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
 MCMC_runtime <- system.time(
@@ -237,10 +237,10 @@ MCMC_runtime <- system.time(
 )
 ```
 ```{r eval = FALSE, echo = FALSE}
-#save(samples, time, file = "wolverine_samples.RData")
+save(samples, MCMC_runtime, file = file.path(baseDir,"nimbleSCR/tests/testthat/wolverine_samples.RData"))
 ```
 ```{r echo = FALSE}
-#load("wolverine_samples.RData")
+load(file.path(baseDir,"nimbleSCR/tests/testthat/wolverine_samples.RData"))
 ```
 
 
@@ -259,7 +259,7 @@ round(effectiveSize(samples),2)
 ```
 We can also calculate the MCMC efficiency for each parameter; this corresponds to the rate of generating effectively independent posterior samples, per second of MCMC runtime:
 ```{r }
- round(effectiveSize(samples)/MCMC_runtime[3],2)  
+round(effectiveSize(samples)/MCMC_runtime[3],2)  
 ```
 Summary of posterior distributions for each parameter:
 ```{r }
@@ -268,7 +268,7 @@ round(samplesSummary(samples), 2)
 
 Examine traceplots and posterior distributions:
 ```{r }
-basicMCMCplots::chainsPlot(samples)
+chainsPlot(samples)
 ```
 
 ## References

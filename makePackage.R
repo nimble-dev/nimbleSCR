@@ -60,7 +60,8 @@ library(nimbleSCR)
 # # distributions (slow)
 # source(file.path(baseDir,"nimbleSCR/test/testthat/testDistributionFunctions.R"))
 library(testthat)
-test_check("nimbleSCR") 
+test_package("nimbleSCR")
+devtools::test("nimbleSCR")
 
 ## inspect package vignettes
 (vignettes <- vignette(package = 'nimbleSCR'))
