@@ -85,10 +85,6 @@ The data file can be downloaded at [https://doi.org/10.5061/dryad.42m96c8].
 We also create objects `code`, `constants`, `data`, and `inits` for later use in the function `nimbleModel`. 
 
 ```{r echo = FALSE}
-#load(system.file("extdata", "wolverine_data.RData", package = "nimbleSCR"))
-```
-
-```{r echo = FALSE}
 ##load("C:/Users/cymi/Downloads/WolverineData.RData")
 #load("~/Downloads/WolverineData.RData")
 ## So it works for everyone
@@ -100,9 +96,13 @@ if(Sys.info()['user'] == 'dturek') {
   baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
   baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
-} else stop('unknown user')
+} else baseDir <- NULL
 
-load(file.path(baseDir,"nimbleSCR/tests/testthat/WolverineData.RData"))
+if(is.null(baseDir)) {
+    load(system.file("extdata", "WolverineData.RData", package = "nimbleSCR"))
+} else {
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverineData.RData"))
+}
 ```
 
 ```{r eval = FALSE}
@@ -240,7 +240,11 @@ MCMC_runtime <- system.time(
 save(samples, MCMC_runtime, file = file.path(baseDir,"nimbleSCR/tests/testthat/wolverine_samples.RData"))
 ```
 ```{r echo = FALSE}
-load(file.path(baseDir,"nimbleSCR/tests/testthat/wolverine_samples.RData"))
+if(is.null(baseDir)) {
+    load(system.file("extdata", "wolverine_samples.RData", package = "nimbleSCR"))
+} else {
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/wolverine_samples.RData"))
+}
 ```
 
 
