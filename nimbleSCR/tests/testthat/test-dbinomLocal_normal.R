@@ -18,8 +18,13 @@ if(Sys.info()['user'] == 'dturek') {
   baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
   baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
-} else stop('unknown user')
+} else baseDir <- NULL
 
+if(is.null(baseDir)) {
+  load(system.file("extdata", "WolverineData.RData", package = "nimbleSCR"))
+} else {
+  load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverineData.RData"))
+}
 #---- 1. REPRODUCE RESULTS FROM PUBLISHED PAPERS ----
 #----   1.1 Turek et al 2021 Ecosphere ----
 ## REPRODUCE WOLVERINE LIKELIHODD CALCULATION FROM THE WOLVERINE EXAMPLE IN DANIEL'S PAPER
@@ -28,7 +33,7 @@ if(Sys.info()['user'] == 'dturek') {
 test_that("Wolverine LogProb is calculated correctly in R",{
   truthWolverineLikelihood <- "-15726.3284159870"# as calculated in the paper
   #Code as in the vignette https://nimble-dev.github.io/nimbleSCR/wolverine_example.html
-  load(file.path(baseDir,"nimbleSCR/tests/testthat/WolverineData.RData"))
+  #load(file.path(baseDir,"nimbleSCR/tests/testthat/WolverineData.RData"))
   code <- nimbleCode({
     ## priors
     psi ~ dunif(0, 1)

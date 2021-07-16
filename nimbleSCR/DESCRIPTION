@@ -1,7 +1,7 @@
 Package: nimbleSCR
 Type: Package
 Title: Spatial Capture-Recapture (SCR) Methods Using 'nimble'
-Version: 0.1.2
+Version: 0.1.3
 Maintainer: Daniel Turek <danielturek@gmail.com>
 Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Daniel", "Turek", role = c("aut", "cre"), email = "danielturek@gmail.com"),
