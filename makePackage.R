@@ -1,4 +1,4 @@
-
+rm(list=ls())
 library(devtools)
 library(roxygen2)
 library(nimble, warn.conflicts = FALSE)
