@@ -127,6 +127,8 @@ rbernppDetection_normal <- nimbleFunction(
     } else if(n > 1) {
       print("rbernppDetection_normal only allows n = 1; using n = 1")
     }
+    if(indicator==0){return(c(0,0))}else{
+      
     ## Integrate the detection intensity over all detection windows
     windowIntensities <- integrateIntensity_normal(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
                                                    upperCoords = upperCoords[1:numWindows,,drop = FALSE],
@@ -142,6 +144,7 @@ rbernppDetection_normal <- nimbleFunction(
                                                    windowIntensities = windowIntensities[1:numWindows],
                                                    sd = sd)
     return(outCoordinates[1,])
+    }
     returnType(double(1))
   }
 )
