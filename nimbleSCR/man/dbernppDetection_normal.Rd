@@ -12,8 +12,6 @@ dbernppDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndex,
-  numPoints,
   numWindows,
   indicator,
   log = 0
@@ -26,14 +24,12 @@ rbernppDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndex,
-  numPoints,
   numWindows,
   indicator
 )
 }
 \arguments{
-\item{x}{Vector of x- and y-coordinates of a single spatial point (detection location).}
+\item{x}{Vector with three elements representing the x- and y-coordinates and the corresponding id the detection window of a single spatial point (detection location).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -42,10 +38,6 @@ rbernppDetection_normal(
 \item{sd}{Standard deviation of the isotropic multivariate normal distribution.}
 
 \item{baseIntensities}{Vector of baseline detection intensities for all detection windows.}
-
-\item{windowIndex}{Index of the detection window where \code{x} falls.}
-
-\item{numPoints}{Number (0 or 1) of points that should be considered.}
 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
@@ -66,8 +58,36 @@ Density and random generation functions of the Bernoulli point process for detec
 An isotropic multivariate normal distribution is used as the decay kernel.
 }
 \examples{
-lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
-upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)  
+coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
+                                    1.5, 3.5,
+                                    2.5, 3.5,
+                                    3.5, 3.5,
+                                    0.5, 2.5,
+                                    1.5, 2.5,
+                                    2.5, 2.5,
+                                    3.5, 2.5,
+                                    0.5, 1.5,
+                                    1.5, 1.5,
+                                    2.5, 1.5,
+                                    3.5, 1.5,
+                                    0.5, 0.5,
+                                    1.5, 0.5,
+                                    2.5, 0.5,
+                                    3.5, 0.5), ncol = 2,byrow = TRUE)
+colnames(coordsHabitatGridCenter) <- c("x","y")
+# Create observation windows
+ lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
+ upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
+ colnames(lowerCoords) <- colnames(upperCoords) <- c("x","y")
+# Rescale coordinates
+ScaledLowerCoords <- scaleCoordsToHabitatGrid(coordsData =  lowerCoords,
+                                              coordsHabitatGridCenter = coordsHabitatGridCenter)
+ScaledUpperCoords <- scaleCoordsToHabitatGrid(coordsData =  upperCoords,
+                                              coordsHabitatGridCenter = coordsHabitatGridCenter)
+ScaledUpperCoords$coordsDataScaled[,2] <- ScaledUpperCoords$coordsDataScaled[,2] + 1.5
+ScaledLowerCoords$coordsDataScaled[,2] <- ScaledLowerCoords$coordsDataScaled[,2] - 1.5
+
+
 s <- c(1, 1)
 sd <- 0.1
 baseIntensities <- c(1:4)
@@ -75,11 +95,16 @@ windowIndex <- 4
 numPoints <- 1
 numWindows <- 4
 indicator <- 1
-dbernppDetection_normal(c(1.1, 1.2), lowerCoords, upperCoords,
-                        s, sd, baseIntensities, 
-                        windowIndex, numPoints, numWindows,
-                        indicator, log = TRUE)
+x <- c(0.5, 2)
+windowIndex <- getWindowIndex(curCoords = x,
+                              lowerCoords = ScaledLowerCoords$coordsDataScaled,
+                              upperCoords =ScaledUpperCoords$coordsDataScaled)
+x <- c(x, windowIndex)
 
+dbernppDetection_normal(x, lowerCoords, upperCoords,
+                        s, sd, baseIntensities
+                        , numWindows,
+                        indicator, log = TRUE)
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

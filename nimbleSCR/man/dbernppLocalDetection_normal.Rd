@@ -12,12 +12,10 @@ dbernppLocalDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndex,
   habitatGridLocal,
   resizeFactor,
   localObsWindowIndices,
   numLocalObsWindows,
-  numPoints,
   numWindows,
   indicator,
   log = 0
@@ -30,18 +28,16 @@ rbernppLocalDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndex,
   habitatGridLocal,
   resizeFactor,
   localObsWindowIndices,
   numLocalObsWindows,
-  numPoints,
   numWindows,
   indicator
 )
 }
 \arguments{
-\item{x}{Vector of x- and y-coordinates of a spatial point (detection location).}
+\item{x}{Vector with three elements representing the x- and y-coordinates and the corresponding id the detection window of a single spatial point (detection location).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -50,8 +46,6 @@ rbernppLocalDetection_normal(
 \item{sd}{Standard deviation of the isotropic multivariate normal distribution.}
 
 \item{baseIntensities}{Vector of baseline detection intensities for all detection windows.}
-
-\item{windowIndex}{Index of the detection window where \code{x} falls.}
 
 \item{habitatGridLocal}{Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).}
 
@@ -62,8 +56,6 @@ rbernppLocalDetection_normal(
 \item{numLocalObsWindows}{Vector of numbers of local observation windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
 The ith number gives the number of local (original) observation windows for the ith (rescaled) habitat window.}
 
-\item{numPoints}{Number (0 or 1) of points that should be considered.}
-
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
 
@@ -72,7 +64,7 @@ and thus the probability of no detection is 1.}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
-\item{n}{Integer specifying the number of realisations to generate.  Only n = 1 is supported.}
+\item{n}{Integer specifying the number of realizations to generate.  Only n = 1 is supported.}
 }
 \value{
 The (log) probability density of the observation vector \code{x}.
@@ -85,21 +77,21 @@ The local evaluation technique is implemented. An isotropic multivariate normal 
 
 # Create habitat grid
 coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
-                                   1.5, 3.5,
-                                   2.5, 3.5,
-                                   3.5, 3.5,
-                                   0.5, 2.5,
-                                   1.5, 2.5,
-                                   2.5, 2.5,
-                                   3.5, 2.5,
-                                   0.5, 1.5,
-                                   1.5, 1.5,
-                                   2.5, 1.5,
-                                   3.5, 1.5,
-                                   0.5, 0.5,
-                                   1.5, 0.5,
-                                   2.5, 0.5,
-                                   3.5, 0.5), ncol = 2,byrow = TRUE)
+                                    1.5, 3.5,
+                                    2.5, 3.5,
+                                    3.5, 3.5,
+                                    0.5, 2.5,
+                                    1.5, 2.5,
+                                    2.5, 2.5,
+                                    3.5, 2.5,
+                                    0.5, 1.5,
+                                    1.5, 1.5,
+                                    2.5, 1.5,
+                                    3.5, 1.5,
+                                    0.5, 0.5,
+                                    1.5, 0.5,
+                                    2.5, 0.5,
+                                    3.5, 0.5), ncol = 2,byrow = TRUE)
 colnames(coordsHabitatGridCenter) <- c("x","y")
 # Create observation windows
 lowerCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
@@ -109,7 +101,7 @@ colnames(lowerCoords) <- colnames(upperCoords) <- c("x","y")
 plot(coordsHabitatGridCenter[,"y"]~coordsHabitatGridCenter[,"x"],pch=16) 
 points(lowerCoords[,"y"]~lowerCoords[,"x"],col="red",pch=16) 
 points(upperCoords[,"y"]~upperCoords[,"x"],col="red",pch=16) 
-
+#'
 s <- c(1, 1)
 sd <- 0.1
 baseIntensities <- c(1:4)
@@ -128,18 +120,22 @@ ScaledLowerCoords$coordsDataScaled[,2] <- ScaledLowerCoords$coordsDataScaled[,2]
 habitatMask <- matrix(1, nrow = 4, ncol=4, byrow = TRUE)
 # Create local objects 
 ObsWindowsLocal <- getLocalObjects(habitatMask = habitatMask,
-                                  coords = ScaledLowerCoords$coordsDataScaled,
-                                  dmax=3,
-                                  resizeFactor = 1,
-                                  plot.check = TRUE
+                                   coords = ScaledLowerCoords$coordsDataScaled,
+                                   dmax=3,
+                                   resizeFactor = 1,
+                                   plot.check = TRUE
 )
-
-dbernppLocalDetection_normal(c(1.1, 1.2), ScaledLowerCoords$coordsDataScaled,
-                            ScaledUpperCoords$coordsDataScaled,
-                            s, sd, baseIntensities, windowIndex, 
-                            ObsWindowsLocal$habitatGrid, ObsWindowsLocal$resizeFactor,
-                            ObsWindowsLocal$localIndices,ObsWindowsLocal$numLocalIndices,
-                            numPoints, numWindows, indicator, log = TRUE)
+x <- c(1.1, 1.2)
+windowIndex <- getWindowIndex(curCoords = x,
+                              lowerCoords = ScaledLowerCoords$coordsDataScaled,
+                              upperCoords =ScaledUpperCoords$coordsDataScaled)
+x <- c(x, windowIndex)
+dbernppLocalDetection_normal(x, ScaledLowerCoords$coordsDataScaled,
+                             ScaledUpperCoords$coordsDataScaled,
+                             s, sd, baseIntensities,  
+                             ObsWindowsLocal$habitatGrid, ObsWindowsLocal$resizeFactor,
+                             ObsWindowsLocal$localIndices,ObsWindowsLocal$numLocalIndices,
+                             numWindows, indicator, log = TRUE)
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

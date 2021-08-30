@@ -186,11 +186,51 @@ rbernppLocalACmovement_normal <- nimbleFunction(
     numGridCols            = integer(0),
     numWindows             = integer(0)
   ) {
-    print("rbernppLocalACmovement_normal is not implemented.")
+    ## Ensure that only one sample is requested
+    if(n <= 0) {
+      stop("The number of requested samples must be above zero")
+    } else if(n > 1) {
+      print("rbernppACmovement only allows n = 1; using n = 1")
+    }
+    ## Find in which habitat window (from the rescaled habitat grid) the s (source AC location) falls in
+    sourceAC <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    ## Get local windows ids within a close distance from the source AC  
+    numWindowsLoc <- numLocalHabWindows[sourceAC] 
+    localWindows <- localHabWindowIndices[sourceAC, 1:numWindowsLoc]
+    
+    ## Integrate the intensity function over all habitat windows
+    windowIntensities <- integrateIntensityLocal_normal(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
+                                                        upperCoords = upperCoords[1:numWindows,,drop = FALSE], 
+                                                        s = s,
+                                                        baseIntensities = baseIntensities[1:numWindows], 
+                                                        sd = sd,
+                                                        numLocalWindows = numWindowsLoc, 
+                                                        localWindows = localWindows)
+    sumIntensity <- sum(windowIntensities)
+    ## DO THE SUBSETTING OF THE LOWER AND UPPER COORDS HERE. 
+    lowerCoords1 <- nimMatrix(nrow = numWindowsLoc, ncol = 2)
+    upperCoords1 <- nimMatrix(nrow = numWindowsLoc, ncol = 2)
+    
+    for(i in 1:numWindowsLoc){
+      lowerCoords1[i,1:2] <- lowerCoords[localWindows[i],,drop = FALSE]
+      upperCoords1[i,1:2] <- upperCoords[localWindows[i],,drop = FALSE]
+    }
+    
+    ## Call the statified rejection sampler
+    outCoordinates <- stratRejectionSampler_normal(numPoints = 1,
+                                                   lowerCoords = lowerCoords1[,,drop = FALSE],
+                                                   upperCoords = upperCoords1[,,drop = FALSE],
+                                                   s = s,
+                                                   windowIntensities = windowIntensities[1:numWindowsLoc],
+                                                   sd = sd)
+    return(outCoordinates[1,])
     returnType(double(1))
-    return(s)
+    
+    
   }
+  
 )
+
 
 
 

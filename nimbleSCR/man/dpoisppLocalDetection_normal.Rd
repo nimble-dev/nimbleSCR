@@ -12,12 +12,11 @@ dpoisppLocalDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndices,
   habitatGridLocal,
   resizeFactor,
   localObsWindowIndices,
   numLocalObsWindows,
-  numPoints,
+  numMaxPoints,
   numWindows,
   indicator,
   log = 0
@@ -30,18 +29,17 @@ rpoisppLocalDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndices,
   habitatGridLocal,
   resizeFactor,
   localObsWindowIndices,
   numLocalObsWindows,
-  numPoints,
+  numMaxPoints,
   numWindows,
   indicator
 )
 }
 \arguments{
-\item{x}{Matrix of x- and y-coordinates of a set of spatial points (detectionn locations). One row corresponds to one point.}
+\item{x}{Matrix of x- and y-coordinates and the corresponding id the detection window of a set of spatial points (detection locations). One row corresponds to one point.}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -50,8 +48,6 @@ rpoisppLocalDetection_normal(
 \item{sd}{Standard deviation of the isotropic multivariate normal distribution.}
 
 \item{baseIntensities}{Vector of baseline detection intensities for all detection windows.}
-
-\item{windowIndices}{Vector of indices of detection windows where each point of \code{x} falls.}
 
 \item{habitatGridLocal}{Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).}
 
@@ -62,8 +58,7 @@ rpoisppLocalDetection_normal(
 \item{numLocalObsWindows}{Vector of numbers of local observation windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
 The ith number gives the number of local (original) observation windows for the ith (rescaled) habitat window.}
 
-\item{numPoints}{Number of points that should be considered. This value (non-negative integer) is used to truncate \code{x} 
-so that extra rows beyond \code{numPoints} are ignored.}
+\item{numMaxPoints}{Maximum number of points. This value (non-negative integer) is only used when simulating detections to constrain the maximum number of detections.}
 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
@@ -142,11 +137,22 @@ ObsWindowsLocal <- getLocalObjects(habitatMask = habitatMask,
 )
 
 # Detection locations
-x <- matrix(c(0.5, 0.2, 1.1, 0.4, 1.4, 0.3, 0.1, 1.3, 1, 1.5), nrow = 5, byrow = TRUE)
-dpoisppLocalDetection_normal(x, ScaledLowerCoords, ScaledUpperCoords, s, sd, baseIntensities, windowIndex, 
+x <- matrix(c(1.5, 2, 1.1, 1.5, 1.4, 0.7, 2, 1.3, 1, 1.5), nrow = 5, byrow = TRUE)
+
+# get the window indeces on the third dimension of x
+windowIndexes <- 0
+for(i in 1:nrow(x)){
+  windowIndexes[i] <- getWindowIndex(curCoords = x[i,],
+                                     lowerCoords = ScaledLowerCoords,
+                                     upperCoords =ScaledUpperCoords)
+}
+x <- cbind(x, windowIndexes)
+# get the total number of detections on x[1,1]
+x <- rbind(c(length(windowIndexes),0,0) ,x )
+dpoisppLocalDetection_normal(x, ScaledLowerCoords, ScaledUpperCoords, s, sd, baseIntensities,  
                              ObsWindowsLocal$habitatGrid, ObsWindowsLocal$resizeFactor,
                              ObsWindowsLocal$localIndices,ObsWindowsLocal$numLocalIndices,
-                             numPoints, numWindows, indicator, log = TRUE)
+                             numMaxPoints = dim(x)[1], numWindows, indicator, log = TRUE)
 }
 \author{
 Wei Zhang and Cyril Milleret

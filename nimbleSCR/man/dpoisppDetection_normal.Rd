@@ -12,8 +12,7 @@ dpoisppDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndices,
-  numPoints,
+  numMaxPoints,
   numWindows,
   indicator,
   log = 0
@@ -26,14 +25,13 @@ rpoisppDetection_normal(
   s,
   sd,
   baseIntensities,
-  windowIndices,
-  numPoints,
+  numMaxPoints,
   numWindows,
   indicator
 )
 }
 \arguments{
-\item{x}{Matrix of x- and y-coordinates of a set of spatial points (detection locations). One row corresponds to one point.}
+\item{x}{Matrix of x- and y-coordinates and the corresponding id the detection window of a set of spatial points (detection locations). One row corresponds to one point.}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -43,12 +41,7 @@ rpoisppDetection_normal(
 
 \item{baseIntensities}{Vector of baseline detection intensities for all detection windows.}
 
-\item{windowIndices}{Vector of indices of detection windows where each point of \code{x} falls.}
-
-\item{numPoints}{Number of points that should be considered. For \code{dpoisppDetection_normal}, this should be a non-negative integer and is used to truncate \code{x} 
-so that extra rows beyond \code{numPoints} are ignored. For \code{rpoisppDetection_normal}, this can be any integer. 
-Usually it is set to be a negative value, which indicates that the number of points is generated from a Poisson model. 
-Otherwise, the number of points generated will be equal to the specified value.}
+\item{numMaxPoints}{Maximum number of points. This value (non-negative integer) is only used when simulating detections to constrain the maximum number of detections.}
 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
@@ -69,9 +62,54 @@ Density and random generation functions of the Poisson point process for detecti
 An isotropic multivariate normal distribution is used as the decay kernel.
 }
 \examples{
-x <- matrix(c(0.5, 0.2, 1.1, 0.4, 1.4, 0.3, 0.1, 1.3, 1, 1.5), nrow = 5, byrow = TRUE)
+coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
+                                    1.5, 3.5,
+                                    2.5, 3.5,
+                                    3.5, 3.5,
+                                    0.5, 2.5,
+                                    1.5, 2.5,
+                                    2.5, 2.5,
+                                    3.5, 2.5,
+                                    0.5, 1.5,
+                                    1.5, 1.5,
+                                    2.5, 1.5,
+                                    3.5, 1.5,
+                                    0.5, 0.5,
+                                    1.5, 0.5,
+                                    2.5, 0.5,
+                                    3.5, 0.5), ncol = 2,byrow = TRUE)
+colnames(coordsHabitatGridCenter) <- c("x","y")
+# Create observation windows
 lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
 upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
+colnames(lowerCoords) <- colnames(upperCoords) <- c("x","y")
+
+# Rescale coordinates
+ScaledLowerCoords <- scaleCoordsToHabitatGrid(coordsData =  lowerCoords,
+                                              coordsHabitatGridCenter = coordsHabitatGridCenter)
+ScaledUpperCoords <- scaleCoordsToHabitatGrid(coordsData =  upperCoords,
+                                              coordsHabitatGridCenter = coordsHabitatGridCenter)
+ScaledUpperCoords$coordsDataScaled[,2] <- ScaledUpperCoords$coordsDataScaled[,2] + 1.5
+ScaledLowerCoords$coordsDataScaled[,2] <- ScaledLowerCoords$coordsDataScaled[,2] - 1.5
+
+
+
+# Detection locations
+x <- matrix(c(1.5, 2, 1.1, 1.5,0.6, 2.1, 0.5, 2, 1, 1.5), nrow = 5, byrow = TRUE)
+
+# get the window indeces on the third dimension of x
+
+windowIndexes <- 0
+for(i in 1:nrow(x)){
+  windowIndexes[i] <- getWindowIndex(curCoords = x[i,],
+                                     lowerCoords = ScaledLowerCoords$coordsDataScaled,
+                                     upperCoords = ScaledUpperCoords$coordsDataScaled)
+}
+x <- cbind(x, windowIndexes)
+# get the total number of detections on x[1,1]
+x <- rbind(c(length(windowIndexes),0,0) ,x )
+
+
 s <- c(1, 1)
 sd <- 0.1
 baseIntensities <- c(1:4)
@@ -79,8 +117,8 @@ windowIndices <- c(1, 2, 2, 3, 4)
 numPoints <- 5
 numWindows <- 4
 indicator <- 1
-dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities,
-                        windowIndices, numPoints, numWindows, indicator, log = TRUE)
+dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities
+                        , numMaxPoints = dim(x)[1] , numWindows, indicator, log = TRUE)
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

@@ -164,14 +164,12 @@
         registerDistributions(
             list(
                 dbernppDetection_normal = list(
-                    BUGSdist = "dbernppDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, windowIndex,
-                                                        numPoints, numWindows, indicator)",
+                    BUGSdist = "dbernppDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities,  numWindows, indicator)",
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
-                              "windowIndex = double(0)", "numPoints = double(0)", "numWindows = double(0)", "indicator = double(0)"),
+                              "numWindows = double(0)", "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
-                )
+                    mixedSizes = FALSE)
             ),
             verbose = FALSE)
         
@@ -196,17 +194,16 @@
         registerDistributions(
             list(
                 dbernppLocalDetection_normal = list(
-                    BUGSdist = "dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, windowIndex, 
-                                                             habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows, numPoints, numWindows, indicator)",
+                    BUGSdist = "dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
+                                 habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
-                              "s = double(1)", "sd = double(0)", "baseIntensities = double(1)", "windowIndex = double(0)",
+                              "s = double(1)", "sd = double(0)", "baseIntensities = double(1)", 
                               "habitatGridLocal = double(2)", "resizeFactor = double(0)",
                               "localObsWindowIndices = double(2)", "numLocalObsWindows = double(1)", 
-                              "numPoints = double(0)", "numWindows = double(0)",
+                              "numWindows = double(0)",
                               "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
-                )
+                    mixedSizes = FALSE)
             ),
             verbose = FALSE)
         
@@ -242,15 +239,14 @@
             list(
                 dpoisppDetection_normal = list(
                     BUGSdist = "dpoisppDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
-                                                         windowIndices, numPoints, numWindows, indicator)",
+                                numMaxPoints, numWindows, indicator)",
                     types = c("value = double(2)", 
                               "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
-                              "windowIndices = double(1)",
-                              "numPoints = double(0)", "numWindows = double(0)", "indicator = double(0)"),
+                              "numMaxPoints = double(0)",
+                              "numWindows = double(0)", "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
-                )
+                    mixedSizes = FALSE)
             ),
             verbose = FALSE)
         
@@ -258,17 +254,16 @@
         registerDistributions(
             list(
                 dpoisppLocalDetection_normal = list(
-                    BUGSdist = "dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, windowIndices,
-                                 habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows, numPoints, numWindows, indicator)",
+                    BUGSdist = "dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
+                                 habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows, numMaxPoints, numWindows, indicator)",
                     types = c("value = double(2)", "lowerCoords = double(2)", "upperCoords = double(2)",
-                              "s = double(1)", "sd = double(0)", "baseIntensities = double(1)", "windowIndices = double(1)",  
+                              "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",  
                               "habitatGridLocal = double(2)", "resizeFactor = double(0)",
                               "localObsWindowIndices = double(2)", "numLocalObsWindows = double(1)", 
-                              "numPoints = double(0)", "numWindows = double(0)",
+                              "numMaxPoints = double(0)", "numWindows = double(0)",
                               "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
-                )
+                    mixedSizes = FALSE)
             ),
             verbose = FALSE)
         
