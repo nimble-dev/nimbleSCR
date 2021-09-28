@@ -19,3 +19,34 @@ RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0), coda, basicMCMCplots
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Collate:
+    integrateIntensity_normal.R
+    integrateIntensityLocal_normal.R
+    calcWindowSizes.R
+    dDispersal_exp.R
+    dHabitatMask.R
+    dbernppAC.R
+    dbernppACmovement_normal.R
+    dbernppDetection_normal.R
+    dbernppLocalACmovement_normal.R
+    dbernppLocalDetection_normal.R
+    dbinomLocal_normal.R
+    dbinom_sparseLocalSCR.R
+    dbinom_vector.R
+    dnormalizer.R
+    dpoisLocal_normal.R
+    dpoisppAC.R
+    dpoisppDetection_normal.R
+    dpoisppLocalDetection_normal.R
+    getLocalObjects.R
+    getLocalTraps.R
+    getSparseY.R
+    getWindowIndex.R
+    localTrapCalculations.R
+    makeConstantNimbleFunction.R
+    marginalVoidProbIntegrand.R
+    marginalVoidProbNumIntegration.R
+    midPointNodes.R
+    scaleCoordsToHabitatGrid.R
+    stratRejectionSampler_normal.R
+    zzz.R
