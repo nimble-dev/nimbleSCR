@@ -1,7 +1,7 @@
 .onAttach <- function(libname, pkgname) {
     
     packageStartupMessage("Warning message:\n'getLocalTraps' and 'dbinom_sparseLocalSCR' are deprecated.\nUse 'getLocalObjects' and 'dbinomLocal_normal' instead.")
-    
+
     suppressMessages({
 
         registerDistributions(
@@ -124,6 +124,27 @@
                 )
             ),
             verbose = FALSE)
+
+
+
+
+
+        registerDistributions(
+            list(
+                dbernppACmovement_normal= list(
+                    BUGSdist = "dbernppACmovement_normal (lowerCoords, upperCoords, s, sd, baseIntensities, habitatGrid,
+                                                      numGridRows, numGridCols, numWindows)",
+                    types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
+                              "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
+                              "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
+                    pqAvail = FALSE,
+                    mixedSizes = FALSE   
+                )
+            ),
+            userEnv = environment(),
+            verbose = FALSE)
+
+                        
 
     })
 }
