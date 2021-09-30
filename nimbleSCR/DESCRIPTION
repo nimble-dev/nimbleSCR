@@ -13,9 +13,41 @@ Authors@R: c(person("Richard", "Bischof", role = "aut"),
 Date: 2021-06-29
 Description: Provides utility functions, distributions, and methods for improving Markov chain Monte Carlo (MCMC) sampling efficiency for ecological Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) models.  The methods provided implement the techniques presented in "Estimation of Large-Scale Spatial Capture-Recapture Models" (Turek, et al (2021); Eco-sphere 12(2):e03385. <doi:10.1002/ecs2.3385>).
 License: GPL-3
-Depends: R (>= 3.4.0), nimble
+Depends: R (>= 3.5.0), nimble
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0), coda, basicMCMCplots
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Collate:
+    calcWindowSizes.R
+    getWindowIndex.R
+    integrateIntensityLocal_normal.R
+    integrateIntensity_normal.R
+    stratRejectionSampler_normal.R
+    dDispersal_exp.R
+    dHabitatMask.R
+    dbernppAC.R
+    dbernppACmovement_normal.R
+    dbernppDetection_normal.R
+    dbernppLocalACmovement_normal.R
+    dbernppLocalDetection_normal.R
+    dbinomLocal_normal.R
+    dbinom_sparseLocalSCR.R
+    dbinom_vector.R
+    dnormalizer.R
+    dpoisLocal_normal.R
+    dpoisppAC.R
+    dpoisppDetection_normal.R
+    dpoisppLocalDetection_normal.R
+    getLocalObjects.R
+    getLocalTraps.R
+    getSparseY.R
+    localTrapCalculations.R
+    makeConstantNimbleFunction.R
+    marginalVoidProbIntegrand.R
+    marginalVoidProbNumIntegration.R
+    midPointNodes.R
+    scaleCoordsToHabitatGrid.R
+    zzz.R
+
