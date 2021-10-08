@@ -23,14 +23,19 @@ Collate:
     calcWindowSizes.R
     getWindowIndex.R
     integrateIntensityLocal_normal.R
+    integrateIntensityLocal_exp.R
     integrateIntensity_normal.R
+    integrateIntensity_exp.R
     stratRejectionSampler_normal.R
+    stratRejectionSampler_exp.R
     dDispersal_exp.R
     dHabitatMask.R
     dbernppAC.R
     dbernppACmovement_normal.R
+    dbernppACmovement_exp.R
     dbernppDetection_normal.R
     dbernppLocalACmovement_normal.R
+    dbernppLocalACmovement_exp.R
     dbernppLocalDetection_normal.R
     dbinomLocal_normal.R
     dbinom_sparseLocalSCR.R

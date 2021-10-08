@@ -162,6 +162,22 @@
           ),
         verbose = FALSE)
         
+        
+        # dbernppACmovement_exp
+        registerDistributions(
+            list(
+                dbernppACmovement_exp= list(
+                    BUGSdist = "dbernppACmovement_exp (lowerCoords, upperCoords, s, lambda, baseIntensities, habitatGrid,
+                                                      numGridRows, numGridCols, numWindows)",
+                    types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
+                              "s = double(1)", "lambda = double(0)", "baseIntensities = double(1)",
+                              "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
+                    pqAvail = FALSE,
+                    mixedSizes = FALSE   
+                )
+            ),
+            verbose = FALSE)
+        
         # dbernppDetection_normal
         registerDistributions(
             list(
@@ -192,6 +208,22 @@
             ),
             verbose = FALSE)
         
+        # dbernppLocalACmovement_exp
+        registerDistributions(
+            list(
+                dbernppLocalACmovement_exp = list(
+                    BUGSdist = "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda, baseIntensities, habitatGrid, habitatGridLocal,
+                                                               resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
+                    types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
+                              "s = double(1)", "lambda = double(0)", "baseIntensities = double(1)",
+                              "habitatGrid = double(2)", "habitatGridLocal = double(2)",
+                              "resizeFactor = double(0)","localHabWindowIndices  = double(2)", "numLocalHabWindows = double(1)",
+                              "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
+                    pqAvail = FALSE,
+                    mixedSizes = FALSE   
+                )
+            ),
+            verbose = FALSE)
         # dbernppLocalDetection_normal
         registerDistributions(
             list(
