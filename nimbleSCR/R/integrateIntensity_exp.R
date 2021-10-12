@@ -40,19 +40,17 @@ integrateIntensity_exp <- nimbleFunction(
     lambda           = double(0),
     numWindows       = double(0)
   ) {
-    res <- baseIntensities 
+    res <- baseIntensities / lambda^2
     for(i in 1:numWindows) { 
       for(j in 1:2){
         ## Lower and upper bounds for integration
         uppIntBound <- upperCoords[i,j] - s[j]
-        lowIntBound <- lowerCoords[i,j] - s[j] 
-        ## Efficiency is not considered here
-        if(uppIntBound > 0 & lowIntBound > 0) 
-          res[i] <- res[i] * (exp(-lambda*lowIntBound) - exp(-lambda*uppIntBound)) / lambda
-        else if(uppIntBound < 0 & lowIntBound < 0) 
-          res[i] <- res[i] * (exp(lambda*uppIntBound) - exp(lambda*lowIntBound)) / lambda
+        lowIntBound <- lowerCoords[i,j] - s[j]
+        ## Need to ensure upperCoords > lowerCoords for input data
+        if(uppIntBound*lowIntBound > 0)
+          res[i] <- res[i] * abs(exp(-lambda*abs(lowIntBound)) - exp(-lambda*abs(uppIntBound)))
         else
-          res[i] <- res[i] * (2 - exp(lambda*lowIntBound) - exp(-lambda*uppIntBound)) / lambda
+          res[i] <- res[i] * (2 - exp(lambda*lowIntBound) - exp(-lambda*uppIntBound))
       }
     }
     returnType(double(1))
