@@ -171,11 +171,11 @@ rpoisppDetection_normal <- nimbleFunction(
     }
     numDims <- 3 
     ## If the individual does not exist in the population, we return an empty matrix directly
-    if(indicator == 0) return(matrix(nrow = numMaxPoints+1, ncol = numDims))
+    if(indicator == 0) return(matrix(nrow = numMaxPoints, ncol = numDims))
     
     ## Initialize an output matrix
     ## This empty matrix will be returned if numWindows==0 or numPoints==0
-    outCoordinates <- matrix(0, nrow = numMaxPoints+1, ncol = numDims)
+    outCoordinates <- matrix(0, nrow = numMaxPoints, ncol = numDims)
     
     ## Generate random points below:
     ## Current implementation uses a stratified rejection sampler. 
