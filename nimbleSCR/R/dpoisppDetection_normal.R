@@ -133,7 +133,6 @@ dpoisppDetection_normal <- nimbleFunction(
       ## 1.837877 <- log(2.0 * pi) 
       logPointIntensity <- rep(1.837877, x[1,1])
       for(i in 1:x[1,1]) {
-        print(i)
         ## Log intensity at the ith point: see Eqn 24 of Zhang et al.(2020, DOI:10.1101/2020.10.06.325035)
         pointBaseIntensity <- baseIntensities[x[i+1,3]]#baseIntensities[windowIndices[i]]
         logPointIntensity[i] <- logPointIntensity[i] + log(pointBaseIntensity) + sum(dnorm((x[i+1, 1:2] - s) / sd, log = 1))
