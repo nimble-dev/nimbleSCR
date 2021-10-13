@@ -48,6 +48,7 @@ Collate:
     dpoisppLocalDetection_normal.R
     getLocalObjects.R
     getLocalTraps.R
+    getLowAndUpCoords.R
     getSparseY.R
     localTrapCalculations.R
     makeConstantNimbleFunction.R
