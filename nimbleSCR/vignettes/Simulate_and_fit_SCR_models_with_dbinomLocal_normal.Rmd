@@ -195,7 +195,7 @@ model <- nimbleModel( code = modelCode,
 
 ### 1.7 Simualte SCR data from the NIMBLE model
 
-We first need to obtain the list of nodes that will be simuated. We used the 'getDependencies' function from NIMBLE. Using the 'simulate' function from NIMBLE, we will then simulate the activity center (AC) locations ('sxy'), the state of the individual ('z') and SCR observation data ('y') given the values we provided for 'p0', 'sigma' and 'psi'.
+We first need to obtain the list of nodes that will be simulated. We used the 'getDependencies' function from NIMBLE. Using the 'simulate' function from NIMBLE, we will then simulate the activity center (AC) locations ('sxy'), the state of the individual ('z') and SCR observation data ('y') given the values we provided for 'p0', 'sigma' and 'psi'.
 
 
 ```{r , warning = FALSE, message = FALSE}

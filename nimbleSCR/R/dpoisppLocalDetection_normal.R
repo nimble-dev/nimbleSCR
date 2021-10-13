@@ -248,7 +248,7 @@ rpoisppLocalDetection_normal <- nimbleFunction(
         outCoordinates[1,1] <-  rpois(1, sumIntensity)
         numPoints1 <- outCoordinates[1,1]+1
         #numPoints1 <- rpois(1, sumIntensity)
-        if(outCoordinates[1,1] >numMaxPoints){stop("There are more simulated individual detections than what can be stored within x.\n You may need to increase the size of the 'x' object and make sure that 'numPoints'is equal to dim(x)[2]" )}
+        if(outCoordinates[1,1] >numMaxPoints){stop("There are more simulated individual detections than what can be stored within x.\n You may need to increase the size of the 'x' object and make sure that 'numMaxPoints'is equal to dim(x)[2]" )}
         if(outCoordinates[1,1]  > 0) {
           
           ## DO THE SUBSETTING OF THE LOWER AND UPPER COORDS HERE. 
