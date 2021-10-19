@@ -39,7 +39,8 @@ rpoisppLocalDetection_normal(
 )
 }
 \arguments{
-\item{x}{Matrix of x- and y-coordinates and the corresponding id the detection window of a set of spatial points (detection locations). One row corresponds to one point.}
+\item{x}{x matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
+x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),].}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 

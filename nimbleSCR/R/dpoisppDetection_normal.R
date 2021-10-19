@@ -5,7 +5,8 @@
 #' 
 #' @name dpoisppDetection_normal
 #' 
-#' @param x Matrix of x- and y-coordinates and the corresponding id the detection window of a set of spatial points (detection locations). One row corresponds to one point.
+#' @param x matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
+#' x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),]. 
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (the AC location).

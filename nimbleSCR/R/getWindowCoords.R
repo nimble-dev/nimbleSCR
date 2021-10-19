@@ -1,6 +1,6 @@
 #' Get lower and upper windows coordinates 
 #'
-#' The \code{getLowAndUpCoords} is an R utility function to create lower and upper habitat and observation windows coordinates, as well an habitat grid with cell ids. 
+#' The \code{getWindowCoords} is an R utility function to create lower and upper habitat and observation windows coordinates, as well an habitat grid with cell ids. 
 #' Those objects are necessary to run all point process (pp) functions. All input data should be scaled to the habitat grid using \code{\link{scaleCoordsToHabitatGrid}}. 
 #' Note that we assume homogeneous window sizes.
 #'
@@ -39,7 +39,7 @@
 #' plot(scaled$coordsHabitatGridCenterScaled[,2] ~ scaled$coordsHabitatGridCenterScaled[,1])
 #' points(scaled$coordsDataScaled[,2] ~ scaled$coordsDataScaled[,1], col="red")
 #' 
-#' LowerAndUpperCoords <- getLowAndUpCoords(scaledHabGridCenter = scaled$coordsHabitatGridCenterScaled,
+#' LowerAndUpperCoords <- getWindowCoords(scaledHabGridCenter = scaled$coordsHabitatGridCenterScaled,
 #'                                          scaledObsGridCenter = scaled$coordsDataScaled)
 #' 
 #' # Plot habitat window cell centers and lower/upper coordinates 
@@ -64,7 +64,7 @@
 #'        pch=16, cex=0.3, col = adjustcolor("red", alpha.f = 0.8))
 #'        
 #' @export
-getLowAndUpCoords <- function(scaledHabGridCenter = scaledHabGridCenter,
+getWindowCoords <- function(scaledHabGridCenter = scaledHabGridCenter,
                               scaledObsGridCenter = NULL,
                               plot.check = TRUE
                               
