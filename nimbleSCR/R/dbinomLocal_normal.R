@@ -1,4 +1,4 @@
-#' Local evaluation of a binomial SCR observation process 
+#' Local evaluation of a binomial SCR detection process 
 #'
 #' The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 

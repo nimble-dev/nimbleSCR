@@ -1,7 +1,11 @@
-#' Bernoulli point process for activity center movement
+#' Bernoulli point process for activity center movement (exponential kernel)
 #' 
-#' Density and random generation functions of the Bernoulli point process for activity center movement. Intended for use in open population models. 
-#' An isotropic multivariate exponential distribution is used as the decay kernel. 
+#' Density and random generation functions of the Bernoulli point process for activity center movement. 
+#'
+#' The \code{dbernppACmovement_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' movement of activity centers between consecutive occasions in open population models.
+#' The distribution assumes that the new individual activity center location (\emph{x})
+#' follows an isotropic exponential normal centered on the previous activity center (\emph{s}) with rate (\emph{lambda}).
 #' 
 #' @name dbernppACmovement_exp
 #' 

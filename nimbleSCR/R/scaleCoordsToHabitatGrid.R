@@ -64,7 +64,7 @@ scaleCoordsToHabitatGrid <- function(coordsData = coordsData,
   start0.y <- max(coordsHabitatGridCenter[ ,"y"]) + resolution/2 #---because we are moving from top to bottom
   start0.x <- min(coordsHabitatGridCenter[ ,"x"]) - resolution/2 #---because we are moving from left to right
   
-  ## Re-projectthe grid cell centers
+  ## Re-project the grid cell centers
   coordsHabitatGridCenterScaled <- coordsHabitatGridCenter
   coordsHabitatGridCenterScaled[ ,"y"] <- (start0.y - coordsHabitatGridCenter[ ,"y"])/resolution
   coordsHabitatGridCenterScaled[ ,"x"] <- (coordsHabitatGridCenter[ ,"x"] - start0.x)/resolution

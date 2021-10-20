@@ -1,12 +1,17 @@
 #' Poisson point process detection model
 #' 
 #' Density and random generation functions of the Poisson point process for detection. 
-#' An isotropic multivariate normal distribution is used as the decay kernel.
+#
+#' The \code{dpoisppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' Poisson observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+#' coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection intensity 
+#' follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
+#' 
 #' 
 #' @name dpoisppDetection_normal
 #' 
-#' @param x matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
-#' x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),]. 
+#' @param x Matrix containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
+#' and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations). 
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (the AC location).
@@ -89,8 +94,8 @@
 #' numPoints <- 5
 #' numWindows <- 4
 #' indicator <- 1
-#' dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities
-#'                         , numMaxPoints = dim(x)[1] , numWindows, indicator, log = TRUE)
+#' dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities,
+#'                         numMaxPoints = dim(x)[1] , numWindows, indicator, log = TRUE)
 
 NULL
 #' @rdname dpoisppDetection_normal
@@ -135,7 +140,7 @@ dpoisppDetection_normal <- nimbleFunction(
       logPointIntensity <- rep(1.837877, x[1,1])
       for(i in 1:x[1,1]) {
         ## Log intensity at the ith point: see Eqn 24 of Zhang et al.(2020, DOI:10.1101/2020.10.06.325035)
-        pointBaseIntensity <- baseIntensities[x[i+1,3]]#baseIntensities[windowIndices[i]]
+        pointBaseIntensity <- baseIntensities[x[i+1,3]]
         logPointIntensity[i] <- logPointIntensity[i] + log(pointBaseIntensity) + sum(dnorm((x[i+1, 1:2] - s) / sd, log = 1))
       }
       ## Log probability density
@@ -195,20 +200,19 @@ rpoisppDetection_normal <- nimbleFunction(
         
         outCoordinates[1,1] <-  rpois(1, sumIntensity)
         numPoints1 <- outCoordinates[1,1]+1
-        #numPoints1 <- rpois(1, sumIntensity)
         if(outCoordinates[1,1] >numMaxPoints){stop("There are more simulated individual detections than what can be stored within x.\n You may need to increase the size of the 'x' object and make sure that 'numMaxPoints'is equal to dim(x)[2]" )}
-        if(outCoordinates[1,1]  > 0) {
-          outCoordinates[2:numPoints1 , 1:2 ] <- stratRejectionSampler_normal(numPoints = outCoordinates[1,1],
-                                                                              lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
-                                                                              upperCoords = upperCoords[1:numWindows,,drop = FALSE],
-                                                                              s = s,
-                                                                              windowIntensities = windowIntensities[1:numWindows],
-                                                                              sd = sd)
-          # GET WINDOW INDEX
-          for(i in 2:numPoints1 ){
-            outCoordinates[i, 3 ] <- getWindowIndex(curCoords = outCoordinates[i, 1:2],
-                                                    lowerCoords = lowerCoords[1:numWindows,,drop = FALSE] ,
-                                                    upperCoords = upperCoords[1:numWindows,,drop = FALSE] )
+        if(outCoordinates[1,1] > 0) {
+          outCoordinates[2:numPoints1,1:2] <- stratRejectionSampler_normal(numPoints = outCoordinates[1,1],
+                                                                           lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
+                                                                           upperCoords = upperCoords[1:numWindows,,drop = FALSE],
+                                                                           s = s,
+                                                                           windowIntensities = windowIntensities[1:numWindows],
+                                                                           sd = sd)
+          ## Get detection window index
+          for(i in 2:numPoints1){
+            outCoordinates[i,3] <- getWindowIndex(curCoords = outCoordinates[i, 1:2],
+                                                  lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
+                                                  upperCoords = upperCoords[1:numWindows,,drop = FALSE])
           }
         }
       }

@@ -1,8 +1,8 @@
-#' Local object Identification
+#' Local Objects Identification
 #'
 #' R utility function to identify all objects (e.g. traps) within a given radius dmax of each cell in a habitat mask.
-#' Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}}). The distance to the activity center and the 
-#' detection probability are then calculated for local objects only (i.e. the detection probability is assumed to be 0 
+#' Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}};\code{\link{dpoisLocal_normal}}).
+#' The distance to the activity center and the detection probability are then calculated for local objects only (i.e. the detection probability is assumed to be 0 
 #' for all other objects as they are far enough from the activity center).
 #'
 #' The \code{getLocalObjects} function is used in advance of model building.
@@ -49,7 +49,7 @@ getLocalObjects <- function( habitatMask,
   oldCoords <- cbind(oldCoords[,2], oldCoords[,1])
   names(oldCoords) <- c("x", "y")
   
-  ## GET ORIGIN FOR THE NEW (RESIZED) HABITAT MATRIX [check with CM why it was (resizeFactor/2) + 0.5?]
+  ## GET ORIGIN FOR THE NEW (RESIZED) HABITAT MATRIX 
   origin <- (resizeFactor/2) 
   
   ## GET DIMENSIONS FOR THE NEW HABITAT MATRIX

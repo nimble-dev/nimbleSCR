@@ -6,7 +6,8 @@
 #' @param curCoords Vector of coordinates of a single spatial point
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of a set of windows. One row for each window.
 #' 
-#' @return Index of the window where the given point falls.
+#' @return Index of the window where the given point falls; -1 is returned if the point does not fall in any window.
+
 #'
 #' @author Pierre Dupont
 #'

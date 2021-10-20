@@ -1,6 +1,12 @@
 #' Bernoulli point process for the distribution of activity centers
 #' 
 #' Density and random generation functions of the Bernoulli point process for the distribution of activity centers. 
+#'
+#' The \code{dbernppAC} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' the activity center location (\emph{x}) of a single individual in continuous space over a set of habitat windows defined by their upper and lower
+#' coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that the activity center  
+#' follows a Bernoulli point process with intensity = \emph{exp(logIntensities)}.
+#' 
 #' 
 #' @name dbernppAC 
 #' 

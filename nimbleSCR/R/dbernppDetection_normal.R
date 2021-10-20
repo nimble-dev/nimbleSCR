@@ -1,11 +1,15 @@
 #' Bernoulli point process detection model
 #' 
-#' Density and random generation functions of the Bernoulli point process for detection. 
-#' An isotropic multivariate normal distribution is used as the decay kernel.
+#' Density and random generation functions of the Bernoulli point process for detection.  
+#' 
+#' The \code{dbernppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' Bernoulli observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+#' coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection probability 
+#' follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
 #' 
 #' @name dbernppDetection_normal
 #' 
-#' @param x Vector with three elements representing the x- and y-coordinates and the corresponding id the detection window of a single spatial point (detection location).
+#' @param x Vector with three elements representing the x- and y-coordinates  and the corresponding id the detection window of a single spatial point (detection location).
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (i.e. the AC location).

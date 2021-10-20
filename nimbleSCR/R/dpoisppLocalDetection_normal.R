@@ -1,13 +1,18 @@
-#' Poisson point process detection model with local evaluation
+#' Local evaluation for a Poisson point process detection model
 #' 
-#' Density and random generation functions of the Poisson point process for detection. The local evaluation technique is implemented. 
-#' An isotropic multivariate normal distribution is used as the decay kernel. 
+#' Density and random generation functions of the Poisson point process for detection. 
+#
+#' The \code{dpoisppLocalDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' Poisson observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+#' coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection intensity 
+#' follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
+#' 
 #' 
 #' @name dpoisppLocalDetection_normal
 #' 
-#' @param x x matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
-#' x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),]. 
-#' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
+#' @param x Matrix containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
+#' and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations). 
+#' @param n Integer specifying the number of realisations to generate. Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (the AC location).
 #' @param sd Standard deviation of the isotropic multivariate normal distribution.
@@ -20,13 +25,13 @@
 #' @param numMaxPoints Maximum number of points. This value (non-negative integer) is only used when simulating detections to constrain the maximum number of detections. 
 #' @param numWindows Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 #' so that extra rows beyond \code{numWindows} are ignored. 
-#' @param indicator Binary variable (0 or 1) used for data augmentation. \code{indicator = 0} means the individual does not exist 
-#' and thus the probability of no detection is 1. 
+#' @param indicator Binary variable (0 or 1) used to indicate whether the individual is available for detection or not.
+#'  \code{indicator = 0} means the individual is not available for detection (e.g. augmented or dead individual) and thus the probability of no detection is 1. 
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' 
 #' @return The (log) probability density of the observation matrix \code{x}.
 #' 
-#' @author Wei Zhang and Cyril Milleret
+#' @author Wei Zhang, Cyril Milleret and Pierre Dupont
 #' 
 #' @import nimble
 #' @importFrom stats dnorm
@@ -103,7 +108,7 @@
 #' }
 #' x <- cbind(x, windowIndexes)
 #' # get the total number of detections on x[1,1]
-#' x <- rbind(c(length(windowIndexes),0,0) ,x )
+#' x <- rbind(c(length(windowIndexes),0,0), x)
 #' dpoisppLocalDetection_normal(x, ScaledLowerCoords, ScaledUpperCoords, s, sd, baseIntensities,  
 #'                              ObsWindowsLocal$habitatGrid, ObsWindowsLocal$resizeFactor,
 #'                              ObsWindowsLocal$localIndices,ObsWindowsLocal$numLocalIndices,
@@ -141,7 +146,7 @@ dpoisppLocalDetection_normal <- nimbleFunction(
       }
     }
     ## Local evaluation:
-    ## Get the habitat window index where the AC is located
+    ## Get the index of the habitat window where the AC is located
     habWindowInd <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
     ## Get the indices of detection windows that are close to the AC
     localWindows <- localObsWindowIndices[habWindowInd, 1:numLocalObsWindows[habWindowInd]]
@@ -150,7 +155,6 @@ dpoisppLocalDetection_normal <- nimbleFunction(
     ## Check if any point is out of the local area of the AC
     if(x[1,1] > 0) {
       for(i in 2:numPoints1) {
-        #if(sum(localWindows == windowIndices[i]) == 0){
         if(sum(localWindows == x[i,3]) == 0){
           if(log) return(-Inf)
           else return(0.0)
@@ -222,7 +226,7 @@ rpoisppLocalDetection_normal <- nimbleFunction(
     ## This empty matrix will be returned if numWindows==0 or numPoints==0
     outCoordinates <- matrix(0, nrow = numMaxPoints, ncol = numDims)
     
-    ## Generate random points below:
+    ## Generate random points:
     ## Current implementation uses a stratified rejection sampler. 
     ## This can become inefficient if the observation window becomes very large compared to the 
     ## standard deviation of the multivariate normal distribution. 
@@ -246,11 +250,10 @@ rpoisppLocalDetection_normal <- nimbleFunction(
       
       if(sumIntensity > 0.0) {
         
-        outCoordinates[1,1] <-  rpois(1, sumIntensity)
+        outCoordinates[1,1] <- rpois(1, sumIntensity)
         numPoints1 <- outCoordinates[1,1]+1
-        #numPoints1 <- rpois(1, sumIntensity)
         if(outCoordinates[1,1] >numMaxPoints){stop("There are more simulated individual detections than what can be stored within x.\n You may need to increase the size of the 'x' object and make sure that 'numMaxPoints'is equal to dim(x)[2]" )}
-        if(outCoordinates[1,1]  > 0) {
+        if(outCoordinates[1,1] > 0) {
           
           ## DO THE SUBSETTING OF THE LOWER AND UPPER COORDS HERE. 
           lowerCoords1 <- nimMatrix(nrow = numWindowsLoc, ncol = 2)
@@ -263,7 +266,7 @@ rpoisppLocalDetection_normal <- nimbleFunction(
           
           
           
-          outCoordinates[2:numPoints1 , 1:2 ] <- stratRejectionSampler_normal(numPoints = outCoordinates[1,1],
+          outCoordinates[2:numPoints1,1:2] <- stratRejectionSampler_normal(numPoints = outCoordinates[1,1],
                                                                               lowerCoords = lowerCoords1[,,drop = FALSE],
                                                                               upperCoords = upperCoords1[,,drop = FALSE],
                                                                               s = s,
@@ -271,9 +274,9 @@ rpoisppLocalDetection_normal <- nimbleFunction(
                                                                               sd = sd)
           # GET WINDOW INDEX
           for(i in 2:numPoints1 ){
-            outCoordinates[i, 3 ] <- getWindowIndex(curCoords = outCoordinates[i, 1:2],
-                                                    lowerCoords = lowerCoords[1:numWindows,,drop = FALSE] ,
-                                                    upperCoords = upperCoords[1:numWindows,,drop = FALSE] )
+            outCoordinates[i,3] <- getWindowIndex(curCoords = outCoordinates[i, 1:2],
+                                                    lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
+                                                    upperCoords = upperCoords[1:numWindows,,drop = FALSE])
           }
         }
       }
