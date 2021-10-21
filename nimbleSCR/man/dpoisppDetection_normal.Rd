@@ -31,8 +31,8 @@ rpoisppDetection_normal(
 )
 }
 \arguments{
-\item{x}{matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
-x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),].}
+\item{x}{Matrix containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
+and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -60,7 +60,10 @@ and thus the probability of no detection is 1.}
 }
 \description{
 Density and random generation functions of the Poisson point process for detection. 
-An isotropic multivariate normal distribution is used as the decay kernel.
+The \code{dpoisppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+Poisson observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection intensity 
+follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
 }
 \examples{
 coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
@@ -118,8 +121,8 @@ windowIndices <- c(1, 2, 2, 3, 4)
 numPoints <- 5
 numWindows <- 4
 indicator <- 1
-dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities
-                        , numMaxPoints = dim(x)[1] , numWindows, indicator, log = TRUE)
+dpoisppDetection_normal(x, lowerCoords, upperCoords, s, sd, baseIntensities,
+                        numMaxPoints = dim(x)[1] , numWindows, indicator, log = TRUE)
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

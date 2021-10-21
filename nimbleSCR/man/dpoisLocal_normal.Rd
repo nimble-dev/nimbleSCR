@@ -3,7 +3,7 @@
 \name{dpoisLocal_normal}
 \alias{dpoisLocal_normal}
 \alias{rpoisLocal_normal}
-\title{Local evaluation of a Poisson SCR observation process}
+\title{Local evaluation of a Poisson SCR detection process}
 \usage{
 dpoisLocal_normal(
   x,
@@ -83,7 +83,7 @@ The log-likelihood value associated with the vector of detections, given the loc
 The \code{dpoisLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
 Poisson observations (\emph{x}) of a single individual over a set of detectors defined by their 
 coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
-follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location.
+follows a half-normal function of the distance between the individual's activity center (\emph{s}) and the detector location.
 }
 \details{
 The \code{dpoisLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):

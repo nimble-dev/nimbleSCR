@@ -28,6 +28,8 @@ A list of objects :
 habitatGrid[trunc(scaledHabGridCenter[1,"y"]) + 1, trunc(scaledHabGridCenter[1,"x"]) + 1]. See \code{\link{scaleCoordsToHabitatGrid}} for more details.
 \item \emph{lowerObsCoords} A matrix with the "x" and "y" lower observation window coordinates. Only returned when \emph{scaledObsGridCenter} is provided.
 \item \emph{upperObsCoords} A matrix with the "x" and "y" upper observation window coordinates. Only returned when \emph{scaledObsGridCenter} is provided.
+
+
 }
 }
 \description{

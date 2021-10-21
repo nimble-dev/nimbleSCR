@@ -29,7 +29,7 @@ rbernppDetection_normal(
 )
 }
 \arguments{
-\item{x}{Vector with three elements representing the x- and y-coordinates and the corresponding id the detection window of a single spatial point (detection location).}
+\item{x}{Vector with three elements representing the x- and y-coordinates  and the corresponding id the detection window of a single spatial point (detection location).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -54,8 +54,13 @@ and thus the probability of no detection is 1.}
 \code{rbernppDetection_normal} gives coordinates of a randomly generated spatial point.
 }
 \description{
-Density and random generation functions of the Bernoulli point process for detection. 
-An isotropic multivariate normal distribution is used as the decay kernel.
+Density and random generation functions of the Bernoulli point process for detection.
+}
+\details{
+The \code{dbernppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+Bernoulli observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection probability 
+follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
 }
 \examples{
 coordsHabitatGridCenter <- matrix(c(0.5, 3.5,

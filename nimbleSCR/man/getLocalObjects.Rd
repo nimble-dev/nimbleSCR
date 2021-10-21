@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLocalObjects.R
 \name{getLocalObjects}
 \alias{getLocalObjects}
-\title{Local object Identification}
+\title{Local Objects Identification}
 \usage{
 getLocalObjects(habitatMask, coords, dmax, resizeFactor = 1, plot.check = TRUE)
 }
@@ -30,8 +30,8 @@ Each row gives the id numbers of the local objects associated with this grid cel
 }
 \description{
 R utility function to identify all objects (e.g. traps) within a given radius dmax of each cell in a habitat mask.
-Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}}). The distance to the activity center and the 
-detection probability are then calculated for local objects only (i.e. the detection probability is assumed to be 0 
+Used in the implementation of the local evaluation approach in SCR models (\code{\link{dbinomLocal_normal}};\code{\link{dpoisLocal_normal}}).
+The distance to the activity center and the detection probability are then calculated for local objects only (i.e. the detection probability is assumed to be 0 
 for all other objects as they are far enough from the activity center).
 }
 \details{

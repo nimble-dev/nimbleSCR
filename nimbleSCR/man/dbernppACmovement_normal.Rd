@@ -3,7 +3,7 @@
 \name{dbernppACmovement_normal}
 \alias{dbernppACmovement_normal}
 \alias{rbernppACmovement_normal}
-\title{Bernoulli point process for activity center movement}
+\title{Bernoulli point process for activity center movement (normal kernel)}
 \usage{
 dbernppACmovement_normal(
   x,
@@ -60,8 +60,13 @@ When the grid has only one row/column, artificial indices have to be provided to
 \code{rbernppACmovement_normal} gives coordinates of a randomly generated spatial point.
 }
 \description{
-Density and random generation functions of the Bernoulli point process for activity center movement. Intended for use in open population models. 
-An isotropic multivariate normal distribution is used as the decay kernel.
+Density and random generation functions of the Bernoulli point process for activity center movement.
+}
+\details{
+The \code{dbernppACmovement_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+movement of activity centers between consecutive occasions in open population models.
+The distribution assumes that the new individual activity center location (\emph{x})
+follows an isotropic multivariate normal centered on the previous activity center (\emph{s}) with standard deviation (\emph{sd}).
 }
 \examples{
 # Use the distribution in R

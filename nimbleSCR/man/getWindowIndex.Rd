@@ -12,7 +12,7 @@ getWindowIndex(curCoords, lowerCoords, upperCoords)
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of a set of windows. One row for each window.}
 }
 \value{
-Index of the window where the given point falls.
+Index of the window where the given point falls; -1 is returned if the point does not fall in any window.
 }
 \description{
 From a set of windows, find the index of the window into which a given point falls. 

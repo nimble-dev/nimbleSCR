@@ -3,7 +3,7 @@
 \name{dbinomLocal_normal}
 \alias{dbinomLocal_normal}
 \alias{rbinomLocal_normal}
-\title{Local evaluation of a binomial SCR observation process}
+\title{Local evaluation of a binomial SCR detection process}
 \usage{
 dbinomLocal_normal(
   x,

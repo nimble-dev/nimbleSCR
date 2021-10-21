@@ -3,7 +3,7 @@
 \name{dbernppLocalACmovement_exp}
 \alias{dbernppLocalACmovement_exp}
 \alias{rbernppLocalACmovement_exp}
-\title{Bernoulli point process for activity center movement with local evaluation}
+\title{Local evaluation of a Bernoulli point process for activity center movement (exponential kernel)}
 \usage{
 dbernppLocalACmovement_exp(
   x,
@@ -77,8 +77,14 @@ so that extra rows beyond \code{numWindows} are ignored.}
 The (log) probability density of the observation vector \code{x}.
 }
 \description{
-Density and random generation functions of the Bernoulli point process for activity center movement. Intended for use in open population models.
-The local evaluation technique is implemented. An isotropic multivariate exponential distribution is used as the decay kernel.
+Density and random generation functions of the Bernoulli point process for activity center movement.
+}
+\details{
+The \code{dbernppLocalACmovement_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
+movement of activity centers between consecutive occasions in open population models.
+The distribution assumes that the new individual activity center location (\emph{x})
+follows an isotropic exponential normal centered on the previous activity center (\emph{s}) with rate (\emph{lambda}).
+The local evaluation approach is implemented.
 }
 \examples{
 

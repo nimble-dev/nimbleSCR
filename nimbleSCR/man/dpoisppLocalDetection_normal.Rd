@@ -3,7 +3,7 @@
 \name{dpoisppLocalDetection_normal}
 \alias{dpoisppLocalDetection_normal}
 \alias{rpoisppLocalDetection_normal}
-\title{Poisson point process detection model with local evaluation}
+\title{Local evaluation for a Poisson point process detection model}
 \usage{
 dpoisppLocalDetection_normal(
   x,
@@ -39,8 +39,8 @@ rpoisppLocalDetection_normal(
 )
 }
 \arguments{
-\item{x}{x matrix of x- and y-coordinates and the corresponding id of the detection window of a set of spatial points (detection locations). 
-x[1,1] gives the total number of detections. Detections are located x[2:(x[1,1]+1),].}
+\item{x}{Matrix containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
+and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
 
@@ -64,19 +64,22 @@ The ith number gives the number of local (original) observation windows for the 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
 
-\item{indicator}{Binary variable (0 or 1) used for data augmentation. \code{indicator = 0} means the individual does not exist 
-and thus the probability of no detection is 1.}
+\item{indicator}{Binary variable (0 or 1) used to indicate whether the individual is available for detection or not.
+\code{indicator = 0} means the individual is not available for detection (e.g. augmented or dead individual) and thus the probability of no detection is 1.}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
-\item{n}{Integer specifying the number of realisations to generate.  Only n = 1 is supported.}
+\item{n}{Integer specifying the number of realisations to generate. Only n = 1 is supported.}
 }
 \value{
 The (log) probability density of the observation matrix \code{x}.
 }
 \description{
-Density and random generation functions of the Poisson point process for detection. The local evaluation technique is implemented. 
-An isotropic multivariate normal distribution is used as the decay kernel.
+Density and random generation functions of the Poisson point process for detection. 
+The \code{dpoisppLocalDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
+Poisson observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
+coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection intensity 
+follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 
@@ -149,12 +152,12 @@ for(i in 1:nrow(x)){
 }
 x <- cbind(x, windowIndexes)
 # get the total number of detections on x[1,1]
-x <- rbind(c(length(windowIndexes),0,0) ,x )
+x <- rbind(c(length(windowIndexes),0,0), x)
 dpoisppLocalDetection_normal(x, ScaledLowerCoords, ScaledUpperCoords, s, sd, baseIntensities,  
                              ObsWindowsLocal$habitatGrid, ObsWindowsLocal$resizeFactor,
                              ObsWindowsLocal$localIndices,ObsWindowsLocal$numLocalIndices,
                              numMaxPoints = dim(x)[1], numWindows, indicator, log = TRUE)
 }
 \author{
-Wei Zhang and Cyril Milleret
+Wei Zhang, Cyril Milleret and Pierre Dupont
 }

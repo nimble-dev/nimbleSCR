@@ -41,7 +41,7 @@ Each window should be of size 1x1 (after rescaling if necessary).}
 \item{sumIntensity}{Sum of the habitat intensities over all windows. This can be obtained using \code{logIntensities}.}
 
 \item{habitatGrid}{Matrix of habitat window indices. Habitat window indices should match the order in \code{lowerCoords}, \code{upperCoords}, and \code{logIntensities}. 
-When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} in order to be able to use the distribution in \code{nimble} model code.}
+When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} to be able to use the distribution in \code{nimble} model code.}
 
 \item{numGridRows, numGridCols}{Numbers of rows and columns of the habitat grid.}
 
@@ -50,14 +50,18 @@ so that extra rows beyond \code{numPoints} are ignored.}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
-\item{n}{Integer specifying the number of realisations to generate.  Only n = 1 is supported.}
+\item{n}{Integer specifying the number of realisations to generate. Only n = 1 is supported.}
 }
 \value{
 \code{dpoisppAC} gives the (log) probability density of the observation matrix \code{x}. 
 \code{rpoisppAC} gives coordinates of a set of randomly generated spatial points.
 }
 \description{
-Density and random generation functions of the Poisson point process for the distribution of activity centers.
+Density and random generation functions of the Poisson point process for the distribution of activity centers. 
+The \code{dpoisppAC} distribution is a NIMBLE custom distribution which can be used to model and simulate
+activity center locations (\emph{x}) of multiple individual in continuous space over a set of habitat windows defined by their upper and lower
+coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that activity centers  
+follow a Poisson point process with intensity = \emph{exp(logIntensities)}.
 }
 \examples{
 lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)

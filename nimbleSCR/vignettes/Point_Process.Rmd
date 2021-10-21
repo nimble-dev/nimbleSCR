@@ -1,13 +1,14 @@
 ---
-title: "Using nimbleSCR to simulate and fit Bayesian SCR models"
+title: "Using nimbleSCR to simulate from and fit Bayesian SCR models"
 author: "Cyril Milleret, Wei Zhang, Pierre Dupont and Richard Bischof"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Using nimbleSCR to simulate and fit Bayesian SCR models}
+  %\VignetteIndexEntry{Using nimbleSCR to simulate from and fit Bayesian SCR models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\rmarkdown.html_vignette.check_title = FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -48,7 +49,7 @@ library(basicMCMCplots)
 ## 1. Simulate SCR data
 ### 1.1 Habitat and trapping grid
 
-As an example, we create an irregular habitat grid with dimensions $80 \times 100$ and a  $10 \times 10$ resolution. We center a $6 \times 8$ trapping grid on the habitat, leaving an untrapped perimeter (buffer) with a width of 20 distance units on each side of the grid.   
+As an example, we create a $80 \times 100$ habitat grid with a resolution of 10 for each dimension. On the habitat, we center a $60 \times 80$ trapping grid with also a resolution of 10 for each dimension, leaving an untrapped perimeter (buffer) with a width of 20 distance units on each side of the grid.  
 
 ```{r , warning = FALSE, message = FALSE}
 ## Create habitat grid
@@ -79,7 +80,7 @@ legend(x = 7, y = 13,
 
 ### 1.2 Rescale coordinates
 
-To implement the local evaluation approach when fitting the SCR model (see @Milleret2019 and @Turek2021 for further details), we need to rescale the habitat and trapping grid coordinates so that each habitat cell measures $1 \times 1$. We also need to identify the lower and upper coordinates of each habitat cell using the 'getLowAndUpCoords' function.
+To implement the local evaluation approach when fitting the SCR model (see @Milleret2019 and @Turek2021 for further details), we need to rescale the habitat and trapping grid coordinates so that each habitat cell is of dimension $1 \times 1$. We also need to identify the lower and upper coordinates of each habitat cell using the 'getWindowCoords' function.
 
 ```{r , warning = FALSE, message = FALSE}
 ## Rescale coordinates
@@ -174,18 +175,21 @@ detCoeffSlope <- 0.5
 habCoeffSlope <- -1
 ```
 
-We use a data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 100. The expected total number of individuals that are truly present in the population is *M* *psi.
+We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 100. The expected total number of individuals that are truly present in the population is *M* *psi.
 
 ```{r , warning = FALSE, message = FALSE}
 M <- 100
 ```
 
-When simulating individual detections using the Poisson point process function 'dpoispp_Detection_normal', all the information is stored in *y*, a 3D array containing i) the number of detections per individual,  ii) the x- and y-coordinates of each detection, and iii) the index of the habitat grid cell for each detection (See ?dpoisppDetection_normal for more details):
-*'y[ ,1,1]': number of detections for each individual
-*'y[ ,2:numDetections,1:2]': x and y coordinates of the detections
-*'y[ ,2:numDetections,3]': IDs of the cells (from lowerAndUpperCoords$habitatGrid) in which the detections fall. Cell IDs can be obtained using the 'getWindowIndex()' function. 
+When simulating individual detections using the Poisson point process function 'dpoispp_Detection_normal', all the information is stored in *y*, a 3D array containing i) the number of detections per individual, ii) the x- and y-coordinates of each detection, and iii) the index of the habitat grid cell for each detection (see ?dpoisppDetection_normal for more details):
 
-Next, we need to provide the maximum number of detections that can be simulated per individual. We set this to be 19 + 1 to account for the fact that the first element of the second dimension of the detection array (y[ ,1,1]) does not contain detection data but the total number of detections for each individual.   
+* 'y[ ,1,1]': number of detections for each individual
+
+* 'y[ ,2:numDetections,1:2]': x and y coordinates of the detections
+
+* 'y[ ,2:numDetections,3]': IDs of the cells (from lowerAndUpperCoords$habitatGrid) in which the detections fall. Cell IDs can be obtained using the 'getWindowIndex()' function.
+
+Next, we need to provide the maximum number of detections that can be simulated per individual. We set this to be 19 + 1 to account for the fact that the first element of the second dimension of the detection array (y[ ,1,1]) does not contain detection data but the total number of detections for each individual.  
 
 ```{r , warning = FALSE, message = FALSE}
 numMaxPoints <- 19 + 1
@@ -218,7 +222,7 @@ nimData <- list( obsLoCoords = lowerAndUpperCoords$lowerObsCoords,
                  habCovs = habCovs)
 ```
 
-In order to simulate directly from the NIMBLE model, we set the true parameter values as initial values. These will be used by the NIMBLE model object to randomly generate SCR data. 
+In order to simulate directly from the NIMBLE model, we set the true parameter values as initial values. These will be used by the NIMBLE model object to randomly generate SCR data.
 ```{r , warning = FALSE, message = FALSE}
 nimInits <- list( psi = psi,
                   sigma = sigma,
@@ -231,7 +235,7 @@ nimInits <- list( psi = psi,
 
 ### 1.6 Create NIMBLE model
 
-We can then build the NIMBLE model. 
+We can then build the NIMBLE model.
 ```{r , warning = FALSE, message = FALSE}
 model <- nimbleModel( code = modelCode,
                       constants = nimConstants,
@@ -388,7 +392,7 @@ chainsPlot(samples)
 
 ### 3.1. Model definition
 
-We use the same simulated dataset to demonstrate how to fit a model using the semi-complete data likelihood (SCDL) approach. We first need to re-define the model.
+We use the same simulated dataset to demonstrate how to fit a model using the semi-complete data likelihood (SCDL) approach [@King2016]. We first need to re-define the model.
 ```{r , warning = FALSE, message = FALSE}
 modelCodeSemiCompleteLikelihood <- nimbleCode({
   #----- SPATIAL PROCESS
@@ -445,9 +449,10 @@ modelCodeSemiCompleteLikelihood <- nimbleCode({
 
   ## Intensity of the detection point process
   detIntensity[1:numObsWindows] <- exp(detCoeffInt + detCoeffSlope * detCovs[1:numObsWindows])
-  ## Detection process.
-  ## Note that this conditions on the fact that individuals are detected (at least once).
-  ## So, at the bottom of this model code we deduct log(probDetection) from the log-likelihood function for each individual
+  ## Detection process
+  ## Note that this conditions on the fact that individuals are detected (at least once)
+  ## So, at the bottom of this model code we deduct log(probDetection) from the log-likelihood
+  ## function for each individual
   for (i in 1:nDetected){
     y[i, 1:numMaxPoints, 1:3] ~ dpoisppDetection_normal(
       lowerCoords = obsLoCoords[1:numObsWindows, 1:2],
@@ -461,8 +466,9 @@ modelCodeSemiCompleteLikelihood <- nimbleCode({
     )
   }
   ## Normalization: normData can be any scalar in the data provided when building the model
-  ## The dnormalizer is a custom distribution defined for efficiency, where the input data does not matter
-  ## and it makes it possible to use the general dpoippDetection_normal function for both data augmentation and SCDL.
+  ## The dnormalizer is a custom distribution defined for efficiency, where the input data
+  ## does not matter. It makes it possible to use the general dpoippDetection_normal function
+  ## when either data augmentation or the SCDL is employed
   logDetProb <- log(probDetection)
   normData ~ dnormalizer(logNormConstant = -M * logDetProb)
 })
@@ -493,17 +499,17 @@ nimInits1$sxy <- nimInits1$sxy[idDetected,]
 The values below are needed to calculate the void probability numerically (i.e. the probability that one individual is detected at least once) using the midpoint rule.
 ```{r , warning = FALSE, message = FALSE}
 ## Number of equal subintervals for each dimension of a grid cell
-nPtsPerDim <- 2 
+nPtsPerDim <- 2
 ## Number of points to use for the numerical integration for each grid cell
-nNodes <- nPtsPerDim^2 
-## Generate midpoint nodes coordinates for numerical integration using the "midPointNodes" function
-nodesRes <- midPointNodes( nimData1$lowerHabCoords,
+nNodes <- nPtsPerDim^2
+## Generate midpoint nodes coordinates for numerical integration using the "getMidPointNodes" function
+nodesRes <- getMidPointNodes( nimData1$lowerHabCoords,
                            nimData1$upperHabCoords,
                            nPtsPerDim)
 ## Add this info to the data and constant objects
 nimData1$quadNodes <- nodesRes$quadNodes
 nimData1$quadWeights <- nodesRes$quadWeights
-nimData1$numNodes = rep(nNodes,dim(nimData1$lowerHabCoords)[1])
+nimData1$numNodes <- rep(nNodes,dim(nimData1$lowerHabCoords)[1])
 nimConstants$nNodes <- dim(nodesRes$quadNodes)[1]
 ```
 

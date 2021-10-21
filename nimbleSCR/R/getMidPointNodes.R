@@ -12,11 +12,11 @@
 #' @examples 
 #' lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
 #' upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
-#' midPointNodes(lowerCoords, upperCoords, 5)
+#' getMidPointNodes(lowerCoords, upperCoords, 5)
 #' 
-#' @rdname midPointNodes
+#' @rdname getMidPointNodes
 #' @export
-midPointNodes <- function(lowerCoords, upperCoords, numSubintervals = 10) {
+getMidPointNodes <- function(lowerCoords, upperCoords, numSubintervals = 10) {
   numDims <- ncol(lowerCoords)
   numWindows <- nrow(lowerCoords)
   numNodes <- numSubintervals^numDims ## Number of nodes for each window

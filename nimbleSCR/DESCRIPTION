@@ -48,13 +48,13 @@ Collate:
     dpoisppLocalDetection_normal.R
     getLocalObjects.R
     getLocalTraps.R
+    getMidPointNodes.R
     getWindowCoords.R
     getSparseY.R
     localTrapCalculations.R
     makeConstantNimbleFunction.R
     marginalVoidProbIntegrand.R
     marginalVoidProbNumIntegration.R
-    midPointNodes.R
     scaleCoordsToHabitatGrid.R
     zzz.R
 

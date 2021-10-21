@@ -27,7 +27,7 @@
 #' upperHabCoords <- matrix(c(2, 1, 2, 2), nrow = 2, byrow = TRUE)
 #' lowerObsCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
 #' upperObsCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
-#' nodesRes <- midPointNodes(lowerHabCoords, upperHabCoords, 10)
+#' nodesRes <- getMidPointNodes(lowerHabCoords, upperHabCoords, 10)
 #' quadNodes <- nodesRes$quadNodes
 #' quadWeights <- nodesRes$quadWeights
 #' numNodes <- rep(100, 2)
