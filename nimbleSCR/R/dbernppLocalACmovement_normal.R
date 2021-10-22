@@ -48,7 +48,7 @@
 #' @examples 
 #' 
 #' # Creat habitat grid
-#' habitatGrid <- matrix(c(1:(4^4)), nrow = 4, ncol=4, byrow = TRUE)
+#' habitatGrid <- matrix(c(1:(4^2)), nrow = 4, ncol=4, byrow = TRUE)
 #' coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
 #'                                     1.5, 3.5,
 #'                                     2.5, 3.5,
