@@ -60,7 +60,7 @@ library(nimbleSCR)
 # # distributions (slow)
 # source(file.path(baseDir,"nimbleSCR/test/testthat/testDistributionFunctions.R"))
 library(testthat)
-test_package("nimbleSCR")
+##test_package("nimbleSCR")
 devtools::test("nimbleSCR")
 
 ## inspect package vignettes
