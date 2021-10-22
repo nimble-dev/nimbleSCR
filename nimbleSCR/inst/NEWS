@@ -1,0 +1,136 @@
+
+
+version 0.1.3 (2021-10-22)
+
+-- added point process distribution functions:
+
+                              Density:  dbernppAC;   dpoisppAC.R.   
+
+                              Movement/density :
+dbernppACmovement_normal.R;  dbernppACmovement_exp.R.
+
+                              Movement/density (LocalVersion):
+dbernppLocalACmovement_normal.R;  dbernppLocalACmovement_exp.R.
+
+                              Detection :  dbernppDetection_normal.R;
+dpoisppDetection_normal.R .
+
+                              Detection (LocalVersion):
+dbernppLocalDetection _normal.R;  dpoisppLocalDetection_normal.R.
+
+                            Normalizing constant for Semi-likelihood:
+dnormalizer.R.   
+
+
+
+-- added point process functions used internally in the distribution
+function (calcWindowSizes;  getWindowIndex;  integrateIntensityLocal_normal;
+integrateIntensityLocal_exp; integrateIntensity_normal;
+integrateIntensity_exp; stratRejectionSampler_normal;
+stratRejectionSampler_exp; makeConstantNimbleFunction;
+marginalVoidProbIntegrand)
+
+-- added function to do the numerical integration of the marginal void
+probability: marginalVoidProbNumIntegration()
+
+-- added function to obtain lower and upper habitat coordinates and the
+habitat grid to do the fast look-up of cell id from x and y coordinates:
+getWindowCoords.
+
+-- added function to obtain midpoint nodes coordinates for numerical
+integration : getMidPointNodes
+
+-- added a vignette describing how to use the point process functions:
+Point_Process.Rmd
+
+
+
+version 0.1.2 (2021-07-01)
+
+
+
+-- added extra arguments for the dbinomLocal_normal() function so it can
+also model trap covariates on p0.
+
+--  added dpoisLocal_normal(), and the possibility to model trap
+covariates on lambda.
+
+--  added the ‘r’ version dbinomLocal_normal() and dpoisLocal_normal()
+function to simulate SCR data.
+
+-- added the possibility to use getSparseY() to merge all information
+about individual detections in one single vector, instead of 3 separate
+objects (necessary when using the “r” version of dbinomLocal_normal() and
+dpoisLocal_normal()).
+
+--  added Soumen Dey as an author.
+
+--  moved wolverine vignette in the package. Added the wolverine dataset
+in the package (in the testthat folder). The working directory to load the
+wolverine data is based on ‘Sys.info()['user']’ (same as we do in
+makePackage.R).
+
+--  created a vignette describing how to use nimble and
+dbinomLocal_normal() to simulate and fit SCR models.
+
+--  fixed bug in scaleCoordsToHabitatGrid when scaleToGrid=F.
+
+--  fixed typo in scaleCoordsToHabitatGrid and getSparseY.
+
+--  added unit-testing using the testthat package:
+
+                - tested UtilityFunctions (getSparseY,
+scaleCoordsToHabitatGrid,getLocalObjects).
+
+ - tested dbinomLocal_normal (Make sure we obtain the same
+model$calculate() than reported in Daniel’s paper for the wolverine example,
+simulate and fit binomial SCR data with a nimble model and check that
+estimates are ‘close’ to the simulated ones).
+
+  - tested dpoisLocal_normal (simulate and fit poisson SCR data with a
+nimble model and check that estimates are ‘close’ to the simulated ones).
+
+
+
+
+
+version 0.1.1 (2021-01-07)
+
+-- getLocalTraps(): added a check (return an error) so that we make sure
+that the ‘dmax’ value we picked is large enough so that an AC location
+located far away in the buffer still has a chance of being detected with the
+local detectirs. Basically all habitat cell center should have >0 one
+“local” trap. This function is deprecated and getLocalObjects() should be
+used instead. I added a “deprecated” warning message that appears when
+running the function.
+
+-- Added a new function to replace getLocalTraps() now called
+getLocalObjects().
+
+-- dbinom_sparseLocalSCR(): Some internal changes where we don’t fully
+re-construct the y and gain in efficiency. dbinom_sparseLocalSCR(): function
+is deprecated and dbinomLocal_normal() should be used instead. I couldn’t
+add a deprecated message for the nimble function. So the warnings about the
+deprecated functions are printed when loading the package by adding a
+packageStartupMessage() in the zzz.R file.
+
+-- Added a new function to replace dbinom_sparseLocalSCR(), now called
+dbinomLocal_normal ().
+
+-- Added a scaleCoordsToHabitatGrid() function. Rescale the coordinates is
+necessary to run all our functions (i.e. fast habitat cell lookup. I guess
+we should do a proper vignette on this). I added credits to Mike Meredith
+for this technique in the description of the function.
+
+It can take as input up to 5 dimensions (5 should be enough for now) array
+of coordinates and scale it to the grid or rescale it back to its original
+coordinate with the argument “scaleToGrid = F”. It requires the dimnames
+(“x” and “y”) to be specified but x and y can be in any dimension of the
+array (useful as posterior x and y coordinates are not always on the same
+dimensions depending on open-pop, and indexing the user is using…).
+
+-- Adjusted the wolverine vignette with the use of the new functions .
+
+-- Added in the description file that it is  now:
+
+-- Corrected a few typos here and there.
