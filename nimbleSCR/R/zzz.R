@@ -157,7 +157,7 @@
                           "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
                           "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
                 pqAvail = FALSE,
-                mixedSizes = FALSE   
+                mixedSizes = TRUE
             )
           ),
         verbose = FALSE)
@@ -173,7 +173,7 @@
                               "s = double(1)", "lambda = double(0)", "baseIntensities = double(1)",
                               "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
+                    mixedSizes = TRUE
                 )
             ),
             verbose = FALSE)
@@ -187,7 +187,7 @@
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
                               "numWindows = double(0)", "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE)
+                    mixedSizes = TRUE)
             ),
             verbose = FALSE)
         
@@ -203,7 +203,7 @@
                               "resizeFactor = double(0)","localHabWindowIndices  = double(2)", "numLocalHabWindows = double(1)",
                               "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
+                    mixedSizes = TRUE
                 )
             ),
             verbose = FALSE)
@@ -220,7 +220,7 @@
                               "resizeFactor = double(0)","localHabWindowIndices  = double(2)", "numLocalHabWindows = double(1)",
                               "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
+                    mixedSizes = TRUE
                 )
             ),
             verbose = FALSE)
@@ -237,7 +237,7 @@
                               "numWindows = double(0)",
                               "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE)
+                    mixedSizes = TRUE)
             ),
             verbose = FALSE)
         
@@ -248,8 +248,7 @@
                 dnormalizer = list(
                     BUGSdist = "dnormalizer(logNormConstant)",
                     types = c("value = double(0)", "logNormConstant = double(0)"),
-                    pqAvail = FALSE,
-                    mixedSizes = FALSE   
+                    pqAvail = FALSE
                 )
             ),
             verbose = FALSE)
@@ -262,7 +261,7 @@
                     types = c("value = double(2)", "lowerCoords = double(2)", "upperCoords = double(2)", "logIntensities = double(1)", 
                               "sumIntensity = double(0)", "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numPoints = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE   
+                    mixedSizes = TRUE
                 )
             ),
             verbose = FALSE)
@@ -280,7 +279,7 @@
                               "numMaxPoints = double(0)",
                               "numWindows = double(0)", "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE)
+                    mixedSizes = TRUE)
             ),
             verbose = FALSE)
         
@@ -297,7 +296,7 @@
                               "numMaxPoints = double(0)", "numWindows = double(0)",
                               "indicator = double(0)"),
                     pqAvail = FALSE,
-                    mixedSizes = FALSE)
+                    mixedSizes = TRUE)
             ),
             verbose = FALSE)
         
