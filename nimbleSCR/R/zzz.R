@@ -141,7 +141,7 @@
                               "logSumIntensity = double(0)", "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)"),
                     
                     discrete = TRUE,
-                    mixedSizes = FALSE,
+                    mixedSizes = TRUE,
                     pqAvail = FALSE
                 )
             ),
