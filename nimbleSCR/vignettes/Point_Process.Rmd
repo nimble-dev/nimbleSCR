@@ -169,16 +169,16 @@ modelCode <- nimbleCode({
 We set parameter values for the simulation as below.
 ```{r , warning = FALSE, message = FALSE}
 sigma <- 1
-psi <- 0.5
+psi <- 0.6
 detCoeffInt <- 0.1
 detCoeffSlope <- 0.5
-habCoeffSlope <- -1
+habCoeffSlope <- -1.5
 ```
 
 We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 100. The expected total number of individuals that are truly present in the population is *M* *psi.
 
 ```{r , warning = FALSE, message = FALSE}
-M <- 100
+M <- 150
 ```
 
 When simulating individual detections using the Poisson point process function 'dpoispp_Detection_normal', all the information is stored in *y*, a 3D array containing i) the number of detections per individual, ii) the x- and y-coordinates of each detection, and iii) the index of the habitat grid cell for each detection (see ?dpoisppDetection_normal for more details):
@@ -242,7 +242,7 @@ model <- nimbleModel( code = modelCode,
                       data = nimData,
                       inits = nimInits,
                       check = F,
-                      calculate = T)
+                      calculate = F)
 ```
 
 
@@ -253,8 +253,8 @@ Here, we want to simulate individual AC locations ('sxy'), individual states ('z
 We first need to identify which nodes in the model need to be simulated, via the 'getDependencies' function in NIMBLE. Then, we can generate values for these nodes using the 'simulate' function in NIMBLE.
 
 ```{r , warning = FALSE, message = FALSE}
-nodesToSim <- model$getDependencies(c("sxy", "z"), self = T)
-set.seed(100)
+nodesToSim <- model$getDependencies(names(nimInits), self = F)
+set.seed(1)
 model$simulate(nodesToSim, includeData = FALSE)
 ```
 
@@ -364,7 +364,7 @@ MCMCRuntime <- system.time(samples <- runMCMC( mcmc = cMCMC,
 ```
 
 ```{r eval = F, echo = FALSE}
-save(samples, MCMCRuntime, file = file.path(baseDir,"nimbleSCR/tests/testthat/pointProcess_samples.RData"))
+save(samples, MCMCRuntime, file = file.path(baseDir,"nimbleSCR/inst/extdata/pointProcess_samples.RData"))
 #file.path("C:/Personal_Cloud/OneDrive/Work/nimbleSCR/nimbleSCR/inst/extdata","pointProcess_samples.RData"))
 ```
 
@@ -527,16 +527,17 @@ model <- nimbleModel(code = modelCodeSemiCompleteLikelihood,
 model$calculate()
 cmodel <- compileNimble(model)
 cmodel$calculate()
-```
 
-```{r , eval = F, warning = FALSE, message = FALSE}
+
 MCMCconf <- configureMCMC(model = model,
                           monitors =  c("N","sigma","probDetection","habCoeffInt", "detCoeffInt","detCoeffSlope","habCoeffSlope"),
                           control = list(reflective = TRUE),
                           thin = 1)
 
 MCMC <- buildMCMC(MCMCconf)
+```
 
+```{r , eval = F, warning = FALSE, message = FALSE}
 cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
 
 ## Run MCMC
@@ -551,7 +552,7 @@ MCMCRuntime1 <- system.time(samples1 <- runMCMC( mcmc = cMCMC,
 
 
 ```{r eval = F, echo = FALSE}
-save(samples1, MCMCRuntime1, file = file.path(baseDir,"nimbleSCR/tests/testthat/pointProcess_samples1.RData"))
+save(samples1, MCMCRuntime1, file = file.path(baseDir,"nimbleSCR/inst/extdata/pointProcess_samples1.RData"))
 ```
 
 
