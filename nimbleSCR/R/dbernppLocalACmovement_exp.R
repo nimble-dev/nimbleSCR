@@ -19,7 +19,7 @@
 #' @param baseIntensities Vector of baseline habitat intensities for all habitat windows.
 #' @param habitatGrid Matrix of habitat window indices. When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} 
 #' in order to be able to use the distribution in \code{nimble} model code.     
-#' @param habitatGridLocal Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).        
+#' @param habitatGridLocal Matrix of resized habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).        
 #' @param resizeFactor Scalar (aggregation factor) for rescaling habitat windows as used in \code{getLocalObjects}.   
 #' @param localHabWindowIndices Matrix of indices of local habitat windows around each rescaled habitat grid cell, as returned by the getLocalObjects function (object named \code{localIndices}).        
 #' @param numLocalHabWindows Vector of numbers of local habitat windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
@@ -131,7 +131,7 @@ dbernppLocalACmovement_exp <- nimbleFunction(
       else return(0.0)
     }
     ## Index of the window where x falls
-    windowInd <- habitatGrid[trunc(x[2]/resizeFactor)+1, trunc(x[1]/resizeFactor)+1]
+    windowInd <- habitatGrid[trunc(x[2])+1, trunc(x[1])+1]
     ## windowInd == 0 means this window is not defined as habitat
     if(windowInd == 0) {
       if(log) return(-Inf)
