@@ -10,10 +10,10 @@
 #' 
 #' @name dbernppAC 
 #' 
-#' @param x Vector of x- and y-coordinates of a single spatial point (i.e. AC location).
+#' @param x Vector of x- and y-coordinates of a single spatial point (i.e. AC location) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}).
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
-#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window. 
-#' Each window should be of size 1x1 (after rescaling if necessary).
+#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}). One row for each window. 
+#' Each window should be of size 1x1.
 #' @param logIntensities Vector of log habitat intensities for all habitat windows. 
 #' @param logSumIntensity Log of the sum of habitat intensities over all windows.
 #' @param habitatGrid Matrix of habitat window indices. Only needed for \code{dbernppAC}. 

@@ -3,8 +3,8 @@
 #' The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 
 #' coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
-#' follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location.
-#'
+#' follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location. 
+#' All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid})
 #'
 #' The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
@@ -13,7 +13,7 @@
 #' \item An indicator (\emph{indicator}) to shortcut calculations for individuals unavailable for detection.
 #' }
 #' 
-#' The \code{dbinomLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
+#' The \code{dbinomLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) and activity centers coordinates (\emph{s}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
 #'
 #' When the aim is to simulate detection data: 
 #' \enumerate{
@@ -36,8 +36,8 @@
 #' @param p0 Baseline detection probability used in the half-normal detection function.
 #' @param p0Traps Vector of baseline detection probabilities for each trap used in the half-normal detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided. 
 #' @param sigma Scale parameter of the half-normal detection function.
-#' @param s Individual activity center x- and y-coordinates.
-#' @param trapCoords Matrix of x- and y-coordinates of all traps.
+#' @param s Individual activity center x- and y-coordinates scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}).
+#' @param trapCoords Matrix of x- and y-coordinates of all traps scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}).
 #' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.
 #' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the \code{\link{getLocalObjects}} function.
 #' @param resizeFactor Aggregation factor used in the \code{\link{getLocalObjects}} function to reduce the number of habitat grid cells to retrieve local traps for.
