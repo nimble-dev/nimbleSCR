@@ -383,7 +383,8 @@ if(is.null(baseDir)) {
 MCMCRuntime
 
 ## Traceplots and density plots for the tracked parameters
-chainsPlot(samples)
+chainsPlot(samples, line = c(N, detCoeffInt, detCoeffSlope, habCoeffSlope, N/M, sigma))
+
 ```
 
 
@@ -570,7 +571,7 @@ if(is.null(baseDir)) {
 MCMCRuntime1
 
 ## Plot check
-chainsPlot(samples1)
+chainsPlot(samples1, line = c(N, detCoeffInt, detCoeffSlope, NA, habCoeffSlope, NA, sigma))
 ```
 
 ## REFERENCES

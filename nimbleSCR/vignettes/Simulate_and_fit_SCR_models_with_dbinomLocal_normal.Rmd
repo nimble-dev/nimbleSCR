@@ -12,6 +12,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width = 8, fig.height = 10) 
 ```
 
 
@@ -288,7 +289,8 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
                                                              nchains = 3,
                                                              samplesAsCodaMCMC = TRUE))
 #plot check 
-chainsPlot(myNimbleOutput)
+chainsPlot(myNimbleOutput, line = c(N, p0, N/M, sigma))
+
 ```
 
 
@@ -471,7 +473,8 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
                                                              nchains = 3,
                                                              samplesAsCodaMCMC = TRUE))
 #plot check 
-chainsPlot(myNimbleOutput)
+chainsPlot(myNimbleOutput, line = c(N, nimInits$betaTraps, p0, N/M, sigma))
+
 ```
 
 ## REFERENCES
