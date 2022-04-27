@@ -48,7 +48,7 @@
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
-#'  and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / \sigma^2)}.
+#'  and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / 2 \sigma^2)}.
 #'
 #' @author Cyril Milleret, Soumen Dey
 #'
