@@ -25,6 +25,8 @@ if(Sys.info()['user'] == 'dturek') {
   baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
   baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'weizhang'){                ## Wei 
+    baseDir <- '/Users/weizhang/Documents/GitHub/nimbleSCR/'
 } else baseDir <- NULL
 
 if(is.null(baseDir)) {
@@ -37,7 +39,7 @@ if(is.null(baseDir)) {
 
 This vignette demonstrates the wolverine point-process SCR model, as in
 "A flexible and efficient Bayesian implementation of point process models for 
-spatial capture-recapture data" (Wei *et al*, *submitted*) using NIMBLE [@de2017programming;@nimbleSoftware2020] and the nimbleSCR package [@nimbleSCR].
+spatial capture-recapture data" (Zhang *et al*, *submitted*) using NIMBLE [@de2017programming;@nimbleSoftware2020] and the nimbleSCR package [@nimbleSCR].
 
 
 ### Load Libraries 
@@ -136,7 +138,7 @@ modelCode <- nimbleCode({
     numHabWindows = numHabWindows
   )
   logDetProb <- log(probDetection)
-  normData ~ dnormalizer(logNormConstant = logDetProb)
+  normData ~ dnormalizer(logNormConstant = -numIdDetected*logDetProb)
 
 })
 ```

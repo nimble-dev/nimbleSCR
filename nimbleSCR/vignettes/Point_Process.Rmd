@@ -471,7 +471,7 @@ modelCodeSemiCompleteLikelihood <- nimbleCode({
   ## does not matter. It makes it possible to use the general dpoippDetection_normal function
   ## when either data augmentation or the SCDL is employed
   logDetProb <- log(probDetection)
-  normData ~ dnormalizer(logNormConstant = -M * logDetProb)
+  normData ~ dnormalizer(logNormConstant = -nDetected * logDetProb)
 })
 ```
 
