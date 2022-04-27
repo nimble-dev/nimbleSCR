@@ -29,11 +29,6 @@ rbernppAC(
 )
 }
 \arguments{
-\item{x}{Vector of x- and y-coordinates of a single spatial point (i.e. AC location).}
-
-\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window. 
-Each window should be of size 1x1 (after rescaling if necessary).}
-
 \item{logIntensities}{Vector of log habitat intensities for all habitat windows.}
 
 \item{logSumIntensity}{Log of the sum of habitat intensities over all windows.}

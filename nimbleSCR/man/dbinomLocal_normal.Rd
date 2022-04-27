@@ -59,10 +59,6 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 
 \item{sigma}{Scale parameter of the half-normal detection function.}
 
-\item{s}{Individual activity center x- and y-coordinates.}
-
-\item{trapCoords}{Matrix of x- and y-coordinates of all traps.}
-
 \item{localTrapsIndices}{Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.}
 
 \item{localTrapsNum}{Vector of numbers of local traps around all habitat grid cells, as returned by the \code{\link{getLocalObjects}} function.}
@@ -81,13 +77,10 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 }
 \value{
 The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
- and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / \sigma^2)}.
+ and the half-normal detection function : \eqn{p = p0 * exp(-d^2 / 2 \sigma^2)}.
 }
 \description{
-The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
-binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 
-coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
-follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location.
+
 }
 \details{
 The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
@@ -97,7 +90,7 @@ The \code{dbinomLocal_normal} distribution incorporates three features to increa
 \item An indicator (\emph{indicator}) to shortcut calculations for individuals unavailable for detection.
 }
 
-The \code{dbinomLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
+The \code{dbinomLocal_normal} distribution requires x- and y- detector coordinates (\emph{trapCoords}) and activity centers coordinates (\emph{s}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
 
 When the aim is to simulate detection data: 
 \enumerate{

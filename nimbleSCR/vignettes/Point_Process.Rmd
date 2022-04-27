@@ -1,11 +1,11 @@
 ---
-title: "Using nimbleSCR to simulate from and fit Bayesian SCR models"
+title: "Point process Bayesian SCR models with nimbleSCR"
 author: "Cyril Milleret, Wei Zhang, Pierre Dupont and Richard Bischof"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Using nimbleSCR to simulate from and fit Bayesian SCR models}
+  %\VignetteIndexEntry{Point process Bayesian SCR models with nimbleSCR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\rmarkdown.html_vignette.check_title = FALSE
