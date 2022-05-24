@@ -11,7 +11,11 @@ if(Sys.info()['user'] == 'dturek') {
     baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
     baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'admin') {
+    baseDir <- '~/GitHubSD/nimbleSCR/'                       ## Soumen
 } else stop('unknown user')
+
+
 
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
@@ -90,3 +94,12 @@ getLocalTraps
 
 getSparseY
 ?dbinom_sparseLocalSCR
+
+dbinomLocal_HNP
+?dbinomLocal_HNP
+
+dbinomLocal_EX
+?dbinomLocal_EX
+
+HRA_nimble
+?HRA_nimble
