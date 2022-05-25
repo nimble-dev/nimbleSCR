@@ -24,6 +24,23 @@ library(coda)
 library(nimble)
 library(nimbleSCR)
 library(basicMCMCplots)
+```
+
+```{r, warning = FALSE, message = FALSE, include=FALSE}
+# FunD <- "E:/RovQuantSD_Codes"
+# source(file.path(FunD, "nimbleSCR_HRfunctions/HRA_nimble_SD.R"))
+# source(file.path(FunD, "nimbleSCR_HRfunctions/dbinomLocal_HNP.R"))
+if(Sys.info()['user'] == 'dturek') {
+  baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
+} else if(Sys.info()['user'] == 'pidu') {
+  baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'            ## Pierre
+} else if(Sys.info()['user'] == 'cymi') {
+  baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
+} else if(Sys.info()['user'] == 'arichbi') {
+  baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'admin') {                    ## Soumen
+    baseDir <- '~/GitHubSD/nimbleSCR/'
+} else baseDir <- NULL
 
 ```
 
@@ -55,7 +72,7 @@ legend(x = 7, y = 33.3,
 ```
 
 In order to use nimbleSCR's efficient functions, we have to rescale habitat and trap coordinates to to allow a fast habitat cell ID lookup and the local evaluation (see @milleret2019local and @turek2021efficient  
-for further details). We use the ' 'scaleCoordsToHabitatGrid' function to rescale coordinates and the 'getLocalObjects' function to set up the objects necessary to perform the local evaluation. Special care should be taken when chosing 'dmax', the radius within which traps are considered, relative to $\sigma$ [@milleret2019local]. Here, we are using a value $>2 * \sigma$.
+for further details). We use the 'scaleCoordsToHabitatGrid' function to rescale coordinates and the 'getLocalObjects' function to set up the objects necessary to perform the local evaluation. Special care should be taken when chosing 'dmax', the radius within which traps are considered, relative to $\sigma$ [@milleret2019local]. Here, we are using a value $>2 * \sigma$.
 ```{r , warning = FALSE, message = FALSE}
 ## RESCALE COORDINATES
 ScaledCoords <- scaleCoordsToHabitatGrid(coordsData =  trapCoords,
@@ -297,9 +314,13 @@ MCMCconf$setSamplerExecutionOrder(c(ordering[1],
 #### 1.7.3 Run MCMC
 
 Now we proceed to build and compile the nimble MCMC object. We use the function 'runMCMC' to execute the compiled MCMC object for obtaining posterior samples.
-```{r , warning = FALSE, message = FALSE, fig.width = 7, fig.height = 10}
+```{r , warning = FALSE, message = FALSE}
 MCMC <- buildMCMC(MCMCconf)
+```
+
+```{r , eval = F, warning = FALSE, message = FALSE}
 cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
+
 # RUN THE MCMC 
 niter <- 10000
 burnin <- 2000 
@@ -310,10 +331,26 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
                                                              nchains = nchains,
                                                              samplesAsCodaMCMC = TRUE))
 
+```
+
+```{r eval = F, echo = FALSE}
+save(myNimbleOutput, niter, burnin, nchains, MCMCRuntime,  
+     file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+```
+
+
+```{r echo = F}
+if(is.null(baseDir)) {
+    load(system.file("extdata", "dbinomLocal_HNP_samples.RData", package = "nimbleSCR"))
+} else {
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+}
+```
+
+```{r , warning = FALSE, message = FALSE, fig.width = 7, fig.height = 10}
 print(MCMCRuntime)
 #plot check 
 chainsPlot(myNimbleOutput, line = c(N, p0, N/M, sigma, w))
-
 ```
 
 
@@ -382,18 +419,16 @@ The function 'HRA_nimble()' has two parts: a setup and and a run part. If we onl
 
 The run part of the function can be run without specifying any arguments. For more information on the detection functions, please refer to @dey2022detfun. We provide some examples to compute home range radius and area in below.
 
-Next we obtain estimate $95\%$ home range radius and area for half-normal plateau detection function. Note that, we only have to provide the parameter values for 'sigma' and 'w' (i.e., 'p0' is not needed) to compute home range radius and area.
+Next we obtain estimate $95\%$ home range radius and area for half-normal plateau detection function (detfun = 1). Note that, we only have to provide the parameter values for 'sigma' and 'w' (i.e., 'p0' is not needed) to compute home range radius and area.
 
 ```{r , warning = FALSE, message = FALSE}
 pr <- 0.95
 paramnames.hr <- c("HRradius", "HRarea")
 params <- c(sigma, w)
 names(params) <- c("sigma", "w")
-HRAnim <- HRA_nimble( param = params, 
-                      xlim = c(0, dim(habitatMask)[2]),
-                      ylim = c(0, dim(habitatMask)[1]),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 1, pr = pr, d = 6)
+HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6, 
+                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                      ng = 800, tol = 1E-5, niter = 2000)
 
 # Different values of argument "detfun"
 # 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
@@ -413,10 +448,9 @@ if(is.list(myNimbleOutput)){posteriorSamples <- do.call(rbind, myNimbleOutput)}
 if(!is.list(myNimbleOutput)){posteriorSamples <- as.matrix(myNimbleOutput)} 
 theseIter <- round(seq(1, nrow(posteriorSamples), by = 10))
 posteriorSamples <- posteriorSamples[theseIter,names(params)]
-HRAnim.mat <- HRA_nimble(param = posteriorSamples, 
+HRAnim.mat <- HRA_nimble(param = posteriorSamples, detfun = 1, pr = pr, d = 6, 
                          xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
-                         ng = 800, tol = 1E-5, niter = 2000,
-                         detfun = 1, pr = pr, d = 6)
+                         ng = 800, tol = 1E-5, niter = 2000)
 
 cHRAnim.arr <- compileNimble(HRAnim.mat, resetFunctions = TRUE)
 
@@ -491,10 +525,9 @@ sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")
 
-HRAnim <- HRA_nimble(param = params, 
+HRAnim <- HRA_nimble(param = params, detfun = 0, pr = pr, d = 6, 
                       xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 0, pr = pr, d = 6)
+                      ng = 800, tol = 1E-5, niter = 2000)
 
 HR.hn <- c(HRAnim$run())
 names(HR.hn) <- paramnames.hr
@@ -535,10 +568,9 @@ Next we obtain the $95\%$ home range radius and area for exponential detection f
 sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")
-HRAnim <- HRA_nimble(param = params, 
+HRAnim <- HRA_nimble(param = params, detfun = 2, pr = pr, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 2, pr = pr, d = 6)
+                      ng = 800, tol = 1E-5, niter = 2000)
 HR.ex <- c(HRAnim$run())
 names(HR.ex) <- paramnames.hr
 print(HR.ex)
@@ -591,10 +623,9 @@ alpha.a = 5
 alpha.b = 1
 params <- c(sigma, alpha.a, alpha.b)
 names(params) <- c("sigma", "alpha.a", "alpha.b")
-HRAnim <- HRA_nimble(param = params, 
+HRAnim <- HRA_nimble(param = params, detfun = 3, pr = pr, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 3, pr = pr, d = 6)
+                      ng = 800, tol = 1E-5, niter = 2000)
 HR.al <- c(HRAnim$run())
 names(HR.al) <- paramnames.hr
 print(HR.al)
@@ -647,10 +678,9 @@ sigma.b = 1
 w = 2
 params <- c(sigma.a, sigma.b, p0.a, p0.b, w)
 names(params) <- c("sigma.a", "sigma.b", "p0.a", "p0.b", "w")
-HRAnim <- HRA_nimble(param = params, 
+HRAnim <- HRA_nimble(param = params, detfun = 4, pr = pr, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 4, pr = pr, d = 6)
+                      ng = 800, tol = 1E-5, niter = 2000)
 HR.bi <- c(HRAnim$run())
 names(HR.bi) <- paramnames.hr
 print(HR.bi)
@@ -708,10 +738,9 @@ sigma.b = 1
 w = 1 
 params <- c(sigma.a, sigma.b, w)
 names(params) <- c("sigma.a", "sigma.b", "w")
-HRAnim <- HRA_nimble(param = params, 
+HRAnim <- HRA_nimble(param = params, detfun = 5, pr = pr, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000,
-                      detfun = 5, pr = pr, d = 6)
+                      ng = 800, tol = 1E-5, niter = 2000)
 HR.dn <- c(HRAnim$run())
 names(HR.dn) <- paramnames.hr
 print(HR.dn)

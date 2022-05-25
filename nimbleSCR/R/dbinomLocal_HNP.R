@@ -58,6 +58,10 @@
 #' @importFrom stats dbinom
 #'
 #' @examples
+#' # A user friendly vignette is also available on github: 
+#' # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
+#' # Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
+#' 
 #' # I. DATA SET UP 
 #' coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
 #'                                     1.5, 3.5,

@@ -29,6 +29,11 @@ rbernppAC(
 )
 }
 \arguments{
+\item{x}{Vector of x- and y-coordinates of a single spatial point (i.e. AC location) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).}
+
+\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). One row for each window. 
+Each window should be of size 1x1.}
+
 \item{logIntensities}{Vector of log habitat intensities for all habitat windows.}
 
 \item{logSumIntensity}{Log of the sum of habitat intensities over all windows.}

@@ -28,6 +28,8 @@ if(Sys.info()['user'] == 'dturek') {
   baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
   baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'admin') {                  ## Soumen
+  baseDir <- '~/GitHubSD/nimbleSCR/' 
 } else baseDir <- NULL
 
 if(is.null(baseDir)) {

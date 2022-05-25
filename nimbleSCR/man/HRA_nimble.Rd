@@ -2,22 +2,28 @@
 % Please edit documentation in R/HRA_nimble.R
 \name{HRA_nimble}
 \alias{HRA_nimble}
-\title{Function to compute home range radius and area for a specified circular quantile with respect to circular detection functions available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).}
+\title{Computation of home range radius and area}
 \usage{
 HRA_nimble(
   param = 2,
+  detfun = 0,
+  pr = 0.95,
+  d = 6,
   xlim = c(0, 30),
   ylim = c(0, 30),
   ng = 800,
   tol = 1e-05,
-  niter = 2000,
-  detfun = 0,
-  pr = 0.95,
-  d = 6
+  niter = 2000
 )
 }
 \arguments{
-\item{param}{A \code{Vector} of values for different parameters in the specified detection function.}
+\item{param}{\code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.}
+
+\item{detfun}{\code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).}
+
+\item{pr}{\code{Numeric}  variable denoting the quantile probability to compute the home range radius.}
+
+\item{d}{\code{Numeric} variable giving an initial value of the radius.}
 
 \item{xlim}{\code{Vector} of length 2 giving the range along x-axis.}
 
@@ -25,18 +31,129 @@ HRA_nimble(
 
 \item{ng}{\code{Numeric} variable denoting the number of breaks along an axis.}
 
-\item{tol}{A \code{Numeric} variable denoting the allowed tolerance in the radius estimate.}
+\item{tol}{\code{Numeric} variable denoting the allowed tolerance in the radius estimate.}
 
-\item{niter}{A \code{Numeric} variable giving the maximum number of iterations in bisection algorithm.}
-
-\item{detfun}{\code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).}
-
-\item{pr}{A \code{Numeric}  variable denoting the quantile probability to compute the radius.}
-
-\item{d}{A \code{Numeric} variable giving an inital value of the radius.}
+\item{niter}{\code{Numeric} variable giving the maximum number of iterations in bisection algorithm.}
 }
 \description{
-\code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a particular detection function using bisection algorithm.
+\code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
+}
+\examples{
+# A user friendly vignette is also available on github: 
+# https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
+# Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
+
+# HALF-NORMAL PLATEAU FUNCTION (HNP, detfun = 1) 
+habitatMask <- matrix(1, nrow = 30, ncol= 30, byrow = TRUE)
+
+pr <- 0.95
+paramnames.hr <- c("HRradius", "HRarea")
+sigma <- 1
+w <- 1.5
+params <- c(sigma, w)
+names(params) <- c("sigma", "w")
+HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6,
+                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                      ng = 800, tol = 1E-5, niter = 2000)
+
+# Different values of argument "detfun"
+# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
+# 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+HR.hnp <- c(HRAnim$run())
+names(HR.hnp) <- paramnames.hr
+print(HR.hnp)
+# FASTER HRA COMPUTATION USING NIMBLE
+samples <- cbind(rgamma(n = 500, shape = 1, rate = 1), rgamma(n = 500, shape = 1.5, rate = 1))
+colnames(samples) <- c("sigma", "w")
+HRAnim.mat <- HRA_nimble(param = samples, detfun = 1, pr = pr, d = 6, 
+                         xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                         ng = 800, tol = 1E-5, niter = 2000)
+
+cHRAnim.arr <- compileNimble(HRAnim.mat, resetFunctions = TRUE)
+
+HRA.Runtime <- system.time(
+  HR.chain <- cHRAnim.arr$run()
+)
+print(HRA.Runtime)
+dimnames(HR.chain)[[2]] <- paramnames.hr
+HRest <- do.call(rbind, lapply(c(1:2), function(j){
+  c(mean(HR.chain[,j], na.rm = TRUE), sd(HR.chain[,j], na.rm = TRUE))
+}))
+dimnames(HRest) <- list(paramnames.hr, c("MEAN", "SD"))
+
+cat("Numerical estimates using MCMC samples: \n", sep = "")
+print(HRest)
+
+# HALF-NORMAL FUNCTION (HN, detfun = 0) 
+sigma = 2
+params <- c(sigma)
+names(params) <- c("sigma")
+
+HRAnim <- HRA_nimble(param = params, detfun = 0, pr = pr, d = 6, 
+                     xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                     ng = 800, tol = 1E-5, niter = 2000)
+
+HR.hn <- c(HRAnim$run())
+names(HR.hn) <- paramnames.hr
+print(HR.hn)
+
+# Exponential (EX, detfun = 2) 
+
+sigma = 2
+params <- c(sigma)
+names(params) <- c("sigma")
+HRAnim <- HRA_nimble(param = params, detfun = 2, pr = pr, d = 6, 
+                     xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                     ng = 800, tol = 1E-5, niter = 2000)
+HR.ex <- c(HRAnim$run())
+names(HR.ex) <- paramnames.hr
+print(HR.ex)
+
+# Asymmetric logistic (AL, detfun = 3) 
+
+sigma = 2
+alpha.a = 5 
+alpha.b = 1
+params <- c(sigma, alpha.a, alpha.b)
+names(params) <- c("sigma", "alpha.a", "alpha.b")
+HRAnim <- HRA_nimble(param = params, detfun = 3, pr = pr, d = 6, 
+                     xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                     ng = 800, tol = 1E-5, niter = 2000)
+HR.al <- c(HRAnim$run())
+names(HR.al) <- paramnames.hr
+print(HR.al)
+
+
+# Bimodal (BI, detfun = 4) 
+
+p0.a = 0.25
+sigma.a = 0.5
+p0.b = 0.15 
+sigma.b = 1
+w = 2
+params <- c(sigma.a, sigma.b, p0.a, p0.b, w)
+names(params) <- c("sigma.a", "sigma.b", "p0.a", "p0.b", "w")
+HRAnim <- HRA_nimble(param = params, detfun = 4, pr = pr, d = 6, 
+                     xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                     ng = 800, tol = 1E-5, niter = 2000)
+HR.bi <- c(HRAnim$run())
+names(HR.bi) <- paramnames.hr
+print(HR.bi)
+
+# Donut (DN, detfun = 5) 
+
+sigma.a = 1.5 
+sigma.b = 1 
+w = 1 
+params <- c(sigma.a, sigma.b, w)
+names(params) <- c("sigma.a", "sigma.b", "w")
+HRAnim <- HRA_nimble(param = params, detfun = 5, pr = pr, d = 6, 
+                     xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                     ng = 800, tol = 1E-5, niter = 2000)
+HR.dn <- c(HRAnim$run())
+names(HR.dn) <- paramnames.hr
+print(HR.dn)
+
 }
 \author{
 Soumen Dey
