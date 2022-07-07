@@ -11,13 +11,21 @@ if(Sys.info()['user'] == 'dturek') {
     baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
     baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'admin') {                    ## Soumen
+    baseDir <- '~/GitHubSD/nimbleSCR/'         
 } else stop('unknown user')
+
+
 
 if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 
+if(!Sys.info()['user'] == 'admin') { 
+    document(paste0(baseDir, 'nimbleSCR'))
+} else if(Sys.info()['user'] == 'admin') { ## Soumen
+    document("C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR")##Soumen
+}
 
-document(paste0(baseDir, 'nimbleSCR'))
 
 if(.Platform$OS.type == "windows") {
     system(paste0('R CMD build ', baseDir, 'nimbleSCR'))
@@ -25,7 +33,11 @@ if(.Platform$OS.type == "windows") {
     system(paste0('R CMD BUILD ', baseDir, 'nimbleSCR'))
 }
 
-check(paste0(baseDir, 'nimbleSCR'))
+if(!Sys.info()['user'] == 'admin') { 
+    check(paste0(baseDir, 'nimbleSCR'))
+} else if(Sys.info()['user'] == 'admin') { ## Soumen
+    check("C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR")##Soumen
+}
 
 suppressMessages(try(remove.packages('nimbleSCR'), silent = TRUE))
 tarFiles <- grep('\\.tar\\.gz', list.files(baseDir, include.dirs = TRUE), value = TRUE)
@@ -90,3 +102,12 @@ getLocalTraps
 
 getSparseY
 ?dbinom_sparseLocalSCR
+
+dbinomLocal_HNP
+?dbinomLocal_HNP
+
+dbinomLocal_EX
+?dbinomLocal_EX
+
+HRA_nimble
+?HRA_nimble

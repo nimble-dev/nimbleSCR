@@ -1,0 +1,765 @@
+---
+title: "Home range size estimation with the nimbleSCR package"
+author: "Soumen Dey"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Computation of home range area with a variety of detection functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width = 8, fig.height = 8) 
+```
+
+
+In this vignette, we demonstrate how to use the nimbleSCR [@nimblescr2020bischof] and NIMBLE [@valpine2017nimble;@nimbleSoftware2021] packages to simulate and fit a Bayesian SCR model with a half-normal plateau detection function and derive home-range size estimates from the estimated parameters (@dey2022detfun). We use a method based on numerical approximation to estimate home range size from SCR models with circular detection functions. 
+```{r, warning = FALSE, message = FALSE}
+# LOAD PACKAGES
+library(coda)
+library(nimble)
+library(nimbleSCR)
+library(basicMCMCplots)
+```
+
+```{r, warning = FALSE, message = FALSE, include=FALSE}
+# FunD <- "E:/RovQuantSD_Codes"
+# source(file.path(FunD, "nimbleSCR_HRfunctions/HRA_nimble_SD.R"))
+# source(file.path(FunD, "nimbleSCR_HRfunctions/dbinomLocal_HNP.R"))
+if(Sys.info()['user'] == 'dturek') {
+  baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
+} else if(Sys.info()['user'] == 'pidu') {
+  baseDir <- 'C:/Users/pidu/PACKAGES/nimbleSCR/'            ## Pierre
+} else if(Sys.info()['user'] == 'cymi') {
+  baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
+} else if(Sys.info()['user'] == 'arichbi') {
+  baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
+} else if(Sys.info()['user'] == 'admin') {                    ## Soumen
+    baseDir <- '~/GitHubSD/nimbleSCR/'
+} else baseDir <- NULL
+
+```
+
+## 1. Binomial SCR Model with half-normal plateau detection function
+### 1.1 Habitat and trapping grid
+For this example, we create a $30 \times 30$ habitat grid represented by grid cell centers. We center a $20 \times 20$ trapping grid in the habitat leaving an unsampled buffer width of 5 distance units (du) around it. 
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 6}
+# CREATE HABITAT GRID 
+coordsHabitatGridCenter <- cbind(rep(seq(29.5, 0.5, by=-1), 30),
+                                 sort(rep(seq(0.5, 29.5, by=1), 30)))
+colnames(coordsHabitatGridCenter) <- c("x","y")
+
+# CREATE TRAP GRID
+trapCoords <- cbind(rep(seq(5.5, 24.5,by=1),20),
+               sort(rep(seq(5.5, 24.5,by=1),20)))
+colnames(trapCoords) <- c("x","y")
+
+# PLOT CHECK
+plot(coordsHabitatGridCenter[,"y"] ~ coordsHabitatGridCenter[,"x"], pch = 1, cex = 1.5) #pch=16) 
+points(trapCoords[,"y"] ~ trapCoords[,"x"], col="red", pch=16 ) 
+par(xpd=TRUE)
+legend(x = 7, y = 33.3,
+       legend=c("Habitat grid centers", "Traps"),
+       pt.cex = c(1.5,1),
+       horiz = T,
+       pch=c(1,16),
+       col=c("black", "red"),
+       bty = 'n')
+```
+
+In order to use nimbleSCR's efficient functions, we have to rescale habitat and trap coordinates to to allow a fast habitat cell ID lookup and the local evaluation (see @milleret2019local and @turek2021efficient  
+for further details). We use the 'scaleCoordsToHabitatGrid' function to rescale coordinates and the 'getLocalObjects' function to set up the objects necessary to perform the local evaluation. Special care should be taken when chosing 'dmax', the radius within which traps are considered, relative to $\sigma$ [@milleret2019local]. Here, we are using a value $>2 * \sigma$.
+```{r , warning = FALSE, message = FALSE}
+## RESCALE COORDINATES
+ScaledCoords <- scaleCoordsToHabitatGrid(coordsData =  trapCoords,
+                                         coordsHabitatGridCenter = coordsHabitatGridCenter)
+
+lowerAndUpperCoords <- getWindowCoords(
+  scaledHabGridCenter = ScaledCoords$coordsHabitatGridCenterScaled,
+  scaledObsGridCenter = ScaledCoords$coordsDataScaled,
+  plot.check = F)
+
+## LOCAL EVALUATION
+habitatMask <- matrix(1, nrow = 30, ncol= 30, byrow = TRUE)
+
+trapLocal <- getLocalObjects(habitatMask = habitatMask,
+                             coords = ScaledCoords$coordsDataScaled,
+                             dmax = 10,
+                             resizeFactor = 1,
+                             plot.check = FALSE)
+```
+
+
+### 1.2 Define SCR model with half-normal plateau detection function
+Here, we use a custom distribution 'dbinomLocal_HNP()' (available in the nimbleSCR package) corresponding to the half-normal plateau detection function [@dey2022detfun].
+
+Note that we do not provide 'detNums' and 'detIndices' arguments in the 'dbinomLocal_HNP()' function as we want to use this model to simulate data (see '?dbinomLocal_HNP' for further details). 
+When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored for each indiidual in the observation vector 'y' in the following order:
+
+* 'detNums' (total number of individual detections), 
+* 'x' (number of individual detections at each trap), 
+* 'detIndices' (id of the trap at which detections occur).
+
+We now need to provide the maximum number of spatial recaptures that can be simulated per individual. We recommend using 'trapLocal\$numlocalindicesmax' that defines the maximum number of traps available for detections when local evaluation is used. This will enable the simulation of as many spatial detections as allowed by the restrictions imposed by the local evaluation (defined by the 'dmax' argument from 'getLocalObjects'). This means that the length of the 'y' observation vector for each individual is equal to the length of $c(detNums, x, detIndices)$ and is therefore equal to $lengthYCombined = 1+ 2 * trapLocal\$numLocalIndicesMax$. 
+```{r , warning = FALSE, message = FALSE}
+lengthYCombined <- 1 + 2*trapLocal$numLocalIndicesMax 
+```
+
+This means that: 'y[1]' denotes the number of detections, 'y[2:(trapLocal\$numLocalIndicesMax+1)]' gives the number of detections in each detector where it was detected (and '-1' at the remaining indices) and 'y[(trapLocal\$numLocalIndicesMax+2):(2*trapLocal\$numLocalIndicesMax+1)]' gives the id of the traps at which detections occur (and '-1' at the remaining indices).
+
+The nimble model code of an SCR model with half-normal plateau detection function is given below. 
+```{r , warning = FALSE, message = FALSE}
+modelCode <- nimbleCode({
+  ## priors
+  psi ~ dunif(0, 1)
+  sigma ~ dunif(0, 50)
+  w ~ dunif(0, 20)
+  p0 ~ dunif(0, 1)
+  
+  ## loop over individuals
+  for(i in 1:M) {
+    ## AC coordinates
+    sxy[i, 1:2] ~ dbernppAC(
+      lowerCoords = lowerHabCoords[1:numHabWindows, 1:2],
+      upperCoords = upperHabCoords[1:numHabWindows, 1:2],
+      logIntensities = logHabIntensity[1:numHabWindows],
+      logSumIntensity = logSumHabIntensity,
+      habitatGrid = habitatGrid[1:numGridRows,1:numGridCols],
+      numGridRows =  numGridRows,
+      numGridCols = numGridCols
+    )
+    
+    ## latent dead/alive indicators
+    z[i] ~ dbern(psi)
+    ## likelihood
+    y[i, 1:lengthYCombined] ~ dbinomLocal_HNP(
+      size = trials[1:n.traps],
+      p0 = p0,
+      s = sxy[i,1:2],
+      sigma = sigma,
+      w = w,
+      trapCoords = trapCoords[1:n.traps,1:2],
+      localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
+      localTrapsNum = nTraps[1:n.cells],
+      resizeFactor = ResizeFactor,
+      habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
+      indicator = z[i],
+      lengthYCombined = lengthYCombined)
+  }
+  ## derived quantity: total population size
+  N <- sum(z[1:M])
+})
+```
+
+### 1.3 Set parameter values to simulate
+Here, we will use nimble's functionalities to simulate a SCR data set directly from the model.
+For this, we need to set the values of the top-level parameters of the model:
+
+- p0: the baseline detection probability
+- sigma: the scale parameter 
+- w: the width of the plataue
+- psi: proportion of available individuals present in the population 
+```{r , warning = FALSE, message = FALSE}
+# PARAMETERS
+p0 <- 0.25
+sigma <- 1
+w <- 1.5
+psi <- 0.5
+```
+The model formulation uses data augmentation to derive N estimates [@royle2012parameter]. We therefore need to choose the total number of individuals *M* (detected + augmented). Here we used 500. The expected total number of individuals present in the population is 'M * psi'.
+```{r , warning = FALSE, message = FALSE}
+M <- 500
+```
+
+
+### 1.4 Create data, constants and inits objects 
+We can now create the lists of input data and constants required by NIMBLE to build the model.
+```{r , warning = FALSE, message = FALSE}
+nimConstants <- list(M = M,
+                     n.traps = dim(ScaledCoords$coordsDataScaled)[1],
+                     y.maxDet = dim(trapLocal$habitatGrid)[1],
+                     x.maxDet = dim(trapLocal$habitatGrid)[2],
+                     ResizeFactor = trapLocal$resizeFactor,
+                     n.cells = dim(trapLocal$localIndices)[1],
+                     maxNBDets = trapLocal$numLocalIndicesMax,
+                     nTraps = trapLocal$numLocalIndices,
+                     lengthYCombined = lengthYCombined,
+                     numHabWindows = dim(lowerAndUpperCoords$upperHabCoords)[1],
+                     numGridRows = dim(lowerAndUpperCoords$habitatGrid)[1],
+                     numGridCols = dim(lowerAndUpperCoords$habitatGrid)[2]
+                     )
+
+habIntensity = rep(1, dim(lowerAndUpperCoords$upperHabCoords)[1])
+logSumHabIntensity <- log(sum(habIntensity))
+logHabIntensity <- log(habIntensity)
+               
+nimData <- list(trapCoords = ScaledCoords$coordsDataScaled,
+                trapIndex = trapLocal$localIndices,
+                lowerHabCoords = lowerAndUpperCoords$lowerHabCoords,
+                upperHabCoords = lowerAndUpperCoords$upperHabCoords,
+                habitatGrid = lowerAndUpperCoords$habitatGrid,
+                logHabIntensity = logHabIntensity,
+                logSumHabIntensity = logSumHabIntensity,
+                habitatIDDet = trapLocal$habitatGrid,
+                trials = rep(1, dim(ScaledCoords$coordsDataScaled)[1])
+)
+```
+
+In order to simulate data from the nimble model, we need to provide simulated values as initial values.
+```{r , warning = FALSE, message = FALSE}
+nimInits <- list(p0 = p0,
+                 psi = psi,
+                 sigma = sigma,
+                 w = w)
+```
+
+
+
+### 1.5 Create NIMBLE model
+we can then build the nimble SCR model object:
+```{r , warning = FALSE, message = FALSE}
+model <- nimbleModel( code = modelCode,
+                      constants = nimConstants,
+                      data = nimData,
+                      inits = nimInits,
+                      check = F,       
+                      calculate = F)  
+```
+
+
+### 1.6 Simulate SCR data from the NIMBLE model
+
+We first need to obtain the list of nodes that will be simulated. We used the 'getDependencies' function from NIMBLE. Using the 'simulate' function from NIMBLE, we will then simulate the activity center (AC) locations ('sxy'), the state of the individual ('z') and SCR observation data ('y') given the values we provided for 'p0', 'sigma', 'w' and 'psi'.
+```{r , warning = FALSE, message = FALSE}
+# FIRST WE GET THE NODES TO SIMULATE
+nodesToSim <- model$getDependencies(c("sxy", "z"), self=T)
+# THEN WE SIMULATE THOSE NODES 
+set.seed(1234)
+model$simulate(nodesToSim, includeData = FALSE)
+```
+
+After running 'simulate', the simulated data are stored in the 'model' object. For example, we can access the simulated 'z' and check how many individuals were considered present:
+```{r , warning = FALSE, message = FALSE}
+N <- sum(model$z)
+```
+
+We have simulated `r N` individuals present in the population of which `r sum(model$y[,1]>0)` were detected.
+
+### 1.7. MCMC with NIMBLE
+
+#### 1.7.1 Compile the nimble model and create MCMC configuration 
+Here, we build the NIMBLE model again using the simulated 'y' as data. For simplicity, we used the simulated 'z' as initial values. Then we can fit the SCR model with the simulated 'y' data set.  
+```{r , warning = FALSE, message = FALSE}
+nimData1 <- nimData
+nimData1$y <- model$y
+nimInits1 <- nimInits
+nimInits1$z <- model$z
+nimInits1$sxy <- model$sxy
+# CREATE AND COMPILE THE NIMBLE MODEL
+model <- nimbleModel( code = modelCode,
+                      constants = nimConstants,
+                      data = nimData1,
+                      inits = nimInits1,
+                      check = F,
+                      calculate = F)
+model$calculate()
+cmodel <- compileNimble(model)
+cmodel$calculate()
+
+MCMCconf <- configureMCMC(model = model,
+                          monitors = c("N", "sigma", "p0","w","psi"),
+                          control = list(reflective = TRUE),
+                          thin = 1)
+
+samplerConfList <- MCMCconf$getSamplers()
+print(samplerConfList[1:5])
+```
+
+#### 1.7.2 Update the 'adaptive' arguments of MCMC samplers for sigma and w
+
+We noticed some covariation between the parameters $\sigma$ and $w$ while obtaining MCMC samples. For a better mixing of these parameters, we adjust the 'adaptive' arguments of the control list in MCMC samplers. We also implement repeated sampling of these two nodes within a single MCMC iteration.
+```{r , warning = FALSE, message = FALSE}
+# sigma
+control <- samplerConfList[[2]]$control
+control$log <- F
+control$reflective <- T
+control$adaptive <- T
+control$scale <- 1
+samplerConfList[[2]]$setControl(control)
+
+# w
+control <- samplerConfList[[3]]$control
+control$log <- F
+control$reflective <- T
+control$adaptive <- T
+control$scale <- 1
+samplerConfList[[3]]$setControl(control)
+
+# Use this modified list of samplerConf objects in the MCMC configuration
+MCMCconf$setSamplers(samplerConfList)
+
+# Retrieve the current ordering of sampler execution
+ordering <- MCMCconf$getSamplerExecutionOrder()
+len <- length(ordering)
+MCMCconf$setSamplerExecutionOrder(c(ordering[1], 
+                                    rep(ordering[2], 10), # sigma
+                                    rep(ordering[3], 10), # w
+                                    ordering[4:len]))
+```
+
+#### 1.7.3 Run MCMC
+
+Now we proceed to build and compile the nimble MCMC object. We use the function 'runMCMC' to execute the compiled MCMC object for obtaining posterior samples.
+```{r , warning = FALSE, message = FALSE}
+MCMC <- buildMCMC(MCMCconf)
+```
+
+```{r , eval = F, warning = FALSE, message = FALSE}
+cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
+
+# RUN THE MCMC 
+niter <- 10000
+burnin <- 2000 
+nchains <- 3
+MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
+                                                             nburnin = burnin,
+                                                             niter = niter,
+                                                             nchains = nchains,
+                                                             samplesAsCodaMCMC = TRUE))
+
+```
+
+```{r eval = F, echo = FALSE}
+save(myNimbleOutput, niter, burnin, nchains, MCMCRuntime,  
+     file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+```
+
+
+```{r echo = F}
+if(is.null(baseDir)) {
+    load(system.file("extdata", "dbinomLocal_HNP_samples.RData", package = "nimbleSCR"))
+} else {
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+}
+```
+
+```{r , warning = FALSE, message = FALSE, fig.width = 7, fig.height = 10}
+print(MCMCRuntime)
+#plot check 
+chainsPlot(myNimbleOutput, line = c(N, p0, N/M, sigma, w))
+```
+
+
+## 1.8. Computation of home range size
+
+Estimating home-range size for a given circular detection function is equivalent to finding an estimate of the quantile $r_\alpha$ such that $\alpha\%$ of all movements lie within the circle of radius $r_\alpha$ centered on activity centre $\mathbf{\textit{s}}$. 
+We can then define the $\alpha\%$ home range area as $A_\alpha$, the set of all points $\mathbf{\textit{x}}$ in the habitat such that $||\mathbf{\textit{x}} − \mathbf{\textit{s}}|| ≤ r_\alpha$. 
+
+While an analytical estimate can be derived for the classical half-normal detection function (see below), the half-normal plateau is a custom detection function for which an analytical estimate $r_\alpha$ is not readily available. 
+
+The half-normal plateau (HNP) detection function is written as:
+\begin{align}
+p_{\text{HNP}}(d) = 
+\begin{cases}
+    p_0,& \text{if } d < w,\\[-0.5em]
+    p_0 \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma^2}\Big{)}, & \text{if } d \geq w,
+\end{cases}
+\end{align}
+where $p_0 \in (0,1)$, $\sigma > 0$ and $w \geq 0$. Here $d$ can be interpreted as the distance between a given location and activity centre of an animal. The parameters in the function: $p_0$ denotes the baseline detection probability, $\sigma$ denotes the scale parameter, and $w$ denotes the plateau length where the detection probability remains constant. For a better understanding, we also plot the detection function against distance in below.
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## HALF-NORMAL PLATEAU FUNCTION
+detfun.HNP <- function(D, p0, sigma, w){
+  bool <- D <= w
+  which_not_bool <- which(!bool)
+  dens <- numeric(length = length(D))  
+  dens[bool] <- 1
+  adjustedD2 <- (D[which_not_bool]-w)^2
+  dens[which_not_bool] <- exp(-(adjustedD2)/(2.0*sigma*sigma))
+  return(p0*dens)
+}
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.HNP(D=x, p0=0.2, sigma = 1, w = 1), type = "l", lwd=2, col = "orange",
+     main = "Half-normal plateau detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.HNP(D=x, p0=0.1, sigma = 1.5, w = 3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'sigma', 'w') 
+focal.values <- cbind(c(0.2, 0.1), # p0
+                      c(1, 1.5), # sigma
+                      c(1, 3)) # w 
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+The function 'HRA_nimble()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4), and donut (DN, detfun = 5). 
+
+The function 'HRA_nimble()' has two parts: a setup and and a run part. If we only want to calculate HR radius for a single set of parameter values, there is no need to compile. But for multiple sets of parameter values (e.g., an mcmc sample) one should compile the function before implementing the run part to reduce the computation time. 'HRA_nimble()' returns the estimates of home range radius and area for a given set of arguments with respect to a particular detection function using bisection algorithm:
+
+* Setup part
+
+  - param: A vector or matrix (parameters in columns) of values for different parameters corresponding to the specified detection function.
+  - xlim: A vector of length 2 giving the range along x-axis
+  - ylim: A vector of length 2 giving the range along y-axis
+  - ng: A numeric variable denoting the number of breaks along an axis
+  - tol: A numeric variable denoting the allowed tolerance in the radius estimate
+  - niter: A numeric variable giving the maximum number of iterations in bisection algorithm
+  - detfun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
+  - pr: A numeric variable denoting the quantile probability to compute the radius 
+  - d: A numeric variable giving an inital value of the radius
+
+The run part of the function can be run without specifying any arguments. For more information on the detection functions, please refer to @dey2022detfun. We provide some examples to compute home range radius and area in below.
+
+Next we obtain estimate $95\%$ home range radius and area for half-normal plateau detection function (detfun = 1). Note that, we only have to provide the parameter values for 'sigma' and 'w' (i.e., 'p0' is not needed) to compute home range radius and area.
+
+```{r , warning = FALSE, message = FALSE}
+pr <- 0.95
+paramnames.hr <- c("HRradius", "HRarea")
+params <- c(sigma, w)
+names(params) <- c("sigma", "w")
+HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6, 
+                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                      ng = 800, tol = 1E-5, niter = 2000)
+
+# Different values of argument "detfun"
+# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
+# 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+HR.hnp <- c(HRAnim$run())
+names(HR.hnp) <- paramnames.hr
+print(HR.hnp)
+
+```
+
+Simulated values of $95\%$ home range radius and area are `r round(HR.hnp[1], 2)` du and `r round(HR.hnp[2], 2)` du$^2$, respectively. 
+
+We can also obtain estimates of home range size and its associated uncertainty from the MCMC chains of the parameters $p_0, \sigma$, and $w$. 
+```{r , warning = FALSE, message = FALSE}
+myNimbleOutput <- as.mcmc.list(myNimbleOutput) 
+if(is.list(myNimbleOutput)){posteriorSamples <- do.call(rbind, myNimbleOutput)} 
+if(!is.list(myNimbleOutput)){posteriorSamples <- as.matrix(myNimbleOutput)} 
+theseIter <- round(seq(1, nrow(posteriorSamples), by = 10))
+posteriorSamples <- posteriorSamples[theseIter,names(params)]
+HRAnim.mat <- HRA_nimble(param = posteriorSamples, detfun = 1, pr = pr, d = 6, 
+                         xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                         ng = 800, tol = 1E-5, niter = 2000)
+
+cHRAnim.arr <- compileNimble(HRAnim.mat, resetFunctions = TRUE)
+
+HRA.Runtime <- system.time(
+  HR.chain <- cHRAnim.arr$run()
+)
+print(HRA.Runtime)
+dimnames(HR.chain)[[2]] <- paramnames.hr
+```
+From the obtained sample 'HR.chain' of $95\%$ home range radius and area, we can obtain summary statistics of these two metrics.
+```{r , warning = FALSE, message = FALSE}
+HRest <- do.call(rbind, lapply(c(1:2), function(j){
+  c(mean(HR.chain[,j], na.rm = T), sd(HR.chain[,j], na.rm = T), quantile(HR.chain[,j], probs = c(0.025, 0.975), na.rm = T))
+}))
+dimnames(HRest) <- list(paramnames.hr, c("MEAN", "SD", "2.5%", "97.5%"))
+
+cat("Numerical estimates using MCMC samples: \n", sep = "")
+print(HRest)
+```
+
+Based on the above analysis, the mean estimate of the $95\%$ home range radius is `r round(HRest["HRradius", "MEAN"], 2)` du and the $95\%$ home range area is `r round(HRest["HRarea", "MEAN"], 2)` du$^2$. 
+
+For visual representation of the distributions of $95\%$ home range radius and area, we also get the traceplots and density of these metrics.
+```{r , warning = FALSE, message = FALSE, fig.width = 7, fig.height = 5}
+HR.mcmc.sample <- as.mcmc.list(lapply(1:nchains, function(x) {
+  niterPerChain <- nrow(HR.chain) / nchains
+  theseRows <- ((x - 1) * niterPerChain + 1):(x * niterPerChain)
+  this.MCMC.chain <- mcmc(HR.chain[theseRows, ])
+  return(this.MCMC.chain)
+})) 
+names(HR.mcmc.sample) <- paste0("chain", 1:nchains)
+chainsPlot(HR.mcmc.sample, line = c(HR.hnp))
+```
+The numerical estimate of home range radius and area can be improved further by tuning the function arguments: the number of bins ('ng'), the tolerance ('tol') and the uppler limit of the number of iterations for numerical approximation using bi-section algorithm ('niter'). However, tuning of these parameters will also affect the computation time of HRA_nimble(). 
+
+## 2. Calculating home range radius and area with other detection functions
+
+We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_EX' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
+
+### Half-normal (HN, detfun = 0)
+The half-normal (HN) detection function is written as:
+\begin{align}
+p_{\text{HN}}(d) = p_0 \, \exp\Big{(}-\frac{d^2}{2\sigma^2}\Big{)},
+\end{align}
+where $p_{0} \in (0,1)$, $\sigma > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the scale parameter. For a better understanding, we also plot the detection function against distance. 
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## HALF-NORMAL FUNCTION
+detfun.HN <- function(D, p0, sigma){ p0*exp(-D*D/(2*sigma*sigma))}
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.HN(D=x, p0=0.25, sigma = 2), type = "l", lwd=2, col = "orange", main = "Half-normal detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.HN(D=x, p0=0.15, sigma = 3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'sigma') 
+focal.values <- cbind(c(0.25, 0.15), # p0
+                      c(2, 3)) # sigma
+                      
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+Next we obtain the $95\%$ home range radius and area for half-normal detection function. Note that we only have to provide the parameter values for 'sigma' (i.e., 'p0' is not needed) to compute home range radius and area.
+```{r , warning = FALSE, message = FALSE}
+# Half-normal (HN) 
+sigma = 2
+params <- c(sigma)
+names(params) <- c("sigma")
+
+HRAnim <- HRA_nimble(param = params, detfun = 0, pr = pr, d = 6, 
+                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
+                      ng = 800, tol = 1E-5, niter = 2000)
+
+HR.hn <- c(HRAnim$run())
+names(HR.hn) <- paramnames.hr
+print(HR.hn)
+```
+
+### Exponential (EX, detfun = 2) 
+The exponential (EX) detection function is written as:
+\begin{align}
+p_{\text{EX}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
+\end{align}
+where $p_{0} \in (0,1)$, $\sigma > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the scale parameter. For a better understanding, we also plot the detection function against distance.
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## EXPONENTIAL FUNCTION
+detfun.EX <- function(D, p0, sigma){ p0*exp(-D/sigma)}
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.EX(D=x, p0=0.25, sigma = 2), type = "l", lwd=2, col = "orange", main = "Exponential detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.EX(D=x, p0=0.15, sigma = 3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'sigma') 
+focal.values <- cbind(c(0.25, 0.15), # p0
+                      c(2, 3)) # sigma
+                     
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+Next we obtain the $95\%$ home range radius and area for exponential detection function. Again, we only have to provide the parameter values for 'sigma' (i.e., 'p0' is not needed) to compute home range radius and area.
+```{r , warning = FALSE, message = FALSE}
+# Exponential (EX) 
+sigma = 2
+params <- c(sigma)
+names(params) <- c("sigma")
+HRAnim <- HRA_nimble(param = params, detfun = 2, pr = pr, d = 6, 
+                      xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
+                      ng = 800, tol = 1E-5, niter = 2000)
+HR.ex <- c(HRAnim$run())
+names(HR.ex) <- paramnames.hr
+print(HR.ex)
+
+```
+
+### Asymmetric logistic (AL, detfun = 3) 
+The asymmetric logistic (AL) detection function is written as:
+\begin{align}
+p_{\text{AL}}(d) = p_0 \, \Big{[} 1 + (d/\sigma)^{\alpha_a} g(d) \, + (d/\sigma)^{\alpha_a \alpha_b} (1-g(d)) \Big{]}^{-1},
+\end{align}
+where $g(d) =\big{\{} 1 + (d/\sigma)^{\nu} \big{\}}^{-1}$, $\nu = \frac{2|\alpha_a|\alpha_b}{1+\alpha_b}$, $p_{0} \in (0,1)$, $\sigma > 0$, $\alpha_a \in \mathbb{R}$ and $\alpha_b > 0$. Here $p_0$ denotes the baseline detection probability, $\alpha_a$ denotes the first curvature parameter, $\alpha_b$ denotes the second curvature parameter and $\sigma$ denotes the distnace from the activity centre where the asymmetric logistic detection function takes the value $p_0/2$. For a better understanding, we also plot the detection function against distance.
+
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## ASYMMETRIC LOGISTICS FUNCTION
+detfun.AL <- function(D, p0, sigma, alpha.a, alpha.b){
+  Anuslope <- (2*abs(alpha.a)*alpha.b)/(1+alpha.b)
+  fx <- 1/ (1+(D/sigma)^alpha.b)
+  den <- 1+fx*((D/sigma)^(alpha.a))+(1-fx)*((D/sigma)^(alpha.a*alpha.b))
+  detp <- p0/den
+  return(detp)
+}
+
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.AL(D=x, p0=0.3, sigma = 2, alpha.a = 5, alpha.b = 1), type = "l", lwd=2, col = "orange", main = "Asymmetric logistic detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.AL(D=x, p0=0.15, sigma = 3, alpha.a = 10, alpha.b = 1), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'sigma', 'alpha.a', 'alpha.b') 
+focal.values <- cbind(c(0.3, 0.15), # p0
+                      c(2, 3), # sigma
+                      c(5, 10), # alpha.a
+                      c(1, 1)) # alpha.b
+                     
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+Next we obtain the $95\%$ home range radius and area for asymmetric logistic detection function. Note that we only have to provide the parameter values for 'sigma', 'alpha.a' and 'alpha.b' (i.e., 'p0' is not needed) to compute home range radius and area.
+```{r , warning = FALSE, message = FALSE}
+# Asymmetric logistic (AL) 
+sigma = 2
+alpha.a = 5 
+alpha.b = 1
+params <- c(sigma, alpha.a, alpha.b)
+names(params) <- c("sigma", "alpha.a", "alpha.b")
+HRAnim <- HRA_nimble(param = params, detfun = 3, pr = pr, d = 6, 
+                      xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
+                      ng = 800, tol = 1E-5, niter = 2000)
+HR.al <- c(HRAnim$run())
+names(HR.al) <- paramnames.hr
+print(HR.al)
+```
+
+### Bimodal (BI, detfun = 4) 
+The bimodal (BI) detection function is written as:
+\begin{align}
+p_{\text{BI}}(d) = p_{0a} \, \exp\Big{(}-\frac{d^2}{2\sigma_{a}^2}\Big{)} \, + p_{0b} \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{b}^2}\Big{)}
+\end{align}
+where $p_{0a} \in (0,1)$, $p_{0b} \in (0,1)$, $\sigma_{a} > 0$, $\sigma_{b} > 0$ and $w \geq 0$. Here $p_{0a}$ denotes the baseline detection probability of the first peak, $p_{0b}$ denotes the baseline detection probability of the second peak, $\sigma_{a}$ denotes the scale parameter for the left tail, $\sigma_{b}$ denotes the scale parameter for the right tail and $w$ denotes the distance between the two peaks. For a better understanding, we also plot the detection function against distance. 
+
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## BIMODAL FUNCTION
+detfun.BI <- function(D, p0.a, sigma.a, p0.b, sigma.b,  w){
+  densa <- p0.a *  exp(-D*D/(2.0*sigma.a*sigma.a)) 
+  densb <-  p0.b * exp(-(D-w)*(D-w)/(2.0*sigma.b*sigma.b))
+  dens <- densa + densb
+  return(dens)
+}
+
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.BI(D=x, p0.a=0.25, sigma.a = 0.5, p0.b = 0.15, sigma.b = 1, w = 2), type = "l", lwd=2, col = "orange", main = "Bimodal detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.BI(D=x, p0.a=0.05, sigma.a = 1.5, p0.b = 0.1, sigma.b = 0.5, w = 3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0.a', 'sigma.a', 'p0.b', 'sigma.b', 'w') 
+focal.values <- cbind(c(0.25, 0.05), # p0.a
+                      c(0.5, 1.5), # sigma.a
+                      c(0.15, 0.1), # p0.a
+                      c(1, 0.5), # sigma.b
+                      c(2, 3)) # w 
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+Next we obtain the $95\%$ home range radius and area for bimodal detection function. Here, we have to provide all the parameter values for 'p0.a', 'sigma.a', 'p0.b', 'sigma.b' and 'w' to compute home range radius and area.
+```{r , warning = FALSE, message = FALSE}
+# Bimodal (BI) 
+p0.a = 0.25
+sigma.a = 0.5
+p0.b = 0.15 
+sigma.b = 1
+w = 2
+params <- c(sigma.a, sigma.b, p0.a, p0.b, w)
+names(params) <- c("sigma.a", "sigma.b", "p0.a", "p0.b", "w")
+HRAnim <- HRA_nimble(param = params, detfun = 4, pr = pr, d = 6, 
+                      xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
+                      ng = 800, tol = 1E-5, niter = 2000)
+HR.bi <- c(HRAnim$run())
+names(HR.bi) <- paramnames.hr
+print(HR.bi)
+```
+
+### Donut (DN, detfun = 5) 
+The donut (DN) detection function is written as:
+\begin{align}
+p_{\text{DN}}(d) = 
+\begin{cases}
+    p_0 \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{a}^2}\Big{)},& \text{if } d < w,\\[-0.5em]
+    p_0 \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{b}^2}\Big{)}, & \text{if } d \geq w,
+\end{cases}
+\end{align}
+where $p_0 \in (0,1)$, $\sigma_{a} > 0$, $\sigma_{b} > 0$ and $w \geq 0$. Here $p_0$ denotes the baseline detection probability, $\sigma_{a}$ denotes the scale parameter for the left tail, $\sigma_{b}$ denotes the scale parameter for the right tail and $w$ denotes the distance between the home-range center and the "donut" centre. For a better understanding, we also plot the detection function against distance.
+```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
+## DONUT FUNCTION
+detfun.DN <- function(D, p0, sigma.a, sigma.b, w){
+  bool <- D <= w
+  which_not_bool <- which(!bool)
+  dens <- numeric(length = length(D)) 
+  adjustedD2.bool <- (D[bool]-w)^2
+  adjustedD2.notbool <- (D[which_not_bool]-w)^2
+  dens[bool] <- exp(-adjustedD2.bool/(2.0*sigma.a*sigma.a))
+  dens[which_not_bool] <- exp(-adjustedD2.notbool/(2.0*sigma.b*sigma.b)) 
+  return(p0*dens)
+}
+
+par(mfrow=c(1,1))
+x <- seq(0, 15, len=10001)
+plot(x, detfun.DN(D=x, p0=0.2, sigma.a = 1.5, sigma.b = 1, w = 1), type = "l", lwd=2, col = "orange",
+     main = "Donut detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.DN(D=x, p0=0.1, sigma.a = 2, sigma.b = 1.5, w = 3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'sigma.a', 'sigma.b', 'w') 
+focal.values <- cbind(c(0.2, 0.1), # p0
+                      c(1.5, 2), # sigma.a
+                      c(1, 1.5), # sigma.b
+                      c(1, 3)) # w 
+legend.items <- apply(focal.values, 1, 
+                      function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
+legend("topright",
+       legend = legend.items,
+       lty = c('solid', 'solid'), 
+       bg="transparent",
+       col=c('orange', "darkcyan"),
+       cex = 0.75,
+       bty = 'n')
+```
+
+Next we obtain the $95\%$ home range radius and area for donut detection function. Note that we only have to provide the parameter values for 'sigma.a', 'sigma.b' and 'w' (i.e., 'p0' is not needed) to compute home range radius or area. 
+```{r , warning = FALSE, message = FALSE}
+# Donut (DN) 
+sigma.a = 1.5 
+sigma.b = 1 
+w = 1 
+params <- c(sigma.a, sigma.b, w)
+names(params) <- c("sigma.a", "sigma.b", "w")
+HRAnim <- HRA_nimble(param = params, detfun = 5, pr = pr, d = 6, 
+                      xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
+                      ng = 800, tol = 1E-5, niter = 2000)
+HR.dn <- c(HRAnim$run())
+names(HR.dn) <- paramnames.hr
+print(HR.dn)
+```
+
+## REMARK
+The analytical estimate of home range radius for the half-normal function is: $\hat{r}_\alpha=\sigma \sqrt{q(\alpha,2)}$, where $q(\alpha,2)$ is the $\alpha\%$ quantile of a chi-square distribution with 2 degrees of freedom [@royle2014spatial]. 
+
+```{r , warning = FALSE, message = FALSE}
+sigma <- 2
+q<-qchisq(pr,2)
+radius<-sigma*sqrt(q)
+area<-pi*(radius^2)
+HR.true<-c(radius,area)
+names(HR.true) <- paramnames.hr
+cat("Analytical estimates: \n", sep = "")
+print(HR.true)
+```
+Note that, the estimates of $95\%$ home range radius and area obtained from our method using numerically approximation (`r round(HR.hn['HRradius'], 2)`, `r round(HR.hn['HRarea'], 2)`) are very close to the above analytical estimate (`r round(HR.true['HRradius'], 2)`, `r round(HR.true['HRarea'], 2)`).
+
+## REFERENCES
+

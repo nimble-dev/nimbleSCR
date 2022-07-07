@@ -4,7 +4,7 @@
 #' Poisson observations (\emph{x}) of a single individual over a set of detectors defined by their 
 #' coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
 #' follows a half-normal function of the distance between the individual's activity center (\emph{s}) and the detector location.
-#' All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid})
+#' All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}})
 #'
 #' The \code{dpoisLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
@@ -35,8 +35,8 @@
 #' @param lambda Baseline detection rate used in the half-normal detection function.
 #' @param lambdaTraps Vector of baseline detection rate for each trap used in the half-normal detection function. When \emph{lambdaTraps} is used, \emph{lambda} should not be provided. 
 #' @param sigma Scale parameter of the half-normal detection function.
-#' @param s Individual activity center x- and y-coordinates scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}).
-#' @param trapCoords Matrix of x- and y-coordinates of all traps scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}).
+#' @param s Individual activity center x- and y-coordinates scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).
+#' @param trapCoords Matrix of x- and y-coordinates of all traps scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).
 #' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.
 #' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the \code{\link{getLocalObjects}} function.
 #' @param resizeFactor Aggregation factor used in the \code{\link{getLocalObjects}} function to reduce the number of habitat grid cells to retrieve local traps for.
@@ -47,7 +47,7 @@
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
-#'  and the half-normal detection function : \eqn{p = lambda * exp(-d^2 / \sigma^2)}.
+#'  and the half-normal detection function : \eqn{p = lambda * exp(-d^2 / 2 \sigma^2)}.
 #'
 #' @author Cyril Milleret, Soumen Dey
 #'

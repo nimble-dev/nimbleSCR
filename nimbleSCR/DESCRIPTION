@@ -16,7 +16,7 @@ Description: Provides utility functions, distributions, and methods for improvin
 License: GPL-3
 Depends: R (>= 3.5.0), nimble
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0), coda, basicMCMCplots
 VignetteBuilder: knitr
 Config/testthat/edition: 3
@@ -43,6 +43,8 @@ Collate:
     dbinom_vector.R
     dnormalizer.R
     dpoisLocal_normal.R
+    dbinomLocal_HNP.R
+    dbinomLocal_EX.R
     dpoisppAC.R
     dpoisppDetection_normal.R
     dpoisppLocalDetection_normal.R
@@ -51,10 +53,10 @@ Collate:
     getMidPointNodes.R
     getWindowCoords.R
     getSparseY.R
+    HRA_nimble.R
     localTrapCalculations.R
     makeConstantNimbleFunction.R
     marginalVoidProbIntegrand.R
     marginalVoidProbNumIntegration.R
     scaleCoordsToHabitatGrid.R
     zzz.R
-

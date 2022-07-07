@@ -65,7 +65,7 @@ ScaledtrapCoords <- scaleCoordsToHabitatGrid(coordsData =  trapCoords,
 habitatMask <- matrix(1, nrow = 12, ncol= 12, byrow = TRUE)
 ```
 
-We also set up the objects necessary to perform the local evaluation using the 'getLocalObjects' function. Special care should be taken when chosing 'dmax' relative to $\sigma$ [@Milleret2019]. Here we are using a value $>2*\sigma$ (see below for the $\sigma$ chosen.
+We also set up the objects necessary to perform the local evaluation using the 'getLocalObjects' function. Special care should be taken when choosing 'dmax' relative to $\sigma$ [@Milleret2019]. Here we are using a value $>2*\sigma$ (see below for the $\sigma$ chosen.
 
 ```{r , warning = FALSE, message = FALSE}
 trapLocal <- getLocalObjects(habitatMask = habitatMask,
@@ -135,7 +135,7 @@ M <- 200
 ```
 
 
-When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored in 'y' in that order (See ?dbinomlocal_normal for more details.):
+When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored in 'y' in that order (See ?dbinomLocal_normal for more details.):
 
 * 'detNums' (total number of individual detections), 
 * 'x' (number of individual detections at each trap), 

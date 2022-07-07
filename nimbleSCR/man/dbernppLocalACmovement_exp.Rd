@@ -55,7 +55,7 @@ Each window should be of size 1x1 (after rescaling if necessary).}
 \item{habitatGrid}{Matrix of habitat window indices. When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} 
 in order to be able to use the distribution in \code{nimble} model code.}
 
-\item{habitatGridLocal}{Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).}
+\item{habitatGridLocal}{Matrix of resized habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).}
 
 \item{resizeFactor}{Scalar (aggregation factor) for rescaling habitat windows as used in \code{getLocalObjects}.}
 
