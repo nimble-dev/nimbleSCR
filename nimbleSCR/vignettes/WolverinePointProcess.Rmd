@@ -1,5 +1,5 @@
 ---
-title: "Using nimbleSCR to fit a point process SCR model to wolverine (Gulo gulo) non-invasive genetic sampling data"
+title: "Using nimbleSCR to fit 'point process SCR models' to wolverine (Gulo gulo) non-invasive genetic sampling data"
 author: "Pierre Dupont"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,13 +10,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(fig.width = 8, fig.height = 10) 
+knitr::opts_chunk$set(fig.width = 5, fig.height = 5) 
 ```
 
-```{r echo = FALSE}
-## So it works for everyone
+```{r, echo = FALSE}
 if(Sys.info()['user'] == 'dturek') {
   baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
 } else if(Sys.info()['user'] == 'pidu') {
@@ -25,8 +24,8 @@ if(Sys.info()['user'] == 'dturek') {
   baseDir <- 'C:/Personal_Cloud/OneDrive/Work/nimbleSCR/'   ## Cyril
 } else if(Sys.info()['user'] == 'arichbi') {
   baseDir <- 'C:/PROJECTS/nimbleSCR/'                       ## Richard
-} else if(Sys.info()['user'] == 'weizhang'){                ## Wei 
-    baseDir <- '/Users/weizhang/Documents/GitHub/nimbleSCR/'
+} else if(Sys.info()['user'] == 'weizhang'){               
+    baseDir <- '/Users/weizhang/Documents/GitHub/nimbleSCR/' ## Wei 
 } else baseDir <- NULL
 
 if(is.null(baseDir)) {
@@ -36,38 +35,36 @@ if(is.null(baseDir)) {
 }
 ```
 
-
-This vignette demonstrates the wolverine point-process SCR model, as in
+This vignette demonstrates the different wolverine SCR models presented in
 "A flexible and efficient Bayesian implementation of point process models for 
 spatial capture-recapture data" (Zhang *et al*, *submitted*) using NIMBLE [@de2017programming;@nimbleSoftware2020] and the nimbleSCR package [@nimbleSCR].
 
 
 ### Load Libraries 
-
-```{r , warning = FALSE, message = FALSE}
+```{r, warning = FALSE, message = FALSE}
 library(nimble)
 library(nimbleSCR)
 library(basicMCMCplots)
 ```
 
 
-### Define Model Structure
 
-Here, we define the `nimble` model structure.
-```{r }
-modelCode <- nimbleCode({  
+### Define 'nimbleSCR' Models
+
+Here, we define the first `nimble` model.
+It uses i) the Bernoulli point process for modelling the distribution of individual wolverine activity centers, ii) a Poisson point process for modelling individual detections, and iii) a semi-complete data-likelihood approach [@King2016] to estimate population size.
+```{r}
+modelCode1 <- nimbleCode({  
   ##------ SPATIAL PROCESS 
   ## Intercept and slope for the log-linear model for habitat selection intensity
   habCoeffInt ~ dnorm(0, sd = 10)
   habCoeffSlope ~ dnorm(0, sd = 10)
-  
   ## Habitat intensity for each habitat window
   habIntensity[1:numHabWindows] <- exp(habCoeffInt + habCoeffSlope * habCovs[1:numHabWindows])
   sumHabIntensity <- sum(habIntensity[1:numHabWindows])
   logHabIntensity[1:numHabWindows] <- log(habIntensity[1:numHabWindows])
   logSumHabIntensity <- log(sumHabIntensity)
-  
-  ## Activity centres of the observed individuals: a bernoulli point process
+  ## Activity centres of the observed individuals: a Bernoulli point process
   for(i in 1:numIdDetected){
     sxy[i,1:2] ~ dbernppAC(
       lowerCoords = habLoCoords[1:numHabWindows, 1:2],
@@ -79,28 +76,22 @@ modelCode <- nimbleCode({
       numGridCols = x.max)
   }#i
   
-  
-
   ##----- DEMOGRAPHIC PROCESS
   ## Number of individuals in the population
   N ~ dpois(sumHabIntensity)
-  
   ## Number of detected individuals
   nDetectedIndiv ~ dbin(probDetection, N)
-  
-  
 
   ##----- DETECTION PROCESS 
   ## Scale for the multivariate normal detection function
-  sigma ~ dunif(0,2)
+  sigma ~ dunif(0,10)
   ## Intercept and slope parameters for the log-linear model for detection intensity
   for(c in 1:numCounties){
     detCoeffInt[c] ~ dnorm(0, sd = 10)
   }#c
   for(cc in 1:numDetCovs){
     detCoeffSlope[cc] ~ dnorm(0, sd = 10)
-  }#c
-  
+  }#cc
   ## Baseline detection intensity for each detection window
   for(j in 1:numDetWindows){
     detIntensity[j] <- exp( detCoeffInt[detCounties[j]] +
@@ -108,7 +99,6 @@ modelCode <- nimbleCode({
                               detCoeffSlope[2] * detCovs[j,2] +
                               detCoeffSlope[3] * detCovs[j,3])
   }#j
-
   ## Detections of the observed individuals conditional on their activity centers
   for(i in 1:numIdDetected) {
     y[i,1:(maxDetections+1),1:3] ~ dpoisppDetection_normal(
@@ -144,54 +134,268 @@ modelCode <- nimbleCode({
 ```
 
 
+Next, we can define a second `nimble` model based on the "usual" formulation of Bayesian SCR models.
+In this model, individual activity center locations are modeled using a two-step process in which i) a categorical distribution is used to sample the habitat window the activity center is located in, and ii) the center of the selected habitat window is used as the location of the activity center inside the selected habitat window. The probability vector of the categorical process follows the intensity of the density point process of the first formulation.
+Individual detections are not modeled continuously in space, instead they are aggregated at discrete detector locations and the number of detections at each detector is modeled using a Poisson distribution.
+Finally, we use the data augmentation approach [@Royle2012] to derive population size instead of the semi-complete data-likelihood approach.
+```{r}
+modelCode2 <- nimbleCode({
+  ##------ SPATIAL PROCESS
+  habCoeffSlope ~ dnorm(0, sd = 10)
+  ## Habitat intensity for each habitat window
+  habIntensity[1:numHabWindows] <- exp(habCoeffSlope * habCovs[1:numHabWindows])
+  for(i in 1:M){
+    sID[i] ~ dcat(habIntensity[1:numHabWindows])
+  }#i
+
+  ##----- DEMOGRAPHIC PROCESS
+  psi ~ dunif(0,1)
+  for(i in 1:M){
+    z[i] ~ dbern(psi)
+  }#i
+  ## Number of individuals in the population
+  N <- sum(z[1:M])
+
+  ##----- DETECTION PROCESS
+  ## Scale for the multivariate normal detection function
+  sigma ~ dunif(0,10)
+  ## Intercept and slope parameters for the log-linear model for detection intensity
+  for(c in 1:numCounties){
+    detCoeffInt[c] ~ dnorm(0, sd = 10)
+  }#c
+  for(cc in 1:numDetCovs){
+    detCoeffSlope[cc] ~ dnorm(0, sd = 10)
+  }#cc
+  ## Baseline detection intensity for each detection window
+  for(j in 1:numDetWindows){
+    lambdaTraps[j] <- exp( detCoeffInt[detCounties[j]] +
+                             detCoeffSlope[1] * detCovs[j,1] +
+                             detCoeffSlope[2] * detCovs[j,2] +
+                             detCoeffSlope[3] * detCovs[j,3])
+  }#j
+
+  ## Detections of the observed individuals conditional on their activity centers
+  for(i in 1:M) {
+    y[i,1:lengthYCombined] ~ dpoisLocal_normal(
+      lambdaTraps = lambdaTraps[1:numDetWindows],
+      trapCoords = detCoords[1:numDetWindows,1:2],
+      s = habCoords[sID[i],1:2],
+      sigma = sigma,
+      localTrapsIndices = localTrapsIndices[1:numHabWindows,1:numDetWindows],
+      localTrapsNum = localTrapsNum[1:numHabWindows],
+      resizeFactor = 1,
+      habitatGrid = habitatGrid[1:y.max,1:x.max],
+      lengthYCombined = lengthYCombined,
+      indicator = z[i])
+  }#i
+})
+```
+
+
+For comparison purposes, we define a third `nimble` model, which is a hybrid formulation of the two previous ones. It uses i) the Bernoulli point process for modelling the distribution of wolverine activity centers and ii) a Poisson point process to model individual detections in continuous space but uses iii) data augmentation instead of the semi-complete data-likelihood approach to estimate population size. 
+This formulation is expected to be both a better representation of the detection process (thus more accurate than model 2) and more efficient than model 1 because of the complexity of the semi-complete data likelihood calculation.
+```{r}
+modelCode3 <- nimbleCode({
+  ##------ SPATIAL PROCESS
+  habCoeffSlope ~ dnorm(0, sd = 10)
+  ## Habitat intensity for each habitat window
+  habIntensity[1:numHabWindows] <- exp(habCoeffSlope * habCovs[1:numHabWindows])
+  sumHabIntensity <- sum(habIntensity[1:numHabWindows])
+  logHabIntensity[1:numHabWindows] <- log(habIntensity[1:numHabWindows])
+  logSumHabIntensity <- log(sumHabIntensity)
+  ## Activity centres of the observed individuals: a bernoulli point process
+  for(i in 1:M){
+    sxy[i,1:2] ~ dbernppAC(
+      lowerCoords = habLoCoords[1:numHabWindows,1:2],
+      upperCoords = habUpCoords[1:numHabWindows,1:2],
+      logIntensities = logHabIntensity[1:numHabWindows],
+      logSumIntensity = logSumHabIntensity,
+      habitatGrid = habitatGrid[1:y.max,1:x.max],
+      numGridRows = y.max,
+      numGridCols = x.max)
+  }#i
+
+  ##----- DEMOGRAPHIC PROCESS
+  psi ~ dunif(0,1)
+  for(i in 1:M){
+    z[i] ~ dbern(psi)
+  }#i
+  ## Number of individuals in the population
+  N <- sum(z[1:M])
+
+  ##----- DETECTION PROCESS
+  ## Scale for the half-normal detection function
+  sigma ~ dunif(0,10)
+  ## Intercept and slope parameters for the log-linear model for detection intensity
+  for(c in 1:numCounties){
+    detCoeffInt[c] ~ dnorm(0, sd = 10)
+  }#c
+  for(cc in 1:numDetCovs){
+    detCoeffSlope[cc] ~ dnorm(0, sd = 10)
+  }#cc
+  ## Baseline detection intensity for each detection window
+  for(j in 1:numDetWindows){
+    detIntensity[j] <- exp( detCoeffInt[detCounties[j]] +
+                              detCoeffSlope[1] * detCovs[j,1] +
+                              detCoeffSlope[2] * detCovs[j,2] +
+                              detCoeffSlope[3] * detCovs[j,3])
+  }#j
+
+  ## Detections of the observed individuals conditional on their activity centers
+  for(i in 1:M){
+    y[i,1:(maxDetections+1),1:3] ~ dpoisppDetection_normal(
+      lowerCoords = detLoCoords[1:numDetWindows,1:2],
+      upperCoords = detUpCoords[1:numDetWindows,1:2],
+      s = sxy[i,1:2],
+      sd = sigma,
+      baseIntensities = detIntensity[1:numDetWindows],
+      numMaxPoints = maxDetections,
+      numWindows = numDetWindows,
+      indicator = z[i])
+  }#i
+})
+```
+
+
+We can also define a fourth `nimble` model, which uses the categorical distribution to model the distribution of wolverine activity centers, a Poisson point process to model individual detections in continuous space and data augmentation to estimate population size. This formulation is expected to be slower than version 3 because of the categorical process. 
+```{r}
+modelCode4 <- nimbleCode({
+  ##------ SPATIAL PROCESS
+  habCoeffSlope ~ dnorm(0, sd = 10)
+  ## Habitat intensity for each habitat window
+  habIntensity[1:numHabWindows] <- exp(habCoeffSlope * habCovs[1:numHabWindows])
+  for(i in 1:M){
+    sID[i] ~ dcat(habIntensity[1:numHabWindows])
+  }#i
+
+  ##----- DEMOGRAPHIC PROCESS
+  psi ~ dunif(0,1)
+  for(i in 1:M){
+    z[i] ~ dbern(psi)
+  }#i
+  ## Number of individuals in the population
+  N <- sum(z[1:M])
+
+  ##----- DETECTION PROCESS
+  ## Scale for the half-normal detection function
+  sigma ~ dunif(0,10)
+  ## Intercept and slope parameters for the log-linear model for detection intensity
+  for(c in 1:numCounties){
+    detCoeffInt[c] ~ dnorm(0, sd = 10)
+  }#c
+  for(cc in 1:numDetCovs){
+    detCoeffSlope[cc] ~ dnorm(0, sd = 10)
+  }#cc
+  ## Baseline detection intensity for each detection window
+  for(j in 1:numDetWindows){
+    detIntensity[j] <- exp( detCoeffInt[detCounties[j]] +
+                              detCoeffSlope[1] * detCovs[j,1] +
+                              detCoeffSlope[2] * detCovs[j,2] +
+                              detCoeffSlope[3] * detCovs[j,3])
+  }#j
+
+  ## Detections of the observed individuals conditional on their activity centers
+  for(i in 1:M){
+    y[i,1:(maxDetections+1),1:3] ~ dpoisppDetection_normal(
+      lowerCoords = detLoCoords[1:numDetWindows,1:2],
+      upperCoords = detUpCoords[1:numDetWindows,1:2],
+      s = habCoords[sID[i],1:2],
+      sd = sigma,
+      baseIntensities = detIntensity[1:numDetWindows],
+      numMaxPoints = maxDetections,
+      numWindows = numDetWindows,
+      indicator = z[i])
+  }#i
+})
+```
+
+
+
 ### Load Wolverine Data
 
-We load the wolverine example data available from [needs to be updated when the paper is published]
-The data file can be downloaded at [needs to be updated when the paper is published].
-```{r eval = FALSE}
+We load the wolverine example data available directly via `nimbleSCR`
+```{r, eval = FALSE}
 load("WolverinePointProcess_Data.RData")
 ```
 
 
 ## Create NIMBLE Model
 
-Now, we can create the `nimble` model object, using the model structure
-defined in `modelCode`, and the constants, data, and initial values.
+Now, we can create the `nimble` model objects, using the model structures
+defined above, as well as the constants, data, and initial values.
 ```{r eval = FALSE}
-Rmodel <- nimbleModel(modelCode, constants, data, inits)
+Rmodel1 <- nimbleModel(modelCode1, constants1, data1, inits1)
+Rmodel2 <- nimbleModel(modelCode2, constants2, data2, inits2)
+Rmodel3 <- nimbleModel(modelCode3, constants3, data3, inits3)
+Rmodel4 <- nimbleModel(modelCode4, constants4, data4, inits4)
 ```
 
 
 #### Configure and Build MCMC
 
-We configure an MCMC algorithm to the `Rmodel` model object.
-
-We assign MCMC monitors to the different parameters we want to tracks (e.g. $N$, $\sigma$, ...)
+We configure an MCMC algorithm for each `Rmodel` model object and we assign MCMC monitors to the different parameters we want to track (e.g. $N$, $\sigma$, ...)
 ```{r message = FALSE, eval = FALSE}
-conf <- configureMCMC( Rmodel,
-                       monitors = c( "N", "habCoeffInt", "habCoeffSlope",
-                                     "detCoeffInt", "detCoeffSlope",
-                                     "sigma", "probDetection"),
+conf1 <- configureMCMC( Rmodel1,
+                       monitors = params1,
                        print = FALSE)
-Rmcmc <- buildMCMC(conf)
+conf2 <- configureMCMC( Rmodel2,
+                       monitors = params2,
+                       print = FALSE)
+conf3 <- configureMCMC( Rmodel3,
+                       monitors = params3,
+                       print = FALSE)
+conf4 <- configureMCMC( Rmodel4,
+                       monitors = params4,
+                       print = FALSE)
+Rmcmc1 <- buildMCMC(conf1)
+Rmcmc2 <- buildMCMC(conf2)
+Rmcmc3 <- buildMCMC(conf3)
+Rmcmc4 <- buildMCMC(conf4)
 ```
+
 
 
 #### Compile and Run MCMC
 
-Finally, we compile both the model and MCMC objects and
-execute the compiled MCMC for 1000 iterations.
+Finally, we compile the models and MCMC objects and
+execute the compiled MCMC runs for 4 chains of 11000 iterations each.
 ```{r eval = FALSE}
-Cmodel <- compileNimble(Rmodel)
-Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
-MCMC_runtime <- system.time(
-  samples <- runMCMC(Cmcmc, niter = 1000)
-)
+Cmodel1 <- compileNimble(Rmodel1)
+Cmcmc1 <- compileNimble(Rmcmc1, project = Rmodel1)
+MCMC_runtime1 <- system.time(
+  MCMC_samples1 <- runMCMC(Cmcmc1,
+                           niter = 11000,
+                           nburnin = 1000,
+                           nchains = 4))
+
+Cmodel2 <- compileNimble(Rmodel2)
+Cmcmc2 <- compileNimble(Rmcmc2, project = Rmodel2)
+MCMC_runtime2 <- system.time(
+  MCMC_samples2 <- runMCMC(Cmcmc2,  
+                           niter = 11000,
+                           nburnin = 1000,
+                           nchains = 4))
+
+Cmodel3 <- compileNimble(Rmodel3)
+Cmcmc3 <- compileNimble(Rmcmc3, project = Rmodel3)
+MCMC_runtime3 <- system.time(
+  MCMC_samples3 <- runMCMC(Cmcmc3,  
+                           niter = 11000,
+                           nburnin = 1000,
+                           nchains = 4))
+
+Cmodel4 <- compileNimble(Rmodel4)
+Cmcmc4 <- compileNimble(Rmcmc4, project = Rmodel4)
+MCMC_runtime4 <- system.time(
+  MCMC_samples4 <- runMCMC(Cmcmc4,  
+                           niter = 11000,
+                           nburnin = 1000,
+                           nchains = 4))
 ```
 
-```{r eval = FALSE, echo = FALSE}
-save(samples,
-     MCMC_runtime,
+```{r echo = FALSE, eval = FALSE}
+save(MCMC_samples1, MCMC_samples2, MCMC_samples3, MCMC_samples4,
+     MCMC_runtime1, MCMC_runtime2, MCMC_runtime3, MCMC_runtime4,
      file = file.path(baseDir,
                       "nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
 ```
@@ -202,25 +406,32 @@ if(is.null(baseDir)) {
                      "WolverinePointProcess_samples.RData",
                      package = "nimbleSCR"))
 } else {
-    load(file.path(baseDir,
-                   "nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
 }
 ```
 
 
 ## Results
-Summary of posterior distributions for each parameter:
+We can then look at the summary of posterior distributions for the different models:
 ```{r }
-round(samplesSummary(samples), 2)
+round(samplesSummary(do.call(rbind,MCMC_samples1)), 2)
+round(samplesSummary(do.call(rbind,MCMC_samples2)), 2)
+round(samplesSummary(do.call(rbind,MCMC_samples3)), 2)
+round(samplesSummary(do.call(rbind,MCMC_samples4)), 2)
 ```
 
-Examine traceplots and posterior distributions:
+And examine traceplots and posterior distributions for $N$ and $\sigma$:
 ```{r }
-chainsPlot(samples)
+chainsPlot(MCMC_samples1, var = c("N","sigma"))
+chainsPlot(MCMC_samples2, var = c("N","sigma"))
+chainsPlot(MCMC_samples3, var = c("N","sigma"))
+chainsPlot(MCMC_samples4, var = c("N","sigma"))
 ```
 
-Obviously, we would need to run multiple longer chains but this might take a while
-(runtime for 1000 iterations was approx 12 min).
+We can see that model 2 and 4 seem to overestimate individual space use ($\sigma$), and underestimate $N$, as a consequence of the coarse resolutions used for the habitat and detectors and the aggregation of activity centers and detections to the centers of the habitat and detector windows, respectively.
+
+
+We can also see that the semi-likelihood approach is much slower than the data-augmentation for comparable models and results (Runtime : `r round(MCMC_runtime1[3]/3600,1)`hrs for model 1 against `r round(MCMC_runtime3[3]/3600,1)`hrs for model 3).
 
 
 
