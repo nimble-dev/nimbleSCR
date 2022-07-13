@@ -45,6 +45,7 @@ spatial capture-recapture data" (Zhang *et al*, *submitted*) using NIMBLE [@de20
 library(nimble)
 library(nimbleSCR)
 library(basicMCMCplots)
+library(coda)
 ```
 
 
@@ -428,10 +429,31 @@ chainsPlot(MCMC_samples3, var = c("N","sigma"))
 chainsPlot(MCMC_samples4, var = c("N","sigma"))
 ```
 
+Next, we can check the posterior effective sample size (ESS) resulting from our
+40 000 posterior samples for the population size estimates ($N$):  
+```{r }
+round(effectiveSize(MCMC_samples1),2)[c("N","sigma")] 
+round(effectiveSize(MCMC_samples2),2)[c("N","sigma")]  
+round(effectiveSize(MCMC_samples3),2)[c("N","sigma")]
+round(effectiveSize(MCMC_samples4),2)[c("N","sigma")]  
+```
+We can also calculate the MCMC efficiency; this corresponds to the rate of generating effectively independent posterior samples, per second of MCMC runtime:
+```{r }
+round(effectiveSize(MCMC_samples1),2)["N"]/round(MCMC_runtime1[3],1)
+round(effectiveSize(MCMC_samples2),2)["N"]/round(MCMC_runtime2[3],1)
+round(effectiveSize(MCMC_samples3),2)["N"]/round(MCMC_runtime3[3],1)
+round(effectiveSize(MCMC_samples4),2)["N"]/round(MCMC_runtime4[3],1)
+```
+
+
+## Conclusion
 We can see that model 2 and 4 seem to overestimate individual space use ($\sigma$), and underestimate $N$, as a consequence of the coarse resolutions used for the habitat and detectors and the aggregation of activity centers and detections to the centers of the habitat and detector windows, respectively.
 
-
 We can also see that the semi-likelihood approach is much slower than the data-augmentation for comparable models and results (Runtime : `r round(MCMC_runtime1[3]/3600,1)`hrs for model 1 against `r round(MCMC_runtime3[3]/3600,1)`hrs for model 3).
+
+However, when looking at the efficiency, model 2 seems to perform better, thanks to the faster detection model using discrete locations (Efficiency : `r round(effectiveSize(MCMC_samples2),2)["N"]/round(MCMC_runtime2[3],1)`ESS/sec) (... but at the cost of poor population size estimates).
+
+Overall, model 3, combining the detection point process and data augmentation seems to be the best compromise with accurate population size estimates and relatively good efficiency (Efficiency : `r round(effectiveSize(MCMC_samples3),2)["N"]/round(MCMC_runtime3[3],1)`ESS/sec) 
 
 
 
