@@ -82,15 +82,26 @@ getSparseY <- function( x,
   
   increaseSize <- nMaxTraps 
   yCombined <- array(NA, c(dim(ySparse)[1], 1 + (increaseSize)*2, dim(ySparse)[3])) 
-  for(t in 1:dim(yCombined)[3]){
-    yCombined[,,t] <- cbind(detNums[,t],
-                            ySparse[,,t],
-                            matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
-                            detIndices[,,t],
-                            matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
-    )
-  }
   
+  if(dim(ySparse)[2]==1){#Deal with cases where there is a maximum of one detection per individuals
+    for(t in 1:dim(yCombined)[3]){
+      yCombined[,,t] <- cbind(detNums[,t],
+                              ySparse[,,t],
+                              matrix(-1, nrow=length(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
+                              detIndices[,,t],
+                              matrix(-1, nrow=length(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
+      )
+    }
+  }else{
+    for(t in 1:dim(yCombined)[3]){
+      yCombined[,,t] <- cbind(detNums[,t],
+                              ySparse[,,t],
+                              matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
+                              detIndices[,,t],
+                              matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
+      )
+    }
+  }
   
   return(list( y = ySparse,
                detIndices = detIndices,
