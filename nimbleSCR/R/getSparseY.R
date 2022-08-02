@@ -10,10 +10,10 @@
 #' @param x A two- or three-dimensional observation data array with dimensions : number of  individuals, number of traps, (and number of detection occasions/sessions).
 #' @param noDetections The value indicating no detection. Defaults to -1.
 #' @param nMaxTraps The maximum number of traps at which detections can occur. 
-#' It is necessary to artificially augment the sparse detection array when using the random generation functionality of the \link{dbinomLocal_normal} or \link{dpoisLocal_normal} functions.
+#' It is necessary to artificially augment the sparse detection array when using the random generation functionality of the \link{rbinomLocal_normal} or \link{rpoisLocal_normal} functions.
 #' When simulating detection data, augmenting the size of the detection array is necessary to avoids artificially limiting the number of detectors at which individuals can be detected.
 #' Default value is maxDetNums * 2, which doubles the maximum number of traps at which an individual can be detected. 
-#' We generally recommend using \emph{numLocalIndicesMax} obtained from \code{\link{getLocalObjects}} when aiming at randomly generating detections from \link{dbinomLocal_normal} or \link{dpoisLocal_normal}.
+#' We generally recommend using \emph{numLocalIndicesMax} obtained from \code{\link{getLocalObjects}} when aiming at randomly generating detections from \link{rbinomLocal_normal} or \link{rpoisLocal_normal}.
 
 #' 
 #' @return A list of objects which constitute a sparse representation of the observation data:

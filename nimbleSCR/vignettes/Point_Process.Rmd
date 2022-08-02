@@ -177,7 +177,7 @@ detCoeffSlope <- 0.5
 habCoeffSlope <- -1.5
 ```
 
-We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 100. The expected total number of individuals that are truly present in the population is *M* *psi.
+We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 150. The expected total number of individuals that are truly present in the population is *M* *psi.
 
 ```{r , warning = FALSE, message = FALSE}
 M <- 150
