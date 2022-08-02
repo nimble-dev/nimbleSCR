@@ -92,7 +92,7 @@ getLocalTraps <- function( habitatMask,
   })
   
   ## MAKE SURE IT ALWAYS RETURN A LIST
-  if(inherits(localIndices,"matrix")){
+  if(inherits(localTrapsIndices,"matrix")){
     localTrapsIndices <- lapply(1:dim(localTrapsIndices)[2], function(x) localTrapsIndices[ ,x])
   }
   

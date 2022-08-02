@@ -90,7 +90,7 @@ getLocalObjects <- function( habitatMask,
   })
   
   ## MAKE SURE IT ALWAYS RETURN A LIST
-  if(class(localIndices) == "matrix"){
+  if(inherits(localIndices,"matrix")){
     localIndices <- lapply(1:dim(localIndices)[2], function(x) localIndices[ ,x])
   }
   
