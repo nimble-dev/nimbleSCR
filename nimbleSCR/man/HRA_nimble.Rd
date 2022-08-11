@@ -12,7 +12,7 @@ HRA_nimble(
   xlim = c(0, 30),
   ylim = c(0, 30),
   ng = 800,
-  tol = 1e-05,
+  tol = 0.00001,
   niter = 2000
 )
 }
