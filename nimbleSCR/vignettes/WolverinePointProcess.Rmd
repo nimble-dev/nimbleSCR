@@ -392,22 +392,46 @@ MCMC_runtime4 <- system.time(
                            niter = 11000,
                            nburnin = 1000,
                            nchains = 4))
+
+MCMC_samples1_summary <- samplesSummary(do.call(rbind,MCMC_samples1))
+MCMC_samples2_summary <- samplesSummary(do.call(rbind,MCMC_samples2))
+MCMC_samples3_summary <- samplesSummary(do.call(rbind,MCMC_samples3))
+MCMC_samples4_summary <- samplesSummary(do.call(rbind,MCMC_samples4))
+
+MCMC_samples1_ess <- effectiveSize(MCMC_samples1)
+MCMC_samples2_ess <- effectiveSize(MCMC_samples2)
+MCMC_samples3_ess <- effectiveSize(MCMC_samples3)
+MCMC_samples4_ess <- effectiveSize(MCMC_samples4)
 ```
 
 ```{r echo = FALSE, eval = FALSE}
-save(MCMC_samples1, MCMC_samples2, MCMC_samples3, MCMC_samples4,
+##save(MCMC_samples1, MCMC_samples2, MCMC_samples3, MCMC_samples4,
+##     MCMC_runtime1, MCMC_runtime2, MCMC_runtime3, MCMC_runtime4,
+##     file = file.path(baseDir,
+##                      "nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
+
+save(MCMC_samples1_summary, MCMC_samples2_summary, MCMC_samples3_summary, MCMC_samples4_summary,
+     MCMC_samples1_ess, MCMC_samples2_ess, MCMC_samples3_ess, MCMC_samples4_ess,
      MCMC_runtime1, MCMC_runtime2, MCMC_runtime3, MCMC_runtime4,
      file = file.path(baseDir,
-                      "nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
+                      "nimbleSCR/inst/extdata/WolverinePointProcess_summary.RData"))
 ```
 
 ```{r echo = FALSE}
+##if(is.null(baseDir)) {
+##    load(system.file("extdata",
+##                     "WolverinePointProcess_samples.RData",
+##                     package = "nimbleSCR"))
+##} else {
+##    load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
+##}
+
 if(is.null(baseDir)) {
     load(system.file("extdata",
-                     "WolverinePointProcess_samples.RData",
+                     "WolverinePointProcess_summary.RData",
                      package = "nimbleSCR"))
 } else {
-    load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverinePointProcess_samples.RData"))
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/WolverinePointProcess_summary.RData"))
 }
 ```
 
@@ -415,14 +439,16 @@ if(is.null(baseDir)) {
 ## Results
 We can then look at the summary of posterior distributions for the different models:
 ```{r }
-round(samplesSummary(do.call(rbind,MCMC_samples1)), 2)
-round(samplesSummary(do.call(rbind,MCMC_samples2)), 2)
-round(samplesSummary(do.call(rbind,MCMC_samples3)), 2)
-round(samplesSummary(do.call(rbind,MCMC_samples4)), 2)
+round(MCMC_samples1_summary, 2)
+round(MCMC_samples2_summary, 2)
+round(MCMC_samples3_summary, 2)
+round(MCMC_samples4_summary, 2)
 ```
 
+<!--
 And examine traceplots and posterior distributions for $N$ and $\sigma$:
-```{r }
+-->
+```{r echo = FALSE, eval = FALSE}
 chainsPlot(MCMC_samples1, var = c("N","sigma"))
 chainsPlot(MCMC_samples2, var = c("N","sigma"))
 chainsPlot(MCMC_samples3, var = c("N","sigma"))
@@ -432,17 +458,17 @@ chainsPlot(MCMC_samples4, var = c("N","sigma"))
 Next, we can check the posterior effective sample size (ESS) resulting from our
 40 000 posterior samples for the population size estimates ($N$):  
 ```{r }
-round(effectiveSize(MCMC_samples1),2)[c("N","sigma")] 
-round(effectiveSize(MCMC_samples2),2)[c("N","sigma")]  
-round(effectiveSize(MCMC_samples3),2)[c("N","sigma")]
-round(effectiveSize(MCMC_samples4),2)[c("N","sigma")]  
+round(MCMC_samples1_ess,2)[c("N","sigma")] 
+round(MCMC_samples2_ess,2)[c("N","sigma")] 
+round(MCMC_samples3_ess,2)[c("N","sigma")] 
+round(MCMC_samples4_ess,2)[c("N","sigma")] 
 ```
 We can also calculate the MCMC efficiency; this corresponds to the rate of generating effectively independent posterior samples, per second of MCMC runtime:
 ```{r }
-round(effectiveSize(MCMC_samples1),2)["N"]/round(MCMC_runtime1[3],1)
-round(effectiveSize(MCMC_samples2),2)["N"]/round(MCMC_runtime2[3],1)
-round(effectiveSize(MCMC_samples3),2)["N"]/round(MCMC_runtime3[3],1)
-round(effectiveSize(MCMC_samples4),2)["N"]/round(MCMC_runtime4[3],1)
+round(MCMC_samples1_ess,2)["N"]/round(MCMC_runtime1[3],1)
+round(MCMC_samples2_ess,2)["N"]/round(MCMC_runtime2[3],1)
+round(MCMC_samples3_ess,2)["N"]/round(MCMC_runtime3[3],1)
+round(MCMC_samples4_ess,2)["N"]/round(MCMC_runtime4[3],1)
 ```
 
 
@@ -451,9 +477,9 @@ We can see that model 2 and 4 seem to overestimate individual space use ($\sigma
 
 We can also see that the semi-likelihood approach is much slower than the data-augmentation for comparable models and results (Runtime : `r round(MCMC_runtime1[3]/3600,1)`hrs for model 1 against `r round(MCMC_runtime3[3]/3600,1)`hrs for model 3).
 
-However, when looking at the efficiency, model 2 seems to perform better, thanks to the faster detection model using discrete locations (Efficiency : `r round(effectiveSize(MCMC_samples2),2)["N"]/round(MCMC_runtime2[3],1)`ESS/sec) (... but at the cost of poor population size estimates).
+However, when looking at the efficiency, model 2 seems to perform better, thanks to the faster detection model using discrete locations (Efficiency : `r round(MCMC_samples2_ess,2)["N"]/round(MCMC_runtime2[3],1)`ESS/sec) (... but at the cost of poor population size estimates).
 
-Overall, model 3, combining the detection point process and data augmentation seems to be the best compromise with accurate population size estimates and relatively good efficiency (Efficiency : `r round(effectiveSize(MCMC_samples3),2)["N"]/round(MCMC_runtime3[3],1)`ESS/sec) 
+Overall, model 3, combining the detection point process and data augmentation seems to be the best compromise with accurate population size estimates and relatively good efficiency (Efficiency : `r round(MCMC_samples3_ess,2)["N"]/round(MCMC_runtime3[3],1)`ESS/sec) 
 
 
 

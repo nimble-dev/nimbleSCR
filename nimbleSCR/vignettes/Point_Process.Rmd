@@ -349,7 +349,7 @@ MCMCconf <- configureMCMC(model = model,
                           monitors  = c("N","sigma","psi","detCoeffInt",
                                         "detCoeffSlope","habCoeffSlope"),
                           control = list(reflective = TRUE),
-                          thin = 1)
+                          thin = 10)
 MCMC <- buildMCMC(MCMCconf)
 ```
 ```{r eval = F}
@@ -535,7 +535,7 @@ cmodel$calculate()
 MCMCconf <- configureMCMC(model = model,
                           monitors =  c("N","sigma","probDetection","habCoeffInt", "detCoeffInt","detCoeffSlope","habCoeffSlope"),
                           control = list(reflective = TRUE),
-                          thin = 1)
+                          thin = 10)
 
 MCMC <- buildMCMC(MCMCconf)
 ```
