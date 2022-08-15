@@ -1,19 +1,19 @@
 #' Local evaluation of a binomial SCR observation process 
 #'
-#' The \code{dbinomLocal_EX} distribution is a NIMBLE custom distribution which can be used to model and simulate
+#' The \code{dbinomLocal_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 
 #' coordinates (\emph{trapCoords}). The distribution assumes that an individual's detection probability at any detector
 #' follows a exponential function of the distance between the  individual's activity center (\emph{s}) and the detector location.
 #'
 #'
-#' The \code{dbinomLocal_EX} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
+#' The \code{dbinomLocal_exp} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
 #' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 <doi:10.1002/ece3.4751> for more details)
 #' \item A sparse matrix representation (\emph{x}, \emph{detIndices} and \emph{detNums}) of the observation data to reduce the size of objects to be processed.
 #' \item An indicator (\emph{indicator}) to shortcut calculations for individuals unavailable for detection.
 #' }
 #' 
-#' The \code{dbinomLocal_EX} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
+#' The \code{dbinomLocal_exp} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
 #'
 #' When the aim is to simulate detection data: 
 #' \enumerate{
@@ -24,10 +24,10 @@
 #' 
 #' 
 #' 
-#' @name dbinomLocal_EX
+#' @name dbinomLocal_exp
 #'
 #' @param x Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by the \code{\link{getSparseY}} function; (ii) with the \emph{yCombined} object as returned by \code{\link{getSparseY}}. 
-#' Note that when the random generation functionality is used (\code{rbinomLocal_EX}), only the \emph{yCombined} format can be used. 
+#' Note that when the random generation functionality is used (\code{rbinomLocal_exp}), only the \emph{yCombined} format can be used. 
 #' The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order).  When such consolidated representation of the detection data \emph{x} is used, \emph{detIndices} and \emph{detNums} arguments shouldn't be specified.
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
 #' @param detIndices Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.
@@ -113,7 +113,7 @@
 #'  # WE TAKE THE FIRST INDIVIDUAL
 #' i=1
 #'   # OPTION 1: USING THE RANDOM GENERATION FUNCTIONNALITY 
-#' dbinomLocal_EX(x=SparseY$y[i,,1],
+#' dbinomLocal_exp(x=SparseY$y[i,,1],
 #'                    detNums=SparseY$detNums[i],
 #'                    detIndices=SparseY$detIndices[i,,1],
 #'                    size=rep(1,4),
@@ -129,7 +129,7 @@
 #'                                                                 
 #'   # OPTION 2: USING RANDOM GENERATION FUNCTIONNALITY 
 #'   # WE DO NOT PROVIDE THE detNums AND detIndices ARGUMENTS
-#' dbinomLocal_EX(x=SparseY$yCombined[i,,1],
+#' dbinomLocal_exp(x=SparseY$yCombined[i,,1],
 #'                    size=rep(1,4),
 #'                    p0 = p0,
 #'                    sigma= sigma, 
@@ -143,7 +143,7 @@
 #'                    lengthYCombined = SparseY$lengthYCombined)
 #' 
 #' # III. USING THE RANDOM GENERATION FUNCTION 
-#' rbinomLocal_EX(n=1,
+#' rbinomLocal_exp(n=1,
 #'                    size=rep(1,4),
 #'                    p0 = p0,
 #'                    sigma= sigma, 
@@ -159,9 +159,9 @@
 #' @export
 NULL
 
-#' @rdname dbinomLocal_EX
+#' @rdname dbinomLocal_exp
 #' @export
-dbinomLocal_EX <- nimbleFunction(
+dbinomLocal_exp <- nimbleFunction(
   run = function( x = double(1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
@@ -272,9 +272,9 @@ dbinomLocal_EX <- nimbleFunction(
   })
 
 
-#' @rdname dbinomLocal_EX
+#' @rdname dbinomLocal_exp
 #' @export
-rbinomLocal_EX <- nimbleFunction(
+rbinomLocal_exp <- nimbleFunction(
   run = function( n = double(0, default = 1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
@@ -293,11 +293,11 @@ rbinomLocal_EX <- nimbleFunction(
   ) {
     ## Specify return type
     returnType(double(1))
-    if(detNums >= 0) stop("Random generation for the rbinomLocal_EX distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
+    if(detNums >= 0) stop("Random generation for the rbinomLocal_exp distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
     
     #========================================================
     # RETURN TYPE DECLARATION
-    if(n!=1){print("rbinomLocal_EX only allows n = 1; using n = 1")}
+    if(n!=1){print("rbinomLocal_exp only allows n = 1; using n = 1")}
     # returnType(double(3))
     # len <- 2*MAX + 1
     ## GET NECESSARY INFO

@@ -46,7 +46,7 @@ Collate:
     dnormalizer.R
     dpoisLocal_normal.R
     dbinomLocal_HNP.R
-    dbinomLocal_EX.R
+    dbinomLocal_exp.R
     dpoisppAC.R
     dpoisppDetection_normal.R
     dpoisppLocalDetection_normal.R

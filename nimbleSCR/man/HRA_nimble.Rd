@@ -12,14 +12,14 @@ HRA_nimble(
   xlim = c(0, 30),
   ylim = c(0, 30),
   ng = 800,
-  tol = 0.00001,
+  tol = 1e-05,
   niter = 2000
 )
 }
 \arguments{
 \item{param}{\code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.}
 
-\item{detfun}{\code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).}
+\item{detfun}{\code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).}
 
 \item{pr}{\code{Numeric}  variable denoting the quantile probability to compute the home range radius.}
 
@@ -36,7 +36,7 @@ HRA_nimble(
 \item{niter}{\code{Numeric} variable giving the maximum number of iterations in bisection algorithm.}
 }
 \description{
-\code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
+\code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EXP, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
 }
 \examples{
 
@@ -60,7 +60,7 @@ HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6,
                       ng = 800, tol = 1E-5, niter = 2000)
 
 # Different values of argument "detfun"
-# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
+# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
 # 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
 HR.hnp <- c(HRAnim$run())
 names(HR.hnp) <- paramnames.hr
@@ -100,7 +100,7 @@ HR.hn <- c(HRAnim$run())
 names(HR.hn) <- paramnames.hr
 print(HR.hn)
 
-# Exponential (EX, detfun = 2) 
+# Exponential (EXP, detfun = 2) 
 
 sigma = 2
 params <- c(sigma)

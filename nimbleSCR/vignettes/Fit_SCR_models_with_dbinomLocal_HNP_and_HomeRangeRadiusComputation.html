@@ -12,7 +12,7 @@
 
 <meta name="author" content="Soumen Dey" />
 
-<meta name="date" content="2022-05-25" />
+<meta name="date" content="2022-08-15" />
 
 <title>Home range size estimation with the nimbleSCR package</title>
 
@@ -357,7 +357,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Home range size estimation with the
 nimbleSCR package</h1>
 <h4 class="author">Soumen Dey</h4>
-<h4 class="date">2022-05-25</h4>
+<h4 class="date">2022-08-15</h4>
 
 
 
@@ -410,8 +410,8 @@ habitat and trap coordinates to to allow a fast habitat cell ID lookup
 and the local evaluation (see <span class="citation">Milleret et al.
 (2019)</span> and <span class="citation">Turek et al.
 (2021)</span><br />
-for further details). We use the ’ ‘scaleCoordsToHabitatGrid’ function
-to rescale coordinates and the ‘getLocalObjects’ function to set up the
+for further details). We use the ‘scaleCoordsToHabitatGrid’ function to
+rescale coordinates and the ‘getLocalObjects’ function to set up the
 objects necessary to perform the local evaluation. Special care should
 be taken when chosing ‘dmax’, the radius within which traps are
 considered, relative to <span class="math inline">\(\sigma\)</span>
@@ -782,7 +782,7 @@ we also plot the detection function against distance in below.</p>
 root) and estimate of <span class="math inline">\(95\%\)</span> home
 range radius and area for a set of circular detection functions
 available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal
-plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric
+plateau (HNP, detfun = 1), exponential (EXP, detfun = 2), asymmetric
 logistic (AL, detfun = 3), bimodal (BI, detfun = 4), and donut (DN,
 detfun = 5).</p>
 <p>The function ‘HRA_nimble()’ has two parts: a setup and and a run
@@ -809,7 +809,7 @@ estimate</li>
 bisection algorithm</li>
 <li>detfun: A numeric variable denoting the type of detection function:
 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential
-(EX), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut
+(EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut
 (DN).</li>
 <li>pr: A numeric variable denoting the quantile probability to compute
 the radius</li>
@@ -834,7 +834,7 @@ radius and area.</p>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">ng =</span> <span class="dv">800</span>, <span class="at">tol =</span> <span class="fl">1E-5</span>, <span class="at">niter =</span> <span class="dv">2000</span>)</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Different values of argument &quot;detfun&quot;</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),</span></span>
 <span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).</span></span>
 <span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>HR.hnp <span class="ot">&lt;-</span> <span class="fu">c</span>(HRAnim<span class="sc">$</span><span class="fu">run</span>())</span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(HR.hnp) <span class="ot">&lt;-</span> paramnames.hr</span>
@@ -863,7 +863,7 @@ uncertainty from the MCMC chains of the parameters <span class="math inline">\(p
 ## ..... row #2000</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(HRA.Runtime)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##  112.85    0.00  112.89</code></pre>
+##   96.94    0.00   96.94</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(HR.chain)[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> paramnames.hr</span></code></pre></div>
 <p>From the obtained sample ‘HR.chain’ of <span class="math inline">\(95\%\)</span> home range radius and area, we can
 obtain summary statistics of these two metrics.</p>
@@ -907,7 +907,7 @@ function using custom distributions such as ‘dbinomLocal_normal()’ or
 ‘dbinomLocal_exp()’, respectively. An example of SCR model fitting using
 half-normal detection and other efficient nimbleSCR features is given <a href="https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html">here</a>.
 Fitting of SCR model using exponential detection function can be
-performed following similar steps (see ‘?dbinomLocal_EX’ for further
+performed following similar steps (see ‘?dbinomLocal_exp’ for further
 details). Below, we provide examples to compute home range radius and
 area for the other detection functions available <span class="citation">(Dey et al. 2022)</span>.</p>
 <div id="half-normal-hn-detfun-0" class="section level3">
@@ -959,10 +959,10 @@ needed) to compute home range radius and area.</p>
 <pre><code>##  HRradius    HRarea 
 ##  4.897252 75.345054</code></pre>
 </div>
-<div id="exponential-ex-detfun-2" class="section level3">
-<h3>Exponential (EX, detfun = 2)</h3>
-<p>The exponential (EX) detection function is written as: <span class="math display">\[\begin{align}
-p_{\text{EX}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
+<div id="exponential-exp-detfun-2" class="section level3">
+<h3>Exponential (EXP, detfun = 2)</h3>
+<p>The exponential (EXP) detection function is written as: <span class="math display">\[\begin{align}
+p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
 \end{align}\]</span> where <span class="math inline">\(p_{0} \in
 (0,1)\)</span>, <span class="math inline">\(\sigma &gt; 0\)</span>. Here
 <span class="math inline">\(p_0\)</span> denotes the baseline detection
@@ -970,11 +970,11 @@ probability and <span class="math inline">\(\sigma\)</span> denotes the
 scale parameter. For a better understanding, we also plot the detection
 function against distance.</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="do">## EXPONENTIAL FUNCTION</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>detfun.EX <span class="ot">&lt;-</span> <span class="cf">function</span>(D, p0, sigma){ p0<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>D<span class="sc">/</span>sigma)}</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>detfun.EXP <span class="ot">&lt;-</span> <span class="cf">function</span>(D, p0, sigma){ p0<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>D<span class="sc">/</span>sigma)}</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">15</span>, <span class="at">len=</span><span class="dv">10001</span>)</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">detfun.EX</span>(<span class="at">D=</span>x, <span class="at">p0=</span><span class="fl">0.25</span>, <span class="at">sigma =</span> <span class="dv">2</span>), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col =</span> <span class="st">&quot;orange&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Exponential detection function&quot;</span>, <span class="at">xlab =</span> <span class="st">&#39;d&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;Detection probability&#39;</span>) </span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">detfun.EX</span>(<span class="at">D=</span>x, <span class="at">p0=</span><span class="fl">0.15</span>, <span class="at">sigma =</span> <span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="st">&quot;solid&quot;</span>, <span class="at">col =</span> <span class="st">&quot;darkcyan&quot;</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">detfun.EXP</span>(<span class="at">D=</span>x, <span class="at">p0=</span><span class="fl">0.25</span>, <span class="at">sigma =</span> <span class="dv">2</span>), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col =</span> <span class="st">&quot;orange&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Exponential detection function&quot;</span>, <span class="at">xlab =</span> <span class="st">&#39;d&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;Detection probability&#39;</span>) </span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">detfun.EXP</span>(<span class="at">D=</span>x, <span class="at">p0=</span><span class="fl">0.15</span>, <span class="at">sigma =</span> <span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="st">&quot;solid&quot;</span>, <span class="at">col =</span> <span class="st">&quot;darkcyan&quot;</span>)</span>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>focal.vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;p0&#39;</span>, <span class="st">&#39;sigma&#39;</span>) </span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>focal.values <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.15</span>), <span class="co"># p0</span></span>
 <span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>)) <span class="co"># sigma</span></span>
@@ -993,7 +993,7 @@ function against distance.</p>
 range radius and area for exponential detection function. Again, we only
 have to provide the parameter values for ‘sigma’ (i.e., ‘p0’ is not
 needed) to compute home range radius and area.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exponential (EX) </span></span>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exponential (EXP) </span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">=</span> <span class="dv">2</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(sigma)</span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;sigma&quot;</span>)</span>
