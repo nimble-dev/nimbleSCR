@@ -10,10 +10,10 @@
 #' @param x A two- or three-dimensional observation data array with dimensions : number of  individuals, number of traps, (and number of detection occasions/sessions).
 #' @param noDetections The value indicating no detection. Defaults to -1.
 #' @param nMaxTraps The maximum number of traps at which detections can occur. 
-#' It is necessary to artificially augment the sparse detection array when using the random generation functionality of the \link{dbinomLocal_normal} or \link{dpoisLocal_normal} functions.
+#' It is necessary to artificially augment the sparse detection array when using the random generation functionality of the \link{rbinomLocal_normal} or \link{rpoisLocal_normal} functions.
 #' When simulating detection data, augmenting the size of the detection array is necessary to avoids artificially limiting the number of detectors at which individuals can be detected.
 #' Default value is maxDetNums * 2, which doubles the maximum number of traps at which an individual can be detected. 
-#' We generally recommend using \emph{numLocalIndicesMax} obtained from \code{\link{getLocalObjects}} when aiming at randomly generating detections from \link{dbinomLocal_normal} or \link{dpoisLocal_normal}.
+#' We generally recommend using \emph{numLocalIndicesMax} obtained from \code{\link{getLocalObjects}} when aiming at randomly generating detections from \link{rbinomLocal_normal} or \link{rpoisLocal_normal}.
 
 #' 
 #' @return A list of objects which constitute a sparse representation of the observation data:
@@ -82,15 +82,26 @@ getSparseY <- function( x,
   
   increaseSize <- nMaxTraps 
   yCombined <- array(NA, c(dim(ySparse)[1], 1 + (increaseSize)*2, dim(ySparse)[3])) 
-  for(t in 1:dim(yCombined)[3]){
-    yCombined[,,t] <- cbind(detNums[,t],
-                            ySparse[,,t],
-                            matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
-                            detIndices[,,t],
-                            matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
-    )
-  }
   
+  if(dim(ySparse)[2]==1){#Deal with cases where there is a maximum of one detection per individuals
+    for(t in 1:dim(yCombined)[3]){
+      yCombined[,,t] <- cbind(detNums[,t],
+                              ySparse[,,t],
+                              matrix(-1, nrow=length(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
+                              detIndices[,,t],
+                              matrix(-1, nrow=length(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
+      )
+    }
+  }else{
+    for(t in 1:dim(yCombined)[3]){
+      yCombined[,,t] <- cbind(detNums[,t],
+                              ySparse[,,t],
+                              matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums)),
+                              detIndices[,,t],
+                              matrix(-1, nrow=dim(ySparse[,,t])[1], ncol=increaseSize-max(detNums))
+      )
+    }
+  }
   
   return(list( y = ySparse,
                detIndices = detIndices,

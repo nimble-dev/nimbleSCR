@@ -45,7 +45,7 @@ getLocalObjects <- function( habitatMask,
                              plot.check = TRUE
 ){
   ## STORE THE COORDINATES OF THE ORIGINAL HABITAT CELLS
-  oldCoords <- which(habitatMask == 1, arr.ind = T) - 0.5
+  oldCoords <- which(habitatMask > 0, arr.ind = T) - 0.5
   oldCoords <- cbind(oldCoords[,2], oldCoords[,1])
   names(oldCoords) <- c("x", "y")
   
@@ -90,7 +90,7 @@ getLocalObjects <- function( habitatMask,
   })
   
   ## MAKE SURE IT ALWAYS RETURN A LIST
-  if(class(localIndices) == "matrix"){
+  if(inherits(localIndices,"matrix")){
     localIndices <- lapply(1:dim(localIndices)[2], function(x) localIndices[ ,x])
   }
   

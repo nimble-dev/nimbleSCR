@@ -22,12 +22,12 @@ if(!('makePackage.R' %in% list.files(baseDir))) stop('')
 
 if(!Sys.info()['user'] == 'admin') { 
     document(paste0(baseDir, 'nimbleSCR'))
-} else if(Sys.info()['user'] == 'admin') { ## Soumen
-    document("C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR")##Soumen
+} else if(Sys.info()['user'] == 'admin') {                    ## Soumen
+    document('C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR')
 }
 
 
-if(.Platform$OS.type == "windows") {
+if(.Platform$OS.type == 'windows') {
     system(paste0('R CMD build ', baseDir, 'nimbleSCR'))
 } else {
     system(paste0('R CMD BUILD ', baseDir, 'nimbleSCR'))
@@ -35,15 +35,15 @@ if(.Platform$OS.type == "windows") {
 
 if(!Sys.info()['user'] == 'admin') { 
     check(paste0(baseDir, 'nimbleSCR'))
-} else if(Sys.info()['user'] == 'admin') { ## Soumen
-    check("C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR")##Soumen
+} else if(Sys.info()['user'] == 'admin') {                    ## Soumen
+    check('C:/Users/admin/OneDrive - Norwegian University of Life Sciences/Documents/GitHubSD/nimbleSCR/nimbleSCR')
 }
 
 suppressMessages(try(remove.packages('nimbleSCR'), silent = TRUE))
 tarFiles <- grep('\\.tar\\.gz', list.files(baseDir, include.dirs = TRUE), value = TRUE)
 lastTarFile <- tarFiles[length(tarFiles)]
 message('installing package version ', gsub('\\.tar\\.gz$', '', lastTarFile))
-if(.Platform$OS.type == "windows") {
+if(.Platform$OS.type == 'windows') {
     system(paste0('R CMD INSTALL --build ', lastTarFile))
 } else {
     system(paste0('R CMD install ', lastTarFile))
@@ -68,12 +68,12 @@ library(nimbleSCR)
 # } else stop('unknown user')
 # 
 # # Utility function (fast!)
-# source(file.path(baseDir,"nimbleSCR/test/testthat/testUtilityFunctions.R"))
+# source(file.path(baseDir,'nimbleSCR/test/testthat/testUtilityFunctions.R'))
 # # distributions (slow)
-# source(file.path(baseDir,"nimbleSCR/test/testthat/testDistributionFunctions.R"))
+# source(file.path(baseDir,'nimbleSCR/test/testthat/testDistributionFunctions.R'))
 library(testthat)
-##test_package("nimbleSCR")
-devtools::test("nimbleSCR")
+##test_package('nimbleSCR')
+devtools::test('nimbleSCR')
 
 ## inspect package vignettes
 (vignettes <- vignette(package = 'nimbleSCR'))

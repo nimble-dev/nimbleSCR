@@ -177,7 +177,7 @@ detCoeffSlope <- 0.5
 habCoeffSlope <- -1.5
 ```
 
-We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 100. The expected total number of individuals that are truly present in the population is *M* *psi.
+We use the data augmentation approach [@Royle2012] to estimate population size *N*. Thus, we need to choose a value *M* for the size of the superpopulation (detected + augmented individuals). Here we set *M* to be 150. The expected total number of individuals that are truly present in the population is *M* *psi.
 
 ```{r , warning = FALSE, message = FALSE}
 M <- 150
@@ -349,7 +349,7 @@ MCMCconf <- configureMCMC(model = model,
                           monitors  = c("N","sigma","psi","detCoeffInt",
                                         "detCoeffSlope","habCoeffSlope"),
                           control = list(reflective = TRUE),
-                          thin = 1)
+                          thin = 10)
 MCMC <- buildMCMC(MCMCconf)
 ```
 ```{r eval = F}
@@ -535,7 +535,7 @@ cmodel$calculate()
 MCMCconf <- configureMCMC(model = model,
                           monitors =  c("N","sigma","probDetection","habCoeffInt", "detCoeffInt","detCoeffSlope","habCoeffSlope"),
                           control = list(reflective = TRUE),
-                          thin = 1)
+                          thin = 10)
 
 MCMC <- buildMCMC(MCMCconf)
 ```

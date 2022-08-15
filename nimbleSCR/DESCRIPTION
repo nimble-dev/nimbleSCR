@@ -1,7 +1,7 @@
 Package: nimbleSCR
 Type: Package
 Title: Spatial Capture-Recapture (SCR) Methods Using 'nimble'
-Version: 0.1.3
+Version: 0.1.4
 Maintainer: Daniel Turek <danielturek@gmail.com>
 Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Daniel", "Turek", role = c("aut", "cre"), email = "danielturek@gmail.com"),
@@ -11,12 +11,13 @@ Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Soumen", "Dey", role = "aut"),
              person("Wei", "Zhang", role = "aut"),
              person("Perry", "de Valpine", role = "aut"))
-Date: 2021-10-25
-Description: Provides utility functions, distributions, and methods for improving Markov chain Monte Carlo (MCMC) sampling efficiency for ecological Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) models.  The methods provided implement the techniques presented in "Estimation of Large-Scale Spatial Capture-Recapture Models" (Turek, et al (2021); Eco-sphere 12(2):e03385. <doi:10.1002/ecs2.3385>).
+Date: 2022-08-11
+Description: Provides utility functions, distributions, and methods for improving Markov chain Monte Carlo (MCMC) sampling efficiency for ecological Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) models.  The methods provided implement the techniques presented in "Estimation of Large-Scale Spatial Capture-Recapture Models" (Turek, et al (2021); Ecosphere 12(2):e03385. <doi:10.1002/ecs2.3385>).
 License: GPL-3
 Depends: R (>= 3.5.0), nimble
+Imports: methods
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0), coda, basicMCMCplots
 VignetteBuilder: knitr
 Config/testthat/edition: 3
@@ -39,6 +40,7 @@ Collate:
     dbernppLocalACmovement_exp.R
     dbernppLocalDetection_normal.R
     dbinomLocal_normal.R
+    dmultiLocal_normal.R
     dbinom_sparseLocalSCR.R
     dbinom_vector.R
     dnormalizer.R

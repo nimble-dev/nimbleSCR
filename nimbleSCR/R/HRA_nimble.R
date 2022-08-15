@@ -24,6 +24,9 @@
 #' 
 #' 
 #' @examples
+#'
+#' \dontrun{
+#' 
 #' # A user friendly vignette is also available on github: 
 #' # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
 #' # Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
@@ -138,6 +141,8 @@
 #' HR.dn <- c(HRAnim$run())
 #' names(HR.dn) <- paramnames.hr
 #' print(HR.dn)
+#'
+#' }
 #' 
 #' @export
 NULL

@@ -31,7 +31,7 @@ rpoisppDetection_normal(
 )
 }
 \arguments{
-\item{x}{Matrix containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
+\item{x}{Array containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
 and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}

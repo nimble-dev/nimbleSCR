@@ -12,7 +12,7 @@ HRA_nimble(
   xlim = c(0, 30),
   ylim = c(0, 30),
   ng = 800,
-  tol = 1e-05,
+  tol = 0.00001,
   niter = 2000
 )
 }
@@ -39,6 +39,9 @@ HRA_nimble(
 \code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
 }
 \examples{
+
+\dontrun{
+
 # A user friendly vignette is also available on github: 
 # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
 # Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
@@ -153,6 +156,8 @@ HRAnim <- HRA_nimble(param = params, detfun = 5, pr = pr, d = 6,
 HR.dn <- c(HRAnim$run())
 names(HR.dn) <- paramnames.hr
 print(HR.dn)
+
+}
 
 }
 \author{
