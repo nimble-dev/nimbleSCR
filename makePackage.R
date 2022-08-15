@@ -106,8 +106,8 @@ getSparseY
 dbinomLocal_HNP
 ?dbinomLocal_HNP
 
-dbinomLocal_EX
-?dbinomLocal_EX
+dbinomLocal_exp
+?dbinomLocal_exp
 
 HRA_nimble
 ?HRA_nimble
