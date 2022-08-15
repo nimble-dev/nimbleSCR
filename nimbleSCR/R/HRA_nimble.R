@@ -174,12 +174,12 @@ HRA_nimble <- nimbleFunction(
       if (this.row%%1000 == 0)  cat('..... row #', this.row, '\n')
       
       if(detfun == 0){ #'HN'
-        # paramnames = c('sigma')
+        # paramnames = c('sigma') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- param[this.row, 1] # Scale parameter 
         p <- exp(-D[1:n]*D[1:n]/(2*sigma*sigma)) # vector (n x 1)
       }
       if(detfun == 1){ #  'HNP'
-        # paramnames = c('sigma', 'w')
+        # paramnames = c('sigma', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- param[this.row, 1] # Scale parameter 
         w <- param[this.row, 2] # Length of plateau
         p <- nimNumeric(length = n, value = 1, init = TRUE)
@@ -188,12 +188,12 @@ HRA_nimble <- nimbleFunction(
         }
       }
       if(detfun == 2){ # 'EX'
-        # paramnames = c('sigma')
+        # paramnames = c('sigma') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- param[this.row, 1] # Scale parameter 
         p <- exp(-D[1:n]/sigma) # vector (n x 1)
       }
       if(detfun == 3){ #'AL'
-        # paramnames = c('sigma', 'alpha.a', 'alpha.b')
+        # paramnames = c('sigma', 'alpha.a', 'alpha.b') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- param[this.row, 1] # Scale parameter 
         alpha.a <- param[this.row, 2]
         alpha.b <- param[this.row, 3]
@@ -203,7 +203,7 @@ HRA_nimble <- nimbleFunction(
         p <- 1/dens[1:n]
       }
       if(detfun == 4){ #'BI'
-        # paramnames = c('sigma', 'sigma.b', 'p0', 'p0.b', 'w')
+        # paramnames = c('sigma', 'sigma.b', 'p0', 'p0.b', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma.a <- param[this.row, 1] # Scale parameter of the first peak 
         sigma.b <- param[this.row, 2] # Scale parameter of the second peak 
         p0.a <- param[this.row, 3] # Baseline detection probability of the first peak 
@@ -215,7 +215,7 @@ HRA_nimble <- nimbleFunction(
         
       }
       if(detfun == 5){ #'DN'
-        # paramnames = c('sigma', 'sigma.b', 'w')
+        # paramnames = c('sigma', 'sigma.b', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma.a <- param[this.row, 1] # Scale parameter of the left tail
         sigma.b <- param[this.row, 2] # Scale parameter of the right tail
         w <- param[this.row, 3] # Distance between the activity centre and the "donut" centre
