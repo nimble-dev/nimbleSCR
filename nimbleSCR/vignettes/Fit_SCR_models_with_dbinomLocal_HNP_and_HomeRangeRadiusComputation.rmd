@@ -401,7 +401,7 @@ legend("topright",
        bty = 'n')
 ```
 
-The function 'HRA_nimble()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4), and donut (DN, detfun = 5). 
+The function 'HRA_nimble()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EXP, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4), and donut (DN, detfun = 5). 
 
 The function 'HRA_nimble()' has two parts: a setup and and a run part. If we only want to calculate HR radius for a single set of parameter values, there is no need to compile. But for multiple sets of parameter values (e.g., an mcmc sample) one should compile the function before implementing the run part to reduce the computation time. 'HRA_nimble()' returns the estimates of home range radius and area for a given set of arguments with respect to a particular detection function using bisection algorithm:
 
@@ -413,7 +413,7 @@ The function 'HRA_nimble()' has two parts: a setup and and a run part. If we onl
   - ng: A numeric variable denoting the number of breaks along an axis
   - tol: A numeric variable denoting the allowed tolerance in the radius estimate
   - niter: A numeric variable giving the maximum number of iterations in bisection algorithm
-  - detfun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
+  - detfun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
   - pr: A numeric variable denoting the quantile probability to compute the radius 
   - d: A numeric variable giving an inital value of the radius
 
@@ -431,7 +431,7 @@ HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6,
                       ng = 800, tol = 1E-5, niter = 2000)
 
 # Different values of argument "detfun"
-# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
+# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
 # 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
 HR.hnp <- c(HRAnim$run())
 names(HR.hnp) <- paramnames.hr
@@ -488,7 +488,7 @@ The numerical estimate of home range radius and area can be improved further by 
 
 ## 2. Calculating home range radius and area with other detection functions
 
-We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_EX' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
+We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_exp' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
 
 ### Half-normal (HN, detfun = 0)
 The half-normal (HN) detection function is written as:
@@ -534,19 +534,19 @@ names(HR.hn) <- paramnames.hr
 print(HR.hn)
 ```
 
-### Exponential (EX, detfun = 2) 
-The exponential (EX) detection function is written as:
+### Exponential (EXP, detfun = 2) 
+The exponential (EXP) detection function is written as:
 \begin{align}
-p_{\text{EX}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
+p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
 \end{align}
 where $p_{0} \in (0,1)$, $\sigma > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the scale parameter. For a better understanding, we also plot the detection function against distance.
 ```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
 ## EXPONENTIAL FUNCTION
-detfun.EX <- function(D, p0, sigma){ p0*exp(-D/sigma)}
+detfun.EXP <- function(D, p0, sigma){ p0*exp(-D/sigma)}
 par(mfrow=c(1,1))
 x <- seq(0, 15, len=10001)
-plot(x, detfun.EX(D=x, p0=0.25, sigma = 2), type = "l", lwd=2, col = "orange", main = "Exponential detection function", xlab = 'd', ylab = 'Detection probability') 
-lines(x, detfun.EX(D=x, p0=0.15, sigma = 3), lwd=2, lty = "solid", col = "darkcyan")
+plot(x, detfun.EXP(D=x, p0=0.25, sigma = 2), type = "l", lwd=2, col = "orange", main = "Exponential detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.EXP(D=x, p0=0.15, sigma = 3), lwd=2, lty = "solid", col = "darkcyan")
 focal.vars <- c('p0', 'sigma') 
 focal.values <- cbind(c(0.25, 0.15), # p0
                       c(2, 3)) # sigma
@@ -564,7 +564,7 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for exponential detection function. Again, we only have to provide the parameter values for 'sigma' (i.e., 'p0' is not needed) to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
-# Exponential (EX) 
+# Exponential (EXP) 
 sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")

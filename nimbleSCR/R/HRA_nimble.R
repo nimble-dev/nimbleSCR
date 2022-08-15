@@ -4,12 +4,12 @@
 #' @title Computation of home range radius and area
 #'
 #' @description
-#' \code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EX, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
+#' \code{HRA_nimble} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EXP, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4) and donut (DN, detfun = 5).
 #' 
 #' @name HRA_nimble
 #' 
 #' @param param \code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.
-#' @param detfun \code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+#' @param detfun \code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
 #' @param pr \code{Numeric}  variable denoting the quantile probability to compute the home range radius.
 #' @param d \code{Numeric} variable giving an initial value of the radius.
 #' @param xlim \code{Vector} of length 2 giving the range along x-axis.
@@ -45,7 +45,7 @@
 #'                       ng = 800, tol = 1E-5, niter = 2000)
 #' 
 #' # Different values of argument "detfun"
-#' # 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EX),
+#' # 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
 #' # 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
 #' HR.hnp <- c(HRAnim$run())
 #' names(HR.hnp) <- paramnames.hr
@@ -85,7 +85,7 @@
 #' names(HR.hn) <- paramnames.hr
 #' print(HR.hn)
 #' 
-#' # Exponential (EX, detfun = 2) 
+#' # Exponential (EXP, detfun = 2) 
 #' 
 #' sigma = 2
 #' params <- c(sigma)
@@ -192,7 +192,7 @@ HRA_nimble <- nimbleFunction(
           if(D[i] > w) {p[i] <- exp(-(D[i] - w)*(D[i] - w)/(2*sigma*sigma))}
         }
       }
-      if(detfun == 2){ # 'EX'
+      if(detfun == 2){ # 'EXP'
         # paramnames = c('sigma') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- param[this.row, 1] # Scale parameter 
         p <- exp(-D[1:n]/sigma) # vector (n x 1)
