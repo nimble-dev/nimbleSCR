@@ -29,7 +29,7 @@ library(basicMCMCplots)
 ```{r, warning = FALSE, message = FALSE, include=FALSE}
 # FunD <- "E:/RovQuantSD_Codes"
 # source(file.path(FunD, "nimbleSCR_HRfunctions/HRA_nimble_SD.R"))
-# source(file.path(FunD, "nimbleSCR_HRfunctions/dbinomLocal_HNP.R"))
+# source(file.path(FunD, "nimbleSCR_HRfunctions/dbinomLocal_normalPlateau.R"))
 if(Sys.info()['user'] == 'dturek') {
   baseDir <- '~/github/nimble/nimbleSCR/'                   ## Daniel
 } else if(Sys.info()['user'] == 'pidu') {
@@ -95,9 +95,9 @@ trapLocal <- getLocalObjects(habitatMask = habitatMask,
 
 
 ### 1.2 Define SCR model with half-normal plateau detection function
-Here, we use a custom distribution 'dbinomLocal_HNP()' (available in the nimbleSCR package) corresponding to the half-normal plateau detection function [@dey2022detfun].
+Here, we use a custom distribution 'dbinomLocal_normalPlateau()' (available in the nimbleSCR package) corresponding to the half-normal plateau detection function [@dey2022detfun].
 
-Note that we do not provide 'detNums' and 'detIndices' arguments in the 'dbinomLocal_HNP()' function as we want to use this model to simulate data (see '?dbinomLocal_HNP' for further details). 
+Note that we do not provide 'detNums' and 'detIndices' arguments in the 'dbinomLocal_normalPlateau()' function as we want to use this model to simulate data (see '?dbinomLocal_normalPlateau' for further details). 
 When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored for each indiidual in the observation vector 'y' in the following order:
 
 * 'detNums' (total number of individual detections), 
@@ -136,7 +136,7 @@ modelCode <- nimbleCode({
     ## latent dead/alive indicators
     z[i] ~ dbern(psi)
     ## likelihood
-    y[i, 1:lengthYCombined] ~ dbinomLocal_HNP(
+    y[i, 1:lengthYCombined] ~ dbinomLocal_normalPlateau(
       size = trials[1:n.traps],
       p0 = p0,
       s = sxy[i,1:2],
@@ -335,15 +335,15 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
 
 ```{r eval = F, echo = FALSE}
 save(myNimbleOutput, niter, burnin, nchains, MCMCRuntime,  
-     file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+     file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_normalPlateau_samples.RData"))
 ```
 
 
 ```{r echo = F}
 if(is.null(baseDir)) {
-    load(system.file("extdata", "dbinomLocal_HNP_samples.RData", package = "nimbleSCR"))
+    load(system.file("extdata", "dbinomLocal_normalPlateau_samples.RData", package = "nimbleSCR"))
 } else {
-    load(file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_HNP_samples.RData"))
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_normalPlateau_samples.RData"))
 }
 ```
 
@@ -401,36 +401,36 @@ legend("topright",
        bty = 'n')
 ```
 
-The function 'HRA_nimble()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detfun = 0), half-normal plateau (HNP, detfun = 1), exponential (EXP, detfun = 2), asymmetric logistic (AL, detfun = 3), bimodal (BI, detfun = 4), and donut (DN, detfun = 5). 
+The function 'getHomeRangeArea()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detFun = 0), half-normal plateau (HNP, detFun = 1), exponential (EXP, detFun = 2), asymmetric logistic (AL, detFun = 3), bimodal (BI, detFun = 4), and donut (DN, detFun = 5). 
 
-The function 'HRA_nimble()' has two parts: a setup and and a run part. If we only want to calculate HR radius for a single set of parameter values, there is no need to compile. But for multiple sets of parameter values (e.g., an mcmc sample) one should compile the function before implementing the run part to reduce the computation time. 'HRA_nimble()' returns the estimates of home range radius and area for a given set of arguments with respect to a particular detection function using bisection algorithm:
+The function 'getHomeRangeArea()' has two parts: a setup and and a run part. If we only want to calculate HR radius for a single set of parameter values, there is no need to compile. But for multiple sets of parameter values (e.g., an mcmc sample) one should compile the function before implementing the run part to reduce the computation time. 'getHomeRangeArea()' returns the estimates of home range radius and area for a given set of arguments with respect to a particular detection function using bisection algorithm:
 
 * Setup part
 
-  - param: A vector or matrix (parameters in columns) of values for different parameters corresponding to the specified detection function.
+  - x: A vector or matrix (parameters in columns) of values for different parameters corresponding to the specified detection function.
   - xlim: A vector of length 2 giving the range along x-axis
   - ylim: A vector of length 2 giving the range along y-axis
-  - ng: A numeric variable denoting the number of breaks along an axis
+  - nBreaks: A numeric variable denoting the number of breaks along an axis
   - tol: A numeric variable denoting the allowed tolerance in the radius estimate
-  - niter: A numeric variable giving the maximum number of iterations in bisection algorithm
-  - detfun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
-  - pr: A numeric variable denoting the quantile probability to compute the radius 
+  - nIter: A numeric variable giving the maximum number of iterations in bisection algorithm
+  - detFun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
+  - prob: A numeric variable denoting the quantile probability to compute the radius 
   - d: A numeric variable giving an inital value of the radius
 
 The run part of the function can be run without specifying any arguments. For more information on the detection functions, please refer to @dey2022detfun. We provide some examples to compute home range radius and area in below.
 
-Next we obtain estimate $95\%$ home range radius and area for half-normal plateau detection function (detfun = 1). Note that, we only have to provide the parameter values for 'sigma' and 'w' (i.e., 'p0' is not needed) to compute home range radius and area.
+Next we obtain estimate $95\%$ home range radius and area for half-normal plateau detection function (detFun = 1). Note that, we only have to provide the parameter values for 'sigma' and 'w' (i.e., 'p0' is not needed) to compute home range radius and area.
 
 ```{r , warning = FALSE, message = FALSE}
-pr <- 0.95
+prob <- 0.95
 paramnames.hr <- c("HRradius", "HRarea")
 params <- c(sigma, w)
 names(params) <- c("sigma", "w")
-HRAnim <- HRA_nimble( param = params, detfun = 1, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea( x = params, detFun = 1, prob = prob, d = 6, 
                       xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 
-# Different values of argument "detfun"
+# Different values of argument "detFun"
 # 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
 # 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
 HR.hnp <- c(HRAnim$run())
@@ -448,9 +448,9 @@ if(is.list(myNimbleOutput)){posteriorSamples <- do.call(rbind, myNimbleOutput)}
 if(!is.list(myNimbleOutput)){posteriorSamples <- as.matrix(myNimbleOutput)} 
 theseIter <- round(seq(1, nrow(posteriorSamples), by = 10))
 posteriorSamples <- posteriorSamples[theseIter,names(params)]
-HRAnim.mat <- HRA_nimble(param = posteriorSamples, detfun = 1, pr = pr, d = 6, 
+HRAnim.mat <- getHomeRangeArea(x = posteriorSamples, detFun = 1, prob = prob, d = 6, 
                          xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
-                         ng = 800, tol = 1E-5, niter = 2000)
+                         nBreaks = 800, tol = 1E-5, nIter = 2000)
 
 cHRAnim.arr <- compileNimble(HRAnim.mat, resetFunctions = TRUE)
 
@@ -484,13 +484,13 @@ HR.mcmc.sample <- as.mcmc.list(lapply(1:nchains, function(x) {
 names(HR.mcmc.sample) <- paste0("chain", 1:nchains)
 chainsPlot(HR.mcmc.sample, line = c(HR.hnp))
 ```
-The numerical estimate of home range radius and area can be improved further by tuning the function arguments: the number of bins ('ng'), the tolerance ('tol') and the uppler limit of the number of iterations for numerical approximation using bi-section algorithm ('niter'). However, tuning of these parameters will also affect the computation time of HRA_nimble(). 
+The numerical estimate of home range radius and area can be improved further by tuning the function arguments: the number of bins ('nBreaks'), the tolerance ('tol') and the uppler limit of the number of iterations for numerical approximation using bi-section algorithm ('nIter'). However, tuning of these parameters will also affect the computation time of getHomeRangeArea(). 
 
 ## 2. Calculating home range radius and area with other detection functions
 
 We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_exp' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
 
-### Half-normal (HN, detfun = 0)
+### Half-normal (HN, detFun = 0)
 The half-normal (HN) detection function is written as:
 \begin{align}
 p_{\text{HN}}(d) = p_0 \, \exp\Big{(}-\frac{d^2}{2\sigma^2}\Big{)},
@@ -525,16 +525,16 @@ sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")
 
-HRAnim <- HRA_nimble(param = params, detfun = 0, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea(x = params, detFun = 0, prob = prob, d = 6, 
                       xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 
 HR.hn <- c(HRAnim$run())
 names(HR.hn) <- paramnames.hr
 print(HR.hn)
 ```
 
-### Exponential (EXP, detfun = 2) 
+### Exponential (EXP, detFun = 2) 
 The exponential (EXP) detection function is written as:
 \begin{align}
 p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
@@ -568,16 +568,16 @@ Next we obtain the $95\%$ home range radius and area for exponential detection f
 sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")
-HRAnim <- HRA_nimble(param = params, detfun = 2, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 HR.ex <- c(HRAnim$run())
 names(HR.ex) <- paramnames.hr
 print(HR.ex)
 
 ```
 
-### Asymmetric logistic (AL, detfun = 3) 
+### Asymmetric logistic (AL, detFun = 3) 
 The asymmetric logistic (AL) detection function is written as:
 \begin{align}
 p_{\text{AL}}(d) = p_0 \, \Big{[} 1 + (d/\sigma)^{\alpha_a} g(d) \, + (d/\sigma)^{\alpha_a \alpha_b} (1-g(d)) \Big{]}^{-1},
@@ -623,15 +623,15 @@ alpha.a = 5
 alpha.b = 1
 params <- c(sigma, alpha.a, alpha.b)
 names(params) <- c("sigma", "alpha.a", "alpha.b")
-HRAnim <- HRA_nimble(param = params, detfun = 3, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea(x = params, detFun = 3, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 HR.al <- c(HRAnim$run())
 names(HR.al) <- paramnames.hr
 print(HR.al)
 ```
 
-### Bimodal (BI, detfun = 4) 
+### Bimodal (BI, detFun = 4) 
 The bimodal (BI) detection function is written as:
 \begin{align}
 p_{\text{BI}}(d) = p_{0a} \, \exp\Big{(}-\frac{d^2}{2\sigma_{a}^2}\Big{)} \, + p_{0b} \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{b}^2}\Big{)}
@@ -678,15 +678,15 @@ sigma.b = 1
 w = 2
 params <- c(sigma.a, sigma.b, p0.a, p0.b, w)
 names(params) <- c("sigma.a", "sigma.b", "p0.a", "p0.b", "w")
-HRAnim <- HRA_nimble(param = params, detfun = 4, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea(x = params, detFun = 4, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 HR.bi <- c(HRAnim$run())
 names(HR.bi) <- paramnames.hr
 print(HR.bi)
 ```
 
-### Donut (DN, detfun = 5) 
+### Donut (DN, detFun = 5) 
 The donut (DN) detection function is written as:
 \begin{align}
 p_{\text{DN}}(d) = 
@@ -738,9 +738,9 @@ sigma.b = 1
 w = 1 
 params <- c(sigma.a, sigma.b, w)
 names(params) <- c("sigma.a", "sigma.b", "w")
-HRAnim <- HRA_nimble(param = params, detfun = 5, pr = pr, d = 6, 
+HRAnim <- getHomeRangeArea(x = params, detFun = 5, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
-                      ng = 800, tol = 1E-5, niter = 2000)
+                      nBreaks = 800, tol = 1E-5, nIter = 2000)
 HR.dn <- c(HRAnim$run())
 names(HR.dn) <- paramnames.hr
 print(HR.dn)
@@ -751,7 +751,7 @@ The analytical estimate of home range radius for the half-normal function is: $\
 
 ```{r , warning = FALSE, message = FALSE}
 sigma <- 2
-q<-qchisq(pr,2)
+q<-qchisq(prob,2)
 radius<-sigma*sqrt(q)
 area<-pi*(radius^2)
 HR.true<-c(radius,area)
