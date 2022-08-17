@@ -10,7 +10,8 @@ dbernppACmovement_exp(
   lowerCoords,
   upperCoords,
   s,
-  lambda,
+  lambda = -999,
+  rate,
   baseIntensities,
   habitatGrid,
   numGridRows,
@@ -24,7 +25,8 @@ rbernppACmovement_exp(
   lowerCoords,
   upperCoords,
   s,
-  lambda,
+  lambda = -999,
+  rate,
   baseIntensities,
   habitatGrid,
   numGridRows,
@@ -40,7 +42,7 @@ Each window should be of size 1x1 (after rescaling if necessary).}
 
 \item{s}{Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).}
 
-\item{lambda}{Rate parameter of the isotropic multivariate exponential distribution.}
+\item{rate}{Rate parameter of the isotropic multivariate exponential distribution (also called lambda in a previous nimbleSCR version).}
 
 \item{baseIntensities}{Vector of baseline habitat intensities for all habitat windows.}
 
@@ -73,15 +75,24 @@ follows an isotropic exponential normal centered on the previous activity center
 lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
 upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)  
 s <- c(1, 1) # Currrent activity center location
-lambda <- 0.1
+rate <- 0.1
 baseIntensities <- c(1:4)
 habitatGrid <- matrix(c(1:4), nrow = 2, byrow = TRUE)
 numRows <- nrow(habitatGrid)
 numCols <- ncol(habitatGrid)
 numWindows <- 4
 # The log probability density of moving from (1,1) to (1.2, 0.8) 
-dbernppACmovement_exp(c(1.2, 0.8), lowerCoords, upperCoords, s, lambda, baseIntensities, 
-                      habitatGrid, numRows, numCols, numWindows, log = TRUE)
+dbernppACmovement_exp(x = c(1.2, 0.8),
+lowerCoords = lowerCoords,
+upperCoords = upperCoords,
+s = s,
+rate = rate,
+baseIntensities = baseIntensities, 
+habitatGrid = habitatGrid,
+numGridRows = numRows,
+numGridCols = numCols,
+numWindows = numWindows,
+log = TRUE)
 }
 \references{
 W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

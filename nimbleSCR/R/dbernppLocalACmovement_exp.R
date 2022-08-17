@@ -15,7 +15,8 @@
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
 #' Each window should be of size 1x1 (after rescaling if necessary). 
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).
-#' @param lambda Rate parameter of the isotropic multivariate exponential distribution.
+#' @param rate Rate parameter of the isotropic multivariate exponential distribution.
+#' @param lambda Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).
 #' @param baseIntensities Vector of baseline habitat intensities for all habitat windows.
 #' @param habitatGrid Matrix of habitat window indices. When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} 
 #' in order to be able to use the distribution in \code{nimble} model code.     
@@ -88,18 +89,28 @@
 #' )
 #' 
 #' s <- c(1, 1) # Currrent activity center location
-#' lambda <- 0.1
+#' rate <- 0.1
 #' numWindows <- nrow(coordsHabitatGridCenter)
 #' baseIntensities <- rep(1,numWindows)
 #' numRows <- nrow(habitatGrid)
 #' numCols <- ncol(habitatGrid)
 #' 
 #' # The log probability density of moving from (1,1) to (1.2, 0.8) 
-#' dbernppLocalACmovement_exp(x = c(1.2, 0.8), lowerCoords, upperCoords, s,
-#'                               lambda, baseIntensities, habitatGrid, 
-#'                               HabWindowsLocal$habitatGrid, HabWindowsLocal$resizeFactor,
-#'                               HabWindowsLocal$localIndices, HabWindowsLocal$numLocalIndices,
-#'                               numRows, numCols, numWindows, log = TRUE)
+#' dbernppLocalACmovement_exp(x = c(1.2, 0.8),
+#'  lowerCoords =lowerCoords,
+#'  upperCoords = upperCoords,
+#'  s =s,
+#'  rate = rate,
+#'  baseIntensities = baseIntensities,
+#'  habitatGrid = habitatGrid, 
+#'  habitatGridLocal = HabWindowsLocal$habitatGrid,
+#'  resizeFactor = HabWindowsLocal$resizeFactor,
+#'  localHabWindowIndices = HabWindowsLocal$localIndices,
+#'  numLocalHabWindows = HabWindowsLocal$numLocalIndices,
+#'  numGridRows = numRows,
+#'  numGridCols = numCols,
+#'  numWindows = numWindows,
+#'  log = TRUE)
 #' 
 #'
 #'
@@ -112,7 +123,8 @@ dbernppLocalACmovement_exp <- nimbleFunction(
     lowerCoords            = double(2),
     upperCoords            = double(2),
     s                      = double(1),
-    lambda                 = double(0),
+    lambda                 = double(0, default = -999),
+    rate                   = double(0),
     baseIntensities        = double(1),
     habitatGrid            = double(2),
     habitatGridLocal       = double(2),
@@ -148,7 +160,10 @@ dbernppLocalACmovement_exp <- nimbleFunction(
       else return(0.0)
     }
     
-    
+    ## Check if the exponential rate is given as "rate" or "lambda"
+    if(lambda == -999){
+      lambda <- rate
+    }
     ## Integrate the intensity function over all habitat windows
     windowIntensities <- integrateIntensityLocal_exp(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
                                                      upperCoords = upperCoords[1:numWindows,,drop = FALSE], 
@@ -181,7 +196,8 @@ rbernppLocalACmovement_exp <- nimbleFunction(
     lowerCoords            = double(2),
     upperCoords            = double(2),
     s                      = double(1),
-    lambda                 = double(0),
+    lambda                 = double(0, default = -999),
+    rate                   = double(0),
     baseIntensities        = double(1),
     habitatGrid            = double(2),
     habitatGridLocal       = double(2),
@@ -198,12 +214,17 @@ rbernppLocalACmovement_exp <- nimbleFunction(
     } else if(n > 1) {
       print("rbernppACmovement only allows n = 1; using n = 1")
     }
+    
     ## Find in which habitat window (from the rescaled habitat grid) the s (source AC location) falls in
     sourceAC <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
     ## Get local windows ids within a close distance from the source AC  
     numWindowsLoc <- numLocalHabWindows[sourceAC] 
     localWindows <- localHabWindowIndices[sourceAC, 1:numWindowsLoc]
     
+    ## Check if the exponential rate is given as "rate" or "lambda"
+    if(lambda == -999){
+      lambda <- rate
+    }
     ## Integrate the intensity function over all habitat windows
     windowIntensities <- integrateIntensityLocal_exp(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],
                                                      upperCoords = upperCoords[1:numWindows,,drop = FALSE], 
@@ -216,7 +237,6 @@ rbernppLocalACmovement_exp <- nimbleFunction(
     ## DO THE SUBSETTING OF THE LOWER AND UPPER COORDS HERE. 
     lowerCoords1 <- nimMatrix(nrow = numWindowsLoc, ncol = 2)
     upperCoords1 <- nimMatrix(nrow = numWindowsLoc, ncol = 2)
-    
     for(i in 1:numWindowsLoc){
       lowerCoords1[i,1:2] <- lowerCoords[localWindows[i],,drop = FALSE]
       upperCoords1[i,1:2] <- upperCoords[localWindows[i],,drop = FALSE]
@@ -231,8 +251,6 @@ rbernppLocalACmovement_exp <- nimbleFunction(
                                                 lambda = lambda)
     return(outCoordinates[1,])
     returnType(double(1))
-    
-    
   }
 )
 
