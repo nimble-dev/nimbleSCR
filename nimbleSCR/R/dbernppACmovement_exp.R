@@ -14,7 +14,8 @@
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window. 
 #' Each window should be of size 1x1 (after rescaling if necessary). 
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).
-#' @param lambda Rate parameter of the isotropic multivariate exponential distribution.
+#' @param rate Rate parameter of the isotropic multivariate exponential distribution.
+#' @param lambda Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).
 #' @param baseIntensities Vector of baseline habitat intensities for all habitat windows.
 #' @param habitatGrid Matrix of habitat window indices. Baseline habitat intensities should match the order in \code{lowerCoords} and \code{upperCoords}. 
 #' When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} in order to be able to use the distribution in \code{nimble} model code.     
@@ -40,15 +41,24 @@
 #' lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)
 #' upperCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)  
 #' s <- c(1, 1) # Currrent activity center location
-#' lambda <- 0.1
+#' rate <- 0.1
 #' baseIntensities <- c(1:4)
 #' habitatGrid <- matrix(c(1:4), nrow = 2, byrow = TRUE)
 #' numRows <- nrow(habitatGrid)
 #' numCols <- ncol(habitatGrid)
 #' numWindows <- 4
 #' # The log probability density of moving from (1,1) to (1.2, 0.8) 
-#' dbernppACmovement_exp(c(1.2, 0.8), lowerCoords, upperCoords, s, lambda, baseIntensities, 
-#'                       habitatGrid, numRows, numCols, numWindows, log = TRUE)
+#' dbernppACmovement_exp(x = c(1.2, 0.8),
+#' lowerCoords = lowerCoords,
+#' upperCoords = upperCoords,
+#' s = s,
+#' rate = rate,
+#' baseIntensities = baseIntensities, 
+#' habitatGrid = habitatGrid,
+#' numGridRows = numRows,
+#' numGridCols = numCols,
+#' numWindows = numWindows,
+#' log = TRUE)
 
 NULL
 #' @rdname dbernppACmovement_exp
@@ -59,7 +69,8 @@ dbernppACmovement_exp <- nimbleFunction(
     lowerCoords     = double(2),
     upperCoords     = double(2),
     s               = double(1),
-    lambda          = double(0),
+    lambda          = double(0, default = -999),
+    rate            = double(0),
     baseIntensities = double(1),
     habitatGrid     = double(2),
     numGridRows     = integer(0),
@@ -78,6 +89,11 @@ dbernppACmovement_exp <- nimbleFunction(
     if(windowInd == 0) {
       if(log) return(-Inf)
       else return(0.0)
+    }
+    
+    ## Check if the exponential rate is given as "rate" or "lambda"
+    if(lambda == -999){
+      lambda <- rate
     }
     ## Integrate the intensity function over all habitat windows
     windowIntensities <- integrateIntensity_exp(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE], 
@@ -108,7 +124,8 @@ rbernppACmovement_exp <- nimbleFunction(
     lowerCoords     = double(2),
     upperCoords     = double(2),
     s               = double(1),
-    lambda          = double(0),
+    lambda          = double(0, default = -999),
+    rate            = double(0),
     baseIntensities = double(1),
     habitatGrid     = double(2),
     numGridRows     = integer(0),
@@ -120,6 +137,10 @@ rbernppACmovement_exp <- nimbleFunction(
       stop("The number of requested samples must be above zero")
     } else if(n > 1) {
       print("rbernppACmovement only allows n = 1; using n = 1")
+    }
+    ## Check if the exponential rate is given as "rate" or "lambda"
+    if(lambda == -999){
+      lambda <- rate
     }
     ## Integrate the intensity function over all habitat windows
     windowIntensities <- integrateIntensity_exp(lowerCoords = lowerCoords[1:numWindows,,drop = FALSE],

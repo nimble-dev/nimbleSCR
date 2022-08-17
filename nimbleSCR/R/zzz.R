@@ -120,7 +120,7 @@
             verbose = F)
         
         
-        ##dmultiLocal_normal
+        # dmultiLocal_normal
         registerDistributions(
           list(
             dmultiLocal_normal = list(
@@ -275,21 +275,22 @@
           ),
         verbose = FALSE)
         
-        
         # dbernppACmovement_exp
         registerDistributions(
-            list(
-                dbernppACmovement_exp= list(
-                    BUGSdist = "dbernppACmovement_exp (lowerCoords, upperCoords, s, lambda, baseIntensities, habitatGrid,
-                                                      numGridRows, numGridCols, numWindows)",
-                    types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
-                              "s = double(1)", "lambda = double(0)", "baseIntensities = double(1)",
-                              "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
-                    pqAvail = FALSE,
-                    mixedSizes = TRUE
-                )
-            ),
-            verbose = FALSE)
+          list(
+            dbernppACmovement_exp= list(
+              BUGSdist = "dbernppACmovement_exp(lowerCoords, upperCoords, s, lambda, rate, baseIntensities, habitatGrid, numGridRows, numGridCols, numWindows)",
+              Rdist = c("dbernppACmovement_exp(lowerCoords, upperCoords, s, lambda = -999, rate, baseIntensities, habitatGrid, numGridRows, numGridCols, numWindows)",
+                        "dbernppACmovement_exp(lowerCoords, upperCoords, s, lambda, rate = -999, baseIntensities, habitatGrid, numGridRows, numGridCols, numWindows)"),
+              types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
+                        "s = double(1)", "lambda = double(0)", "rate = double(0)", "baseIntensities = double(1)",
+                        "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)"),
+              discrete = TRUE,
+              mixedSizes = TRUE,
+              pqAvail = FALSE
+            )
+          ),
+          verbose = FALSE)
         
         # dbernppDetection_normal
         registerDistributions(
@@ -323,20 +324,22 @@
         
         # dbernppLocalACmovement_exp
         registerDistributions(
-            list(
-                dbernppLocalACmovement_exp = list(
-                    BUGSdist = "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda, baseIntensities, habitatGrid, habitatGridLocal,
-                                                               resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
-                    types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
-                              "s = double(1)", "lambda = double(0)", "baseIntensities = double(1)",
-                              "habitatGrid = double(2)", "habitatGridLocal = double(2)",
-                              "resizeFactor = double(0)","localHabWindowIndices  = double(2)", "numLocalHabWindows = double(1)",
-                              "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)" ),
-                    pqAvail = FALSE,
-                    mixedSizes = TRUE
-                )
-            ),
-            verbose = FALSE)
+          list(
+            dbernppLocalACmovement_exp = list(
+              BUGSdist = "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda, rate, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
+              Rdist = c("dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda = -999, rate, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
+                        "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda, rate = -999, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)"),
+              types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
+                        "s = double(1)", "lambda = double(0)", "rate = double(0)", "baseIntensities = double(1)",
+                        "habitatGrid = double(2)", "habitatGridLocal = double(2)", "resizeFactor = double(0)",
+                        "localHabWindowIndices = double(2)", "numLocalHabWindows = double(1)",
+                        "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)"),
+              pqAvail = FALSE,
+              mixedSizes = TRUE
+            )
+          ),
+          verbose = FALSE)
+        
         # dbernppLocalDetection_normal
         registerDistributions(
             list(
@@ -353,7 +356,6 @@
                     mixedSizes = TRUE)
             ),
             verbose = FALSE)
-        
        
         # dnormalizer
         registerDistributions(
@@ -378,7 +380,6 @@
                 )
             ),
             verbose = FALSE)
-        
         
         # dpoisppDetection_normal
         registerDistributions(

@@ -10,7 +10,8 @@ dbernppLocalACmovement_exp(
   lowerCoords,
   upperCoords,
   s,
-  lambda,
+  lambda = -999,
+  rate,
   baseIntensities,
   habitatGrid,
   habitatGridLocal,
@@ -28,7 +29,8 @@ rbernppLocalACmovement_exp(
   lowerCoords,
   upperCoords,
   s,
-  lambda,
+  lambda = -999,
+  rate,
   baseIntensities,
   habitatGrid,
   habitatGridLocal,
@@ -48,7 +50,7 @@ Each window should be of size 1x1 (after rescaling if necessary).}
 
 \item{s}{Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).}
 
-\item{lambda}{Rate parameter of the isotropic multivariate exponential distribution.}
+\item{rate}{Rate parameter of the isotropic multivariate exponential distribution (also called lambda in a previous nimbleSCR version).}
 
 \item{baseIntensities}{Vector of baseline habitat intensities for all habitat windows.}
 
@@ -133,18 +135,28 @@ HabWindowsLocal <- getLocalObjects(habitatMask = habitatMask,
 )
 
 s <- c(1, 1) # Currrent activity center location
-lambda <- 0.1
+rate <- 0.1
 numWindows <- nrow(coordsHabitatGridCenter)
 baseIntensities <- rep(1,numWindows)
 numRows <- nrow(habitatGrid)
 numCols <- ncol(habitatGrid)
 
 # The log probability density of moving from (1,1) to (1.2, 0.8) 
-dbernppLocalACmovement_exp(x = c(1.2, 0.8), lowerCoords, upperCoords, s,
-                              lambda, baseIntensities, habitatGrid, 
-                              HabWindowsLocal$habitatGrid, HabWindowsLocal$resizeFactor,
-                              HabWindowsLocal$localIndices, HabWindowsLocal$numLocalIndices,
-                              numRows, numCols, numWindows, log = TRUE)
+dbernppLocalACmovement_exp(x = c(1.2, 0.8),
+ lowerCoords =lowerCoords,
+ upperCoords = upperCoords,
+ s =s,
+ rate = rate,
+ baseIntensities = baseIntensities,
+ habitatGrid = habitatGrid, 
+ habitatGridLocal = HabWindowsLocal$habitatGrid,
+ resizeFactor = HabWindowsLocal$resizeFactor,
+ localHabWindowIndices = HabWindowsLocal$localIndices,
+ numLocalHabWindows = HabWindowsLocal$numLocalIndices,
+ numGridRows = numRows,
+ numGridCols = numCols,
+ numWindows = numWindows,
+ log = TRUE)
 
 
 
