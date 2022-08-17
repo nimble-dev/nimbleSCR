@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Computation of home range area with a variety of detection functions}
+  %\VignetteIndexEntry{Home range size estimation with the nimbleSCR package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -537,19 +537,19 @@ print(HR.hn)
 ### Exponential (EXP, detFun = 2) 
 The exponential (EXP) detection function is written as:
 \begin{align}
-p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\frac{d}{\sigma}\Big{)},
+p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\text{rate} \, * \, d\Big{)},
 \end{align}
-where $p_{0} \in (0,1)$, $\sigma > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the scale parameter. For a better understanding, we also plot the detection function against distance.
+where $p_{0} \in (0,1)$, $\text{rate} > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the rate parameter. For a better understanding, we also plot the detection function against distance.
 ```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
 ## EXPONENTIAL FUNCTION
-detfun.EXP <- function(D, p0, sigma){ p0*exp(-D/sigma)}
+detfun.EXP <- function(D, p0, rate){ p0*exp(-rate*D)}
 par(mfrow=c(1,1))
 x <- seq(0, 15, len=10001)
-plot(x, detfun.EXP(D=x, p0=0.25, sigma = 2), type = "l", lwd=2, col = "orange", main = "Exponential detection function", xlab = 'd', ylab = 'Detection probability') 
-lines(x, detfun.EXP(D=x, p0=0.15, sigma = 3), lwd=2, lty = "solid", col = "darkcyan")
-focal.vars <- c('p0', 'sigma') 
+plot(x, detfun.EXP(D=x, p0=0.25, rate = 1/2), type = "l", lwd=2, col = "orange", main = "Exponential detection function", xlab = 'd', ylab = 'Detection probability') 
+lines(x, detfun.EXP(D=x, p0=0.15, rate = 1/3), lwd=2, lty = "solid", col = "darkcyan")
+focal.vars <- c('p0', 'rate') 
 focal.values <- cbind(c(0.25, 0.15), # p0
-                      c(2, 3)) # sigma
+                      c(1/2, round(1/3,2))) # sigma
                      
 legend.items <- apply(focal.values, 1, 
                       function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
@@ -562,12 +562,12 @@ legend("topright",
        bty = 'n')
 ```
 
-Next we obtain the $95\%$ home range radius and area for exponential detection function. Again, we only have to provide the parameter values for 'sigma' (i.e., 'p0' is not needed) to compute home range radius and area.
+Next we obtain the $95\%$ home range radius and area for exponential detection function. Again, we only have to provide the parameter values for 'rate' (i.e., 'p0' is not needed) to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
 # Exponential (EXP) 
-sigma = 2
-params <- c(sigma)
-names(params) <- c("sigma")
+rate = 1/2
+params <- c(rate)
+names(params) <- c("rate")
 HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
                       nBreaks = 800, tol = 1E-5, nIter = 2000)

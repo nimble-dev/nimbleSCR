@@ -87,9 +87,9 @@
 #' 
 #' # Exponential (EXP, detFun = 2) 
 #' 
-#' sigma = 2
-#' params <- c(sigma)
-#' names(params) <- c("sigma")
+#' rate = 1/2
+#' params <- c(rate)
+#' names(params) <- c("rate")
 #' HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6, 
 #'                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
 #'                      nBreaks = 800, tol = 1E-5, nIter = 2000)
@@ -193,9 +193,9 @@ getHomeRangeArea <- nimbleFunction(
         }
       }
       if(detFun == 2){ # 'EXP'
-        # paramnames = c('sigma') # PARAMETER NAMES IN THEIR ORDER OF USE
-        sigma <- x[this.row, 1] # Scale parameter 
-        p <- exp(-D[1:n]/sigma) # vector (n x 1)
+        # paramnames = c('rate') # PARAMETER NAMES IN THEIR ORDER OF USE
+        rate <- x[this.row, 1] # Rate parameter 
+        p <- exp(-rate * D[1:n]) # vector (n x 1)
       }
       if(detFun == 3){ #'AL'
         # paramnames = c('sigma', 'alpha.a', 'alpha.b') # PARAMETER NAMES IN THEIR ORDER OF USE
