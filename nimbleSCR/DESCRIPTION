@@ -45,7 +45,7 @@ Collate:
     dbinom_vector.R
     dnormalizer.R
     dpoisLocal_normal.R
-    dbinomLocal_HNP.R
+    dbinomLocal_normalPlateau.R
     dbinomLocal_exp.R
     dpoisppAC.R
     dpoisppDetection_normal.R
@@ -55,7 +55,7 @@ Collate:
     getMidPointNodes.R
     getWindowCoords.R
     getSparseY.R
-    HRA_nimble.R
+    getHomeRangeArea.R
     localTrapCalculations.R
     makeConstantNimbleFunction.R
     marginalVoidProbIntegrand.R
