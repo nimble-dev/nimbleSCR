@@ -12,7 +12,7 @@ dbinomLocal_exp(
   size,
   p0 = -999,
   p0Traps,
-  sigma,
+  rate,
   s,
   trapCoords,
   localTrapsIndices,
@@ -31,7 +31,7 @@ rbinomLocal_exp(
   size,
   p0 = -999,
   p0Traps,
-  sigma,
+  rate,
   s,
   trapCoords,
   localTrapsIndices,
@@ -57,7 +57,7 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 
 \item{p0Traps}{Vector of baseline detection probabilities for each trap used in the exponential detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided.}
 
-\item{sigma}{Scale parameter of the exponential detection function.}
+\item{rate}{Rate parameter of the exponential detection function.}
 
 \item{s}{Individual activity center x- and y-coordinates.}
 
@@ -81,7 +81,7 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 }
 \value{
 The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
- and the exponential detection function : \eqn{p = p0 * exp(-d / \sigma)}.
+ and the exponential detection function : \eqn{p = p0 * exp(- rate * d)}.
 }
 \description{
 The \code{dbinomLocal_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
@@ -134,7 +134,7 @@ points(trapCoords[,"y"]~trapCoords[,"x"],col="red",pch=16)
 
 # PARAMETERS
 p0 <- 0.3
-sigma <- 1.5
+rate <- 1/1.5
 indicator <- 1 
 # WE CONSIDER 2 INDIVIDUALS
 y <- matrix(c(0, 1, 1, 0,
@@ -169,7 +169,7 @@ dbinomLocal_exp(x=SparseY$y[i,,1],
                    detIndices=SparseY$detIndices[i,,1],
                    size=rep(1,4),
                    p0 = p0,
-                   sigma= sigma, 
+                   rate= rate, 
                    s=s[i,1:2],
                    trapCoords=ScaledtrapCoords,
                    localTrapsIndices=TrapLocal$localIndices,
@@ -183,7 +183,7 @@ dbinomLocal_exp(x=SparseY$y[i,,1],
 dbinomLocal_exp(x=SparseY$yCombined[i,,1],
                    size=rep(1,4),
                    p0 = p0,
-                   sigma= sigma, 
+                   rate= rate, 
                    s=s[i,1:2],
                    trapCoords=ScaledtrapCoords,
                    localTrapsIndices=TrapLocal$localIndices,
@@ -197,7 +197,7 @@ dbinomLocal_exp(x=SparseY$yCombined[i,,1],
 rbinomLocal_exp(n=1,
                    size=rep(1,4),
                    p0 = p0,
-                   sigma= sigma, 
+                   rate= rate, 
                    s=s[i,1:2],
                    trapCoords=ScaledtrapCoords,
                    localTrapsIndices=TrapLocal$localIndices,

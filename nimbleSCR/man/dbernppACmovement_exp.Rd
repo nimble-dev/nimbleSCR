@@ -42,7 +42,9 @@ Each window should be of size 1x1 (after rescaling if necessary).}
 
 \item{s}{Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).}
 
-\item{rate}{Rate parameter of the isotropic multivariate exponential distribution (also called lambda in a previous nimbleSCR version).}
+\item{lambda}{Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).}
+
+\item{rate}{Rate parameter of the isotropic multivariate exponential distribution.}
 
 \item{baseIntensities}{Vector of baseline habitat intensities for all habitat windows.}
 
