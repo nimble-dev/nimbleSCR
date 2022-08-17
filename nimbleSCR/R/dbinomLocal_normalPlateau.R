@@ -1,20 +1,20 @@
 #' Local evaluation of a binomial SCR observation process 
 #'
-#' The \code{dbinomLocal_HNP} distribution is a NIMBLE custom distribution which can be used to model 
+#' The \code{dbinomLocal_normalPlateau} distribution is a NIMBLE custom distribution which can be used to model 
 #' and simulate binomial observations (\emph{x}) of a single individual over a set of detectors defined
 #' by their coordinates (\emph{trapCoords}). The distribution assumes that an individual's detection
 #' probability at any detector follows a half-normal plateau function of the distance between the 
 #' individual's activity center (\emph{s}) and the detector location.
 #'
 #'
-#' The \code{dbinomLocal_HNP} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
+#' The \code{dbinomLocal_normalPlateau} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
 #' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 <doi:10.1002/ece3.4751> for more details)
 #' \item A sparse matrix representation (\emph{x}, \emph{detIndices} and \emph{detNums}) of the observation data to reduce the size of objects to be processed.
 #' \item An indicator (\emph{indicator}) to shortcut calculations for individuals unavailable for detection.
 #' }
 #' 
-#' The \code{dbinomLocal_HNP} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
+#' The \code{dbinomLocal_normalPlateau} distribution requires x- and y- detector coordinates (\emph{trapCoords}) to be scaled to the habitat grid (\emph{habitatGrid}) using the (\code{\link{scaleCoordsToHabitatGrid}} function.)
 #'
 #' When the aim is to simulate detection data: 
 #' \enumerate{
@@ -25,10 +25,10 @@
 #' 
 #' 
 #' 
-#' @name dbinomLocal_HNP
+#' @name dbinomLocal_normalPlateau
 #'
 #' @param x Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by the \code{\link{getSparseY}} function; (ii) with the \emph{yCombined} object as returned by \code{\link{getSparseY}}. 
-#' Note that when the random generation functionality is used (\code{rbinomLocal_HNP}), only the \emph{yCombined} format can be used. 
+#' Note that when the random generation functionality is used (\code{rbinomLocal_normalPlateau}), only the \emph{yCombined} format can be used. 
 #' The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order).  When such consolidated representation of the detection data \emph{x} is used, \emph{detIndices} and \emph{detNums} arguments shouldn't be specified.
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
 #' @param detIndices Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.
@@ -37,7 +37,7 @@
 #' @param p0 Baseline detection probability used in the half-normal plateau detection function.
 #' @param p0Traps Vector of baseline detection probabilities for each trap used in the half-normal plateau detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided. 
 #' @param sigma Scale parameter of the half-normal plateau detection function.
-#' @param w Length of plataue of the half-normal plateau detection function.
+#' @param w Length of plateau of the half-normal plateau detection function.
 #' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
 #' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.
@@ -60,7 +60,7 @@
 #' @examples
 #' # A user friendly vignette is also available on github: 
 #' # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
-#' # Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
+#' # Vignette name: Fit_SCR_models_with_dbinomLocal_normalPlateau_and_HomeRangeRadiusComputation.rmd
 #' 
 #' # I. DATA SET UP 
 #' coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
@@ -120,7 +120,7 @@
 #'  # WE TAKE THE FIRST INDIVIDUAL
 #' i=1
 #'   # OPTION 1: USING THE RANDOM GENERATION FUNCTIONNALITY 
-#' dbinomLocal_HNP(x=SparseY$y[i,,1],
+#' dbinomLocal_normalPlateau(x=SparseY$y[i,,1],
 #'                    detNums=SparseY$detNums[i],
 #'                    detIndices=SparseY$detIndices[i,,1],
 #'                    size=rep(1,4),
@@ -137,7 +137,7 @@
 #'                                                                 
 #'   # OPTION 2: USING RANDOM GENERATION FUNCTIONNALITY 
 #'   # WE DO NOT PROVIDE THE detNums AND detIndices ARGUMENTS
-#' dbinomLocal_HNP(x=SparseY$yCombined[i,,1],
+#' dbinomLocal_normalPlateau(x=SparseY$yCombined[i,,1],
 #'                    size=rep(1,4),
 #'                    p0 = p0,
 #'                    sigma= sigma, 
@@ -152,7 +152,7 @@
 #'                    lengthYCombined = SparseY$lengthYCombined)
 #' 
 #' # III. USING THE RANDOM GENERATION FUNCTION 
-#' rbinomLocal_HNP(n=1,
+#' rbinomLocal_normalPlateau(n=1,
 #'                    size=rep(1,4),
 #'                    p0 = p0,
 #'                    sigma= sigma, 
@@ -169,9 +169,9 @@
 #' @export
 NULL
 
-#' @rdname dbinomLocal_HNP
+#' @rdname dbinomLocal_normalPlateau
 #' @export
-dbinomLocal_HNP <- nimbleFunction(
+dbinomLocal_normalPlateau <- nimbleFunction(
   run = function( x = double(1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
@@ -286,9 +286,9 @@ dbinomLocal_HNP <- nimbleFunction(
   })
 
 
-#' @rdname dbinomLocal_HNP
+#' @rdname dbinomLocal_normalPlateau
 #' @export
-rbinomLocal_HNP <- nimbleFunction(
+rbinomLocal_normalPlateau <- nimbleFunction(
   run = function( n = double(0, default = 1),
                   detNums = double(0, default = -999),
                   detIndices = double(1),
@@ -308,11 +308,11 @@ rbinomLocal_HNP <- nimbleFunction(
   ) {
     ## Specify return type
     returnType(double(1))
-    if(detNums >= 0) stop("Random generation for the rbinomLocal_HNP distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
+    if(detNums >= 0) stop("Random generation for the rbinomLocal_normalPlateau distribution is not currently supported without combining all individual detections information in one vector. See 'getSparseY()'")
     
     #========================================================
     # RETURN TYPE DECLARATION
-    if(n!=1){print("rbinomLocal_HNP only allows n = 1; using n = 1")}
+    if(n!=1){print("rbinomLocal_normalPlateau only allows n = 1; using n = 1")}
     # returnType(double(3))
     # len <- 2*MAX + 1
     ## GET NECESSARY INFO

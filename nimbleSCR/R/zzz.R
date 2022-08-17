@@ -157,34 +157,34 @@
           ),
           verbose = F)
         
-        # dbinomLocal_HNP
+        # dbinomLocal_normalPlateau
         registerDistributions(
             list(
-                dbinomLocal_HNP = list(
-                    BUGSdist ='dbinomLocal_HNP(detNums       , detIndices    , size, p0       , p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                    Rdist = c('dbinomLocal_HNP(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                dbinomLocal_normalPlateau = list(
+                    BUGSdist ='dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0       , p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                    Rdist = c('dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0 = -999, p0Traps    , sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
                               
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
-                              'dbinomLocal_HNP(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
-                              'dbinomLocal_HNP(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)'
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor     , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices = s, size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined)',
+                              'dbinomLocal_normalPlateau(detNums = -999, detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)',
+                              'dbinomLocal_normalPlateau(detNums       , detIndices    , size, p0       , p0Traps = s, sigma, w, s, trapCoords, localTrapsIndices, localTrapsNum, resizeFactor = 1 , habitatGrid, indicator, lengthYCombined = 0)'
                     ),
                     types = c('value = double(1)', 'detIndices = double(1)', 'size = double(1)', 'p0Traps = double(1)', 'w = double(0)', 's = double(1)', 'trapCoords = double(2)', 'localTrapsIndices = double(2)', 'localTrapsNum = double(1)', 'habitatGrid = double(2)'),
                     discrete = TRUE,
