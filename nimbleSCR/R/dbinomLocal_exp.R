@@ -35,7 +35,7 @@
 #' @param size Vector of the number of trials (zero or more) for each trap (\emph{trapCoords}).
 #' @param p0 Baseline detection probability used in the exponential detection function.
 #' @param p0Traps Vector of baseline detection probabilities for each trap used in the exponential detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided. 
-#' @param sigma Scale parameter of the exponential detection function.
+#' @param rate Rate parameter of the exponential detection function.
 #' @param s Individual activity center x- and y-coordinates.
 #' @param trapCoords Matrix of x- and y-coordinates of all traps.
 #' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.
@@ -48,7 +48,7 @@
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'
 #' @return The log-likelihood value associated with the vector of detections, given the location of the activity center (s),
-#'  and the exponential detection function : \eqn{p = p0 * exp(-d / \sigma)}.
+#'  and the exponential detection function : \eqn{p = p0 * exp(- rate * d)}.
 #'
 #' @author Soumen Dey
 #'
@@ -83,7 +83,7 @@
 #' 
 #' # PARAMETERS
 #' p0 <- 0.3
-#' sigma <- 1.5
+#' rate <- 1/1.5
 #' indicator <- 1 
 #' # WE CONSIDER 2 INDIVIDUALS
 #' y <- matrix(c(0, 1, 1, 0,
@@ -118,7 +118,7 @@
 #'                    detIndices=SparseY$detIndices[i,,1],
 #'                    size=rep(1,4),
 #'                    p0 = p0,
-#'                    sigma= sigma, 
+#'                    rate= rate, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
 #'                    localTrapsIndices=TrapLocal$localIndices,
@@ -132,7 +132,7 @@
 #' dbinomLocal_exp(x=SparseY$yCombined[i,,1],
 #'                    size=rep(1,4),
 #'                    p0 = p0,
-#'                    sigma= sigma, 
+#'                    rate= rate, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
 #'                    localTrapsIndices=TrapLocal$localIndices,
@@ -146,7 +146,7 @@
 #' rbinomLocal_exp(n=1,
 #'                    size=rep(1,4),
 #'                    p0 = p0,
-#'                    sigma= sigma, 
+#'                    rate= rate, 
 #'                    s=s[i,1:2],
 #'                    trapCoords=ScaledtrapCoords,
 #'                    localTrapsIndices=TrapLocal$localIndices,
@@ -168,7 +168,7 @@ dbinomLocal_exp <- nimbleFunction(
                   size = double(1),
                   p0 = double(0, default = -999),
                   p0Traps = double(1),
-                  sigma = double(0),
+                  rate = double(0),
                   s = double(1),
                   trapCoords = double(2),
                   localTrapsIndices = double(2),
@@ -221,8 +221,7 @@ dbinomLocal_exp <- nimbleFunction(
     }
     
     ## Calculate the log-probability of the vector of detections
-    alpha <- -1.0 / sigma
-    # alpha <- -1.0 / (2.0 * sigma * sigma)
+    alpha <- - rate
     logProb <- 0.0 
     detIndices1 <- c(detIndices1, 0)
     count <- 1 
@@ -233,15 +232,11 @@ dbinomLocal_exp <- nimbleFunction(
         if(theseLocalTraps[r] == detIndices1[count]){ 
           d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
           p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d)
-          # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-          # p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
           logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
           count <- count + 1
         }else{
           d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
           p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d)
-          # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-          # p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
           logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
           
         }
@@ -251,15 +246,11 @@ dbinomLocal_exp <- nimbleFunction(
         if(theseLocalTraps[r] == detIndices1[count]){ 
           d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
           p <- p0 * exp(alpha * d)
-          # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-          # p <- p0 * exp(alpha * d2)
           logProb <-  logProb + dbinom(x1[count], prob = p, size = size[theseLocalTraps[r]], log = TRUE)
           count <- count + 1
         }else{
           d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
           p <- p0 * exp(alpha * d)
-          # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-          # p <- p0 * exp(alpha * d2)
           logProb <- logProb + dbinom(0, prob = p, size = size[theseLocalTraps[r]], log = TRUE)
         }
       }
@@ -281,7 +272,7 @@ rbinomLocal_exp <- nimbleFunction(
                   size = double(1),
                   p0 = double(0, default = -999),
                   p0Traps = double(1),
-                  sigma = double(0),
+                  rate = double(0),
                   s = double(1),
                   trapCoords = double(2),
                   localTrapsIndices = double(2),
@@ -298,16 +289,12 @@ rbinomLocal_exp <- nimbleFunction(
     #========================================================
     # RETURN TYPE DECLARATION
     if(n!=1){print("rbinomLocal_exp only allows n = 1; using n = 1")}
-    # returnType(double(3))
-    # len <- 2*MAX + 1
+    
     ## GET NECESSARY INFO
-    alpha <- -1.0 / sigma
-    # alpha <- -1.0 / (2.0 * sigma * sigma)
-    # n.detectors <- dim(detector.xy)[1]
-    # nMAxDetections <- length(detIndices)
+    alpha <- - rate
     nMAxDetections <- (lengthYCombined-1)/2
     ## SHORTCUT IF INDIVIDUAL IS NOT AVAILABLE FOR DETECTION
-    #if(indicator == 0){return(rep(0.0, 2*nMAxDetections + 1))}
+    
     if(indicator == 0){return(rep(0.0, lengthYCombined))}
     
     ## RETRIEVE THE ID OF THE HABITAT WINDOW THE CURRENT sxy FALLS IN FROM THE HABITAT_ID MATRIX
@@ -327,8 +314,6 @@ rbinomLocal_exp <- nimbleFunction(
       for(r in 1:localTrapsNum[sID]){
         d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
         p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d)
-        # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        # p <- p0Traps[theseLocalTraps[r]] * exp(alpha * d2)
         # Draw the observation at detector j from a binomial distribution with probability p
         detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
         if(detectOut[r] >0){
@@ -343,8 +328,6 @@ rbinomLocal_exp <- nimbleFunction(
       for(r in 1:localTrapsNum[sID]){
         d <- pow(pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2),0.5)
         p <- p0 * exp(alpha * d)
-        # d2 <- pow(trapCoords[theseLocalTraps[r],1] - s[1], 2) + pow(trapCoords[theseLocalTraps[r],2] - s[2], 2)
-        # p <- p0 * exp(alpha * d2)
         # Draw the observation at detector j from a binomial distribution with probability p
         detectOut[r] <- rbinom(1, size[theseLocalTraps[r]], p)
         if(detectOut[r] >0){
@@ -359,8 +342,6 @@ rbinomLocal_exp <- nimbleFunction(
     }
     count <- count - 1
     
-    
-    # out <- rep(-1, 2*nMAxDetections + 1)
     out <- rep(-1, lengthYCombined)
     
     out[1] <- count
