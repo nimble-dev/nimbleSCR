@@ -1,5 +1,7 @@
 #' Bivariate exponential dispersal distribution for activity centers
 #'
+#' This function is deprecated, and it will be removed from a future release.
+#' 
 #' The dDispersal_exp distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.
 #'
 #' The dDispersal_exp distribution models the location of an AC at time (t+1), conditional on the previous AC location at time (t) and the rate parameter (rate) of the exponential distribution for dispersal distance.
@@ -20,6 +22,9 @@
 #' @importFrom stats dexp rexp runif
 #'
 #' @examples
+#'
+#' \dontrun{
+#' 
 #' ## define model code
 #' code <- nimbleCode({
 #'     lambda ~ dgamma(0.001, 0.001)
@@ -39,6 +44,8 @@
 #'
 #' ## use model object for MCMC, etc.
 #'
+#' }
+#'
 #' @export
 NULL
 
@@ -49,6 +56,7 @@ dDispersal_exp <- nimbleFunction(
                     s = double(1),
                     rate = double(),
                     log = double()) {
+        stop('This function is deprecated, and will be removed from a future release.')
         dist <- sqrt(sum((x-s)^2))
         lp <- dexp(dist, rate = rate, log = TRUE) - log(dist)
         returnType(double())
@@ -61,6 +69,7 @@ rDispersal_exp <- nimbleFunction(
     run = function( n = integer(),
                     s = double(1),
                     rate = double()) {
+        stop('This function is deprecated, and will be removed from a future release.')
         if(n != 1) stop('rDispersal_exp only implemented for n = 1')
         theta <- runif(1, 0, 2*pi)
         d <- rexp(1, rate = rate)
