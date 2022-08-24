@@ -64,7 +64,7 @@
 #' @examples
 #' # A user friendly vignette is also available on github: 
 #' # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
-#' # Vignette name: Fit_SCR_models_with_dbinomLocal_normalPlateau_and_HomeRangeRadiusComputation.rmd
+#' # Vignette name: Fit_with_dbinomLocal_normalPlateau_and_HomeRangeAreaComputation.rmd
 #' 
 #' # I. DATA SET UP 
 #' coordsHabitatGridCenter <- matrix(c(0.5, 3.5,
