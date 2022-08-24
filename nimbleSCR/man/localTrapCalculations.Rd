@@ -66,9 +66,11 @@ calcLocalTrapExposure(R, n, d, localTrapInd, sigma, p0)
 \item{p0}{Baseline detection probability.}
 }
 \description{
-Utility functions to enable local trap calculations in SCR models.  See details section for more information.
+These functions are deprecated, and they will be removed from a future release.  Utility functions to enable local trap calculations in SCR models.  See details section for more information.
 }
 \details{
+These functions are deprecated, and they will be removed from a future release.
+
 The makeGrid function is used in advance of model building.  It creates and returns a list of two objects: a table (grid) corresponding to the discretized grid, where each row gives the x-coordinate, the y-coordinate, and the id number for a grid cell; and second, a function (makeID) to be used in the model code which operates on a discretized AC location, and returns the id number of the corresponding grid cell.
 
 The findLocalTraps function operates on the grid object returned from makeGrid, and an array of the trap location coordinates, and the desired maximal exposure radius for caluclations (dmax).  It returns a array (localTraps) with number of rows equal to the number of grid cells.  The first element of each row gives the number of local traps within exposure radius to that grid cell.  The following elements of each row give the id numbers of those local traps.
@@ -84,6 +86,9 @@ The calcLocalTrapDists function is used inside the model code.  It calculates th
 The calcLocalTrapExposure function is specific to the detection probability calculations used in this example.  This function should be modified specifically to the detection function, exposure function, or otherwise calculations to be done only for the traps in the vicinity of individual activity center locations
 }
 \examples{
+
+\dontrun{
+
 ## generate random trap locations
 nTraps <- 200
 traps_xmin <- 0
@@ -193,6 +198,8 @@ Rmodel <- nimbleModel(code, constants, data, inits,
                       calculate = FALSE, check = FALSE)
  
 ## use model object for MCMC, etc.
+
+}
 
 }
 \author{

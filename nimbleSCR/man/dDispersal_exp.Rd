@@ -24,12 +24,17 @@ rDispersal_exp(n, s, rate)
 The log-probability value associated with the bivariate activity center location x, given the current activity center s, and the rate parameter of the exponential dispersal distance distribution.
 }
 \description{
-The dDispersal_exp distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.
+This function is deprecated, and it will be removed from a future release.
 }
 \details{
+The dDispersal_exp distribution is a bivariate distribution which can be used to model the latent bivariate activity centers (ACs) of individuals in a population.  This distribution models the situation when individual AC dispersal is uniform in direction (that is, dispersal occurs in a direction theta, where theta is uniformly distributed on [-pi, pi]), and with an exponential distribution for the radial dispersal distance.
+
 The dDispersal_exp distribution models the location of an AC at time (t+1), conditional on the previous AC location at time (t) and the rate parameter (rate) of the exponential distribution for dispersal distance.
 }
 \examples{
+
+\dontrun{
+
 ## define model code
 code <- nimbleCode({
     lambda ~ dgamma(0.001, 0.001)
@@ -48,6 +53,8 @@ constants <- list(N = 10, T = 6)
 Rmodel <- nimbleModel(code, constants)
 
 ## use model object for MCMC, etc.
+
+}
 
 }
 \author{

@@ -1,9 +1,11 @@
 
 #' Local Trap Calculations
 #'
-#' Utility functions to enable local trap calculations in SCR models.  See details section for more information.
+#' These functions are deprecated, and they will be removed from a future release.  Utility functions to enable local trap calculations in SCR models.  See details section for more information.
 #'
 #' @details
+#'
+#' These functions are deprecated, and they will be removed from a future release.
 #' 
 #' The makeGrid function is used in advance of model building.  It creates and returns a list of two objects: a table (grid) corresponding to the discretized grid, where each row gives the x-coordinate, the y-coordinate, and the id number for a grid cell; and second, a function (makeID) to be used in the model code which operates on a discretized AC location, and returns the id number of the corresponding grid cell.
 #' 
@@ -48,6 +50,9 @@
 #' @import nimble
 #'
 #' @examples
+#'
+#' \dontrun{
+#' 
 #' ## generate random trap locations
 #' nTraps <- 200
 #' traps_xmin <- 0
@@ -158,6 +163,8 @@
 #'  
 #' ## use model object for MCMC, etc.
 #'
+#' }
+#'
 NULL
 
 
@@ -169,6 +176,7 @@ makeGrid <- function( xmin = 0,
                       ymax,
                       resolution = 1,
                       buffer = 0) {
+    warning('This function is deprecated, and will be removed from a future release.')
     makeVals <- function(min, max, buf, res) {
         unique(c(rev(seq(min, min-buf, by = -res)), seq(min, max+buf, by = res)))
     }
@@ -204,6 +212,7 @@ makeGrid <- function( xmin = 0,
 findLocalTraps <- function( grid,
                             trapCoords,
                             dmax) {
+    warning('This function is deprecated, and will be removed from a future release.')
     trtrapsBool <- apply(grid, 1, function(row) {
         apply(trapCoords, 1, function(tp) {
             sqrt(sum((row[1:2]-tp)^2)) <= dmax
@@ -227,6 +236,7 @@ getNumLocalTraps <- nimbleFunction(
     run = function( idarg = double(),
                     nLocalTraps = double(1),
                     LTD1arg = double()) {
+        stop('This function is deprecated, and will be removed from a future release.')
         if(idarg < 1)       {   return(0)   }
         if(idarg > LTD1arg) {   return(0)   }
         n <- nLocalTraps[idarg]
@@ -241,6 +251,7 @@ getLocalTrapIndices <- nimbleFunction(
                     localTraps = double(2),
                     n = double(),
                     idarg = double()) {
+        stop('This function is deprecated, and will be removed from a future release.')
         indices <- numeric(MAXNUM, 0)
         if(n > 0) {
             indices[1:n] <- localTraps[idarg, 2:(n+1)]
@@ -257,6 +268,7 @@ calcLocalTrapDists <- nimbleFunction(
                     localTrapInd = double(1),
                     s = double(1),
                     trapCoords = double(2)) {
+        stop('This function is deprecated, and will be removed from a future release.')
         Ds <- numeric(MAXNUM, 0)
         if(n > 0) {
             Ds[1:n] <- sqrt((s[1] - trapCoords[localTrapInd[1:n],1])^2 + 
@@ -275,6 +287,7 @@ calcLocalTrapExposure <- nimbleFunction(
                     localTrapInd = double(1),
                     sigma = double(),
                     p0 = double()) {
+        stop('This function is deprecated, and will be removed from a future release.')
         g <- numeric(R, 0.00000000000001)      ## small value
         if(n > 0) {
             g[localTrapInd[1:n]] <- p0 * exp(-d[1:n]/sigma)
