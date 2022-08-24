@@ -54,6 +54,10 @@
 #'
 #' @author Soumen Dey
 #'
+#' @references
+#' 
+#' Dey, S., Bischof, R., Dupont, P. P. A., & Milleret, C. (2022). Does the punishment fit the crime? Consequences and diagnosis of misspecified detection functions in Bayesian spatial capture–recapture modeling. Ecology and Evolution, 12, e8600. https://doi.org/10.1002/ece3.8600
+#' 
 #' @import nimble
 #' @importFrom stats dbinom
 #'

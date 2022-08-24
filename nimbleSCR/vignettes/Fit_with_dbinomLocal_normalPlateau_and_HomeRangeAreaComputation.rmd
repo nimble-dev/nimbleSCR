@@ -1,11 +1,11 @@
 ---
-title: "Home range size estimation with the nimbleSCR package"
+title: "Fit with half-normal plateau detection function and home range size estimation using nimbleSCR package"
 author: "Soumen Dey"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Home range size estimation with the nimbleSCR package}
+  %\VignetteIndexEntry{Fit with half-normal plateau detection function and home range size estimation using nimbleSCR package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -361,7 +361,7 @@ We can then define the $\alpha\%$ home range area as $A_\alpha$, the set of all 
 
 While an analytical estimate can be derived for the classical half-normal detection function (see below), the half-normal plateau is a custom detection function for which an analytical estimate $r_\alpha$ is not readily available. 
 
-The half-normal plateau (HNP) detection function is written as:
+The half-normal plateau detection function is written as:
 \begin{align}
 p_{\text{HNP}}(d) = 
 \begin{cases}
@@ -401,7 +401,7 @@ legend("topright",
        bty = 'n')
 ```
 
-The function 'getHomeRangeArea()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal(HN, detFun = 0), half-normal plateau (HNP, detFun = 1), exponential (EXP, detFun = 2), asymmetric logistic (AL, detFun = 3), bimodal (BI, detFun = 4), and donut (DN, detFun = 5). 
+The function 'getHomeRangeArea()' uses numerical approximation (to find the root) and estimate of $95\%$ home range radius and area for a set of circular detection functions available in nimbleSCR, viz., half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4), and donut (detFun = 5). 
 
 The function 'getHomeRangeArea()' has two parts: a setup and and a run part. If we only want to calculate HR radius for a single set of parameter values, there is no need to compile. But for multiple sets of parameter values (e.g., an mcmc sample) one should compile the function before implementing the run part to reduce the computation time. 'getHomeRangeArea()' returns the estimates of home range radius and area for a given set of arguments with respect to a particular detection function using bisection algorithm:
 
@@ -413,9 +413,9 @@ The function 'getHomeRangeArea()' has two parts: a setup and and a run part. If 
   - nBreaks: A numeric variable denoting the number of breaks along an axis
   - tol: A numeric variable denoting the allowed tolerance in the radius estimate
   - nIter: A numeric variable giving the maximum number of iterations in bisection algorithm
-  - detFun: A numeric variable denoting the type of detection function: 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN). 
+  - detFun: A numeric variable denoting the type of detection function: 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Aysmmetric logistic, 4 = Bimodal, 5 = Donut. 
   - prob: A numeric variable denoting the quantile probability to compute the radius 
-  - d: A numeric variable giving an inital value of the radius
+  - d: A numeric variable giving an initial value of the radius
 
 The run part of the function can be run without specifying any arguments. For more information on the detection functions, please refer to @dey2022detfun. We provide some examples to compute home range radius and area in below.
 
@@ -431,8 +431,8 @@ HRAnim <- getHomeRangeArea( x = params, detFun = 1, prob = prob, d = 6,
                       nBreaks = 800, tol = 1E-5, nIter = 2000)
 
 # Different values of argument "detFun"
-# 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
-# 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+# 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential,
+# 3 = Aysmmetric logistic, 4 = Bimodal, 5 = Donut.
 HR.hnp <- c(HRAnim$run())
 names(HR.hnp) <- paramnames.hr
 print(HR.hnp)
@@ -490,8 +490,8 @@ The numerical estimate of home range radius and area can be improved further by 
 
 We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_exp' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
 
-### Half-normal (HN, detFun = 0)
-The half-normal (HN) detection function is written as:
+### Half-normal (detFun = 0)
+The half-normal detection function is written as:
 \begin{align}
 p_{\text{HN}}(d) = p_0 \, \exp\Big{(}-\frac{d^2}{2\sigma^2}\Big{)},
 \end{align}
@@ -520,7 +520,7 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for half-normal detection function. Note that we only have to provide the parameter values for 'sigma' (i.e., 'p0' is not needed) to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
-# Half-normal (HN) 
+# Half-normal 
 sigma = 2
 params <- c(sigma)
 names(params) <- c("sigma")
@@ -534,12 +534,12 @@ names(HR.hn) <- paramnames.hr
 print(HR.hn)
 ```
 
-### Exponential (EXP, detFun = 2) 
-The exponential (EXP) detection function is written as:
+### Exponential (detFun = 2) 
+The exponential detection function is written as:
 \begin{align}
 p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\text{rate} \, * \, d\Big{)},
 \end{align}
-where $p_{0} \in (0,1)$, $\text{rate} > 0$. Here $p_0$ denotes the baseline detection probability and $\sigma$ denotes the rate parameter. For a better understanding, we also plot the detection function against distance.
+where $p_{0} \in (0,1)$, $\text{rate} > 0$. Here $p_0$ denotes the baseline detection probability and $\text{rate}$ denotes the rate parameter. For a better understanding, we also plot the detection function against distance.
 ```{r , warning = FALSE, message = FALSE, fig.width = 6, fig.height = 4}
 ## EXPONENTIAL FUNCTION
 detfun.EXP <- function(D, p0, rate){ p0*exp(-rate*D)}
@@ -549,7 +549,7 @@ plot(x, detfun.EXP(D=x, p0=0.25, rate = 1/2), type = "l", lwd=2, col = "orange",
 lines(x, detfun.EXP(D=x, p0=0.15, rate = 1/3), lwd=2, lty = "solid", col = "darkcyan")
 focal.vars <- c('p0', 'rate') 
 focal.values <- cbind(c(0.25, 0.15), # p0
-                      c(1/2, round(1/3,2))) # sigma
+                      c(1/2, round(1/3,2))) # rate
                      
 legend.items <- apply(focal.values, 1, 
                       function(s){paste(paste(focal.vars,"=",s,sep=" "),collapse=", ")})
@@ -564,21 +564,21 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for exponential detection function. Again, we only have to provide the parameter values for 'rate' (i.e., 'p0' is not needed) to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
-# Exponential (EXP) 
+# Exponential
 rate = 1/2
 params <- c(rate)
 names(params) <- c("rate")
 HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6, 
                       xlim = c(0, nimConstants$x.max), ylim = c(0, nimConstants$y.max),
                       nBreaks = 800, tol = 1E-5, nIter = 2000)
-HR.ex <- c(HRAnim$run())
-names(HR.ex) <- paramnames.hr
-print(HR.ex)
+HR.exp <- c(HRAnim$run())
+names(HR.exp) <- paramnames.hr
+print(HR.exp)
 
 ```
 
-### Asymmetric logistic (AL, detFun = 3) 
-The asymmetric logistic (AL) detection function is written as:
+### Asymmetric logistic (detFun = 3) 
+The asymmetric logistic detection function is written as:
 \begin{align}
 p_{\text{AL}}(d) = p_0 \, \Big{[} 1 + (d/\sigma)^{\alpha_a} g(d) \, + (d/\sigma)^{\alpha_a \alpha_b} (1-g(d)) \Big{]}^{-1},
 \end{align}
@@ -617,7 +617,7 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for asymmetric logistic detection function. Note that we only have to provide the parameter values for 'sigma', 'alpha.a' and 'alpha.b' (i.e., 'p0' is not needed) to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
-# Asymmetric logistic (AL) 
+# Asymmetric logistic
 sigma = 2
 alpha.a = 5 
 alpha.b = 1
@@ -631,8 +631,8 @@ names(HR.al) <- paramnames.hr
 print(HR.al)
 ```
 
-### Bimodal (BI, detFun = 4) 
-The bimodal (BI) detection function is written as:
+### Bimodal (detFun = 4) 
+The bimodal detection function is written as:
 \begin{align}
 p_{\text{BI}}(d) = p_{0a} \, \exp\Big{(}-\frac{d^2}{2\sigma_{a}^2}\Big{)} \, + p_{0b} \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{b}^2}\Big{)}
 \end{align}
@@ -670,7 +670,7 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for bimodal detection function. Here, we have to provide all the parameter values for 'p0.a', 'sigma.a', 'p0.b', 'sigma.b' and 'w' to compute home range radius and area.
 ```{r , warning = FALSE, message = FALSE}
-# Bimodal (BI) 
+# Bimodal 
 p0.a = 0.25
 sigma.a = 0.5
 p0.b = 0.15 
@@ -686,8 +686,8 @@ names(HR.bi) <- paramnames.hr
 print(HR.bi)
 ```
 
-### Donut (DN, detFun = 5) 
-The donut (DN) detection function is written as:
+### Donut (detFun = 5) 
+The donut detection function is written as:
 \begin{align}
 p_{\text{DN}}(d) = 
 \begin{cases}
@@ -732,7 +732,7 @@ legend("topright",
 
 Next we obtain the $95\%$ home range radius and area for donut detection function. Note that we only have to provide the parameter values for 'sigma.a', 'sigma.b' and 'w' (i.e., 'p0' is not needed) to compute home range radius or area. 
 ```{r , warning = FALSE, message = FALSE}
-# Donut (DN) 
+# Donut 
 sigma.a = 1.5 
 sigma.b = 1 
 w = 1 

@@ -4,12 +4,12 @@
 #' @title Computation of home range radius and area
 #'
 #' @description
-#' \code{getHomeRangeArea} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal(HN, detFun = 0), half-normal plateau (HNP, detFun = 1), exponential (EXP, detFun = 2), asymmetric logistic (AL, detFun = 3), bimodal (BI, detFun = 4) and donut (DN, detFun = 5).
+#' \code{getHomeRangeArea} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4) and donut (detFun = 5).
 #' 
 #' @name getHomeRangeArea
 #' 
 #' @param x \code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.
-#' @param detFun \code{Numeric} variable denoting the type of detection function. 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP), 3 = Asymmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+#' @param detFun \code{Numeric} variable denoting the type of detection function. 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Asymmetric logistic, 4 = Bimodal, 5 = Donut.
 #' @param prob \code{Numeric}  variable denoting the quantile probability to compute the home range radius.
 #' @param d \code{Numeric} variable giving an initial value of the radius.
 #' @param xlim \code{Vector} of length 2 giving the range along x-axis.
@@ -20,6 +20,10 @@
 #'
 #' @author Soumen Dey
 #' 
+#' @references
+#' 
+#' Dey, S., Bischof, R., Dupont, P. P. A., & Milleret, C. (2022). Does the punishment fit the crime? Consequences and diagnosis of misspecified detection functions in Bayesian spatial capture–recapture modeling. Ecology and Evolution, 12, e8600. https://doi.org/10.1002/ece3.8600
+#' 
 #' @import nimble
 #' 
 #' 
@@ -29,9 +33,9 @@
 #' 
 #' # A user friendly vignette is also available on github: 
 #' # https://github.com/nimble-dev/nimbleSCR/blob/master/nimbleSCR/vignettes/
-#' # Vignette name: Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
+#' # Vignette name: Fit_with_dbinomLocal_normalPlateau_and_HomeRangeAreaComputation.rmd
 #' 
-#' # HALF-NORMAL PLATEAU FUNCTION (HNP, detFun = 1) 
+#' # HALF-NORMAL PLATEAU FUNCTION (detFun = 1) 
 #' habitatMask <- matrix(1, nrow = 30, ncol= 30, byrow = TRUE)
 #' 
 #' prob <- 0.95
@@ -45,8 +49,8 @@
 #'                       nBreaks = 800, tol = 1E-5, nIter = 2000)
 #' 
 #' # Different values of argument "detFun"
-#' # 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),
-#' # 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).
+#' # 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential,
+#' # 3 = Aysmmetric logistic, 4 = Bimodal, 5 = Donut.
 #' HR.hnp <- c(HRAnim$run())
 #' names(HR.hnp) <- paramnames.hr
 #' print(HR.hnp)
@@ -72,7 +76,7 @@
 #' cat("Numerical estimates using MCMC samples: \n", sep = "")
 #' print(HRest)
 #' 
-#' # HALF-NORMAL FUNCTION (HN, detFun = 0) 
+#' # HALF-NORMAL FUNCTION (detFun = 0) 
 #' sigma = 2
 #' params <- c(sigma)
 #' names(params) <- c("sigma")
@@ -85,7 +89,7 @@
 #' names(HR.hn) <- paramnames.hr
 #' print(HR.hn)
 #' 
-#' # Exponential (EXP, detFun = 2) 
+#' # Exponential (detFun = 2) 
 #' 
 #' rate = 1/2
 #' params <- c(rate)
@@ -93,11 +97,11 @@
 #' HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6, 
 #'                      xlim = c(0, dim(habitatMask)[2]), ylim = c(0, dim(habitatMask)[1]),
 #'                      nBreaks = 800, tol = 1E-5, nIter = 2000)
-#' HR.ex <- c(HRAnim$run())
-#' names(HR.ex) <- paramnames.hr
-#' print(HR.ex)
+#' HR.exp <- c(HRAnim$run())
+#' names(HR.exp) <- paramnames.hr
+#' print(HR.exp)
 #' 
-#' # Asymmetric logistic (AL, detFun = 3) 
+#' # Asymmetric logistic (detFun = 3) 
 #' 
 #' sigma = 2
 #' alpha.a = 5 
@@ -112,7 +116,7 @@
 #' print(HR.al)
 #' 
 #' 
-#' # Bimodal (BI, detFun = 4) 
+#' # Bimodal (detFun = 4) 
 #' 
 #' p0.a = 0.25
 #' sigma.a = 0.5
@@ -128,7 +132,7 @@
 #' names(HR.bi) <- paramnames.hr
 #' print(HR.bi)
 #' 
-#' # Donut (DN, detFun = 5) 
+#' # Donut (detFun = 5) 
 #' 
 #' sigma.a = 1.5 
 #' sigma.b = 1 
@@ -178,12 +182,12 @@ getHomeRangeArea <- nimbleFunction(
     for(this.row in 1:nrows ){
       if (this.row%%1000 == 0)  cat('..... row #', this.row, '\n')
       
-      if(detFun == 0){ #'HN'
+      if(detFun == 0){ # HALF-NORMAL
         # paramnames = c('sigma') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- x[this.row, 1] # Scale parameter 
         p <- exp(-D[1:n]*D[1:n]/(2*sigma*sigma)) # vector (n x 1)
       }
-      if(detFun == 1){ #  'HNP'
+      if(detFun == 1){ #  HALF-NORMAL PLATEAU
         # paramnames = c('sigma', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- x[this.row, 1] # Scale parameter 
         w <- x[this.row, 2] # Length of plateau
@@ -192,12 +196,12 @@ getHomeRangeArea <- nimbleFunction(
           if(D[i] > w) {p[i] <- exp(-(D[i] - w)*(D[i] - w)/(2*sigma*sigma))}
         }
       }
-      if(detFun == 2){ # 'EXP'
+      if(detFun == 2){ # EXPONENTIAL
         # paramnames = c('rate') # PARAMETER NAMES IN THEIR ORDER OF USE
         rate <- x[this.row, 1] # Rate parameter 
         p <- exp(-rate * D[1:n]) # vector (n x 1)
       }
-      if(detFun == 3){ #'AL'
+      if(detFun == 3){ # ASYMMETRIC LOGISTIC
         # paramnames = c('sigma', 'alpha.a', 'alpha.b') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma <- x[this.row, 1] # Scale parameter 
         alpha.a <- x[this.row, 2]
@@ -207,7 +211,7 @@ getHomeRangeArea <- nimbleFunction(
         dens <- 1+fx[1:n]*((D[1:n]/sigma)^(alpha.a))+(1-fx[1:n])*((D[1:n]/sigma)^(alpha.a*alpha.b))
         p <- 1/dens[1:n]
       }
-      if(detFun == 4){ #'BI'
+      if(detFun == 4){ # BIMODAL
         # paramnames = c('sigma', 'sigma.b', 'p0', 'p0.b', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma.a <- x[this.row, 1] # Scale parameter of the first peak 
         sigma.b <- x[this.row, 2] # Scale parameter of the second peak 
@@ -219,7 +223,7 @@ getHomeRangeArea <- nimbleFunction(
         p <- densa[1:n] + densb[1:n]
         
       }
-      if(detFun == 5){ #'DN'
+      if(detFun == 5){ # DONUT
         # paramnames = c('sigma', 'sigma.b', 'w') # PARAMETER NAMES IN THEIR ORDER OF USE
         sigma.a <- x[this.row, 1] # Scale parameter of the left tail
         sigma.b <- x[this.row, 2] # Scale parameter of the right tail

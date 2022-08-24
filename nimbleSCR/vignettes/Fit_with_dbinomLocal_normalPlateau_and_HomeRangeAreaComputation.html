@@ -12,9 +12,9 @@
 
 <meta name="author" content="Soumen Dey" />
 
-<meta name="date" content="2022-08-17" />
+<meta name="date" content="2022-08-24" />
 
-<title>Home range size estimation with the nimbleSCR package</title>
+<title>Fit with half-normal plateau detection function and home range size estimation using nimbleSCR package</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -354,10 +354,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Home range size estimation with the
-nimbleSCR package</h1>
+<h1 class="title toc-ignore">Fit with half-normal plateau detection
+function and home range size estimation using nimbleSCR package</h1>
 <h4 class="author">Soumen Dey</h4>
-<h4 class="date">2022-08-17</h4>
+<h4 class="date">2022-08-24</h4>
 
 
 
@@ -735,7 +735,7 @@ such that <span class="math inline">\(||\mathbf{\textit{x}} −
 <p>While an analytical estimate can be derived for the classical
 half-normal detection function (see below), the half-normal plateau is a
 custom detection function for which an analytical estimate <span class="math inline">\(r_\alpha\)</span> is not readily available.</p>
-<p>The half-normal plateau (HNP) detection function is written as: <span class="math display">\[\begin{align}
+<p>The half-normal plateau detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{HNP}}(d) =
 \begin{cases}
     p_0,&amp; \text{if } d &lt; w,\\[-0.5em]
@@ -783,10 +783,9 @@ we also plot the detection function against distance in below.</p>
 <p>The function ‘getHomeRangeArea()’ uses numerical approximation (to
 find the root) and estimate of <span class="math inline">\(95\%\)</span>
 home range radius and area for a set of circular detection functions
-available in nimbleSCR, viz., half-normal(HN, detFun = 0), half-normal
-plateau (HNP, detFun = 1), exponential (EXP, detFun = 2), asymmetric
-logistic (AL, detFun = 3), bimodal (BI, detFun = 4), and donut (DN,
-detFun = 5).</p>
+available in nimbleSCR, viz., half-normal (detFun = 0), half-normal
+plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic
+(detFun = 3), bimodal (detFun = 4), and donut (detFun = 5).</p>
 <p>The function ‘getHomeRangeArea()’ has two parts: a setup and and a
 run part. If we only want to calculate HR radius for a single set of
 parameter values, there is no need to compile. But for multiple sets of
@@ -810,12 +809,11 @@ estimate</li>
 <li>nIter: A numeric variable giving the maximum number of iterations in
 bisection algorithm</li>
 <li>detFun: A numeric variable denoting the type of detection function:
-0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential
-(EXP), 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut
-(DN).</li>
+0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 =
+Aysmmetric logistic, 4 = Bimodal, 5 = Donut.</li>
 <li>prob: A numeric variable denoting the quantile probability to
 compute the radius</li>
-<li>d: A numeric variable giving an inital value of the radius</li>
+<li>d: A numeric variable giving an initial value of the radius</li>
 </ul></li>
 </ul>
 <p>The run part of the function can be run without specifying any
@@ -836,8 +834,8 @@ radius and area.</p>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nBreaks =</span> <span class="dv">800</span>, <span class="at">tol =</span> <span class="fl">1E-5</span>, <span class="at">nIter =</span> <span class="dv">2000</span>)</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Different values of argument &quot;detFun&quot;</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 = Half-normal (HN), 1 = Half-normal plateau (HNP), 2 = Exponential (EXP),</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 = Aysmmetric logistic (AL), 4 = Bimodal (BI), 5 = Donut (DN).</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential,</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 = Aysmmetric logistic, 4 = Bimodal, 5 = Donut.</span></span>
 <span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>HR.hnp <span class="ot">&lt;-</span> <span class="fu">c</span>(HRAnim<span class="sc">$</span><span class="fu">run</span>())</span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(HR.hnp) <span class="ot">&lt;-</span> paramnames.hr</span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(HR.hnp)</span></code></pre></div>
@@ -865,7 +863,7 @@ uncertainty from the MCMC chains of the parameters <span class="math inline">\(p
 ## ..... row #2000</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(HRA.Runtime)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##  124.66    0.00  124.66</code></pre>
+##   98.32    0.00   98.35</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(HR.chain)[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> paramnames.hr</span></code></pre></div>
 <p>From the obtained sample ‘HR.chain’ of <span class="math inline">\(95\%\)</span> home range radius and area, we can
 obtain summary statistics of these two metrics.</p>
@@ -912,9 +910,9 @@ Fitting of SCR model using exponential detection function can be
 performed following similar steps (see ‘?dbinomLocal_exp’ for further
 details). Below, we provide examples to compute home range radius and
 area for the other detection functions available <span class="citation">(Dey et al. 2022)</span>.</p>
-<div id="half-normal-hn-detfun-0" class="section level3">
-<h3>Half-normal (HN, detFun = 0)</h3>
-<p>The half-normal (HN) detection function is written as: <span class="math display">\[\begin{align}
+<div id="half-normal-detfun-0" class="section level3">
+<h3>Half-normal (detFun = 0)</h3>
+<p>The half-normal detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{HN}}(d) = p_0 \, \exp\Big{(}-\frac{d^2}{2\sigma^2}\Big{)},
 \end{align}\]</span> where <span class="math inline">\(p_{0} \in
 (0,1)\)</span>, <span class="math inline">\(\sigma &gt; 0\)</span>. Here
@@ -946,7 +944,7 @@ function against distance.</p>
 range radius and area for half-normal detection function. Note that we
 only have to provide the parameter values for ‘sigma’ (i.e., ‘p0’ is not
 needed) to compute home range radius and area.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Half-normal (HN) </span></span>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Half-normal </span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">=</span> <span class="dv">2</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(sigma)</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;sigma&quot;</span>)</span>
@@ -961,16 +959,16 @@ needed) to compute home range radius and area.</p>
 <pre><code>##  HRradius    HRarea 
 ##  4.897252 75.345054</code></pre>
 </div>
-<div id="exponential-exp-detfun-2" class="section level3">
-<h3>Exponential (EXP, detFun = 2)</h3>
-<p>The exponential (EXP) detection function is written as: <span class="math display">\[\begin{align}
+<div id="exponential-detfun-2" class="section level3">
+<h3>Exponential (detFun = 2)</h3>
+<p>The exponential detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{EXP}}(d) = p_0 \, \exp\Big{(}-\text{rate} \, * \, d\Big{)},
 \end{align}\]</span> where <span class="math inline">\(p_{0} \in
 (0,1)\)</span>, <span class="math inline">\(\text{rate} &gt; 0\)</span>.
 Here <span class="math inline">\(p_0\)</span> denotes the baseline
-detection probability and <span class="math inline">\(\sigma\)</span>
-denotes the rate parameter. For a better understanding, we also plot the
-detection function against distance.</p>
+detection probability and <span class="math inline">\(\text{rate}\)</span> denotes the rate parameter.
+For a better understanding, we also plot the detection function against
+distance.</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="do">## EXPONENTIAL FUNCTION</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>detfun.EXP <span class="ot">&lt;-</span> <span class="cf">function</span>(D, p0, rate){ p0<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>rate<span class="sc">*</span>D)}</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
@@ -979,7 +977,7 @@ detection function against distance.</p>
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">detfun.EXP</span>(<span class="at">D=</span>x, <span class="at">p0=</span><span class="fl">0.15</span>, <span class="at">rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="st">&quot;solid&quot;</span>, <span class="at">col =</span> <span class="st">&quot;darkcyan&quot;</span>)</span>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>focal.vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;p0&#39;</span>, <span class="st">&#39;rate&#39;</span>) </span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>focal.values <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.15</span>), <span class="co"># p0</span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="fu">round</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>,<span class="dv">2</span>))) <span class="co"># sigma</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="fu">round</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>,<span class="dv">2</span>))) <span class="co"># rate</span></span>
 <span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                     </span>
 <span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>legend.items <span class="ot">&lt;-</span> <span class="fu">apply</span>(focal.values, <span class="dv">1</span>, </span>
 <span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>                      <span class="cf">function</span>(s){<span class="fu">paste</span>(<span class="fu">paste</span>(focal.vars,<span class="st">&quot;=&quot;</span>,s,<span class="at">sep=</span><span class="st">&quot; &quot;</span>),<span class="at">collapse=</span><span class="st">&quot;, &quot;</span>)})</span>
@@ -995,22 +993,22 @@ detection function against distance.</p>
 range radius and area for exponential detection function. Again, we only
 have to provide the parameter values for ‘rate’ (i.e., ‘p0’ is not
 needed) to compute home range radius and area.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exponential (EXP) </span></span>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exponential</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>rate <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(rate)</span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;rate&quot;</span>)</span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>HRAnim <span class="ot">&lt;-</span> <span class="fu">getHomeRangeArea</span>(<span class="at">x =</span> params, <span class="at">detFun =</span> <span class="dv">2</span>, <span class="at">prob =</span> prob, <span class="at">d =</span> <span class="dv">6</span>, </span>
 <span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, nimConstants<span class="sc">$</span>x.max), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, nimConstants<span class="sc">$</span>y.max),</span>
 <span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nBreaks =</span> <span class="dv">800</span>, <span class="at">tol =</span> <span class="fl">1E-5</span>, <span class="at">nIter =</span> <span class="dv">2000</span>)</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>HR.ex <span class="ot">&lt;-</span> <span class="fu">c</span>(HRAnim<span class="sc">$</span><span class="fu">run</span>())</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(HR.ex) <span class="ot">&lt;-</span> paramnames.hr</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(HR.ex)</span></code></pre></div>
-<pre><code>##  HRradius    HRarea 
-##  2.383263 17.844058</code></pre>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>HR.exp <span class="ot">&lt;-</span> <span class="fu">c</span>(HRAnim<span class="sc">$</span><span class="fu">run</span>())</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(HR.exp) <span class="ot">&lt;-</span> paramnames.hr</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(HR.exp)</span></code></pre></div>
+<pre><code>##   HRradius     HRarea 
+##   9.389359 276.963004</code></pre>
 </div>
-<div id="asymmetric-logistic-al-detfun-3" class="section level3">
-<h3>Asymmetric logistic (AL, detFun = 3)</h3>
-<p>The asymmetric logistic (AL) detection function is written as: <span class="math display">\[\begin{align}
+<div id="asymmetric-logistic-detfun-3" class="section level3">
+<h3>Asymmetric logistic (detFun = 3)</h3>
+<p>The asymmetric logistic detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{AL}}(d) = p_0 \, \Big{[} 1 + (d/\sigma)^{\alpha_a} g(d) \, +
 (d/\sigma)^{\alpha_a \alpha_b} (1-g(d)) \Big{]}^{-1},
 \end{align}\]</span> where <span class="math inline">\(g(d) =\big{\{} 1
@@ -1056,7 +1054,7 @@ range radius and area for asymmetric logistic detection function. Note
 that we only have to provide the parameter values for ‘sigma’, ‘alpha.a’
 and ‘alpha.b’ (i.e., ‘p0’ is not needed) to compute home range radius
 and area.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Asymmetric logistic (AL) </span></span>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Asymmetric logistic</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">=</span> <span class="dv">2</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>alpha.a <span class="ot">=</span> <span class="dv">5</span> </span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>alpha.b <span class="ot">=</span> <span class="dv">1</span></span>
@@ -1071,9 +1069,9 @@ and area.</p>
 <pre><code>##  HRradius    HRarea 
 ##  4.257453 56.944218</code></pre>
 </div>
-<div id="bimodal-bi-detfun-4" class="section level3">
-<h3>Bimodal (BI, detFun = 4)</h3>
-<p>The bimodal (BI) detection function is written as: <span class="math display">\[\begin{align}
+<div id="bimodal-detfun-4" class="section level3">
+<h3>Bimodal (detFun = 4)</h3>
+<p>The bimodal detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{BI}}(d) = p_{0a} \,
 \exp\Big{(}-\frac{d^2}{2\sigma_{a}^2}\Big{)} \, + p_{0b} \,
 \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{b}^2}\Big{)}
@@ -1118,7 +1116,7 @@ against distance.</p>
 range radius and area for bimodal detection function. Here, we have to
 provide all the parameter values for ‘p0.a’, ‘sigma.a’, ‘p0.b’,
 ‘sigma.b’ and ‘w’ to compute home range radius and area.</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bimodal (BI) </span></span>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bimodal </span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>p0.a <span class="ot">=</span> <span class="fl">0.25</span></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>sigma.a <span class="ot">=</span> <span class="fl">0.5</span></span>
 <span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>p0.b <span class="ot">=</span> <span class="fl">0.15</span> </span>
@@ -1135,9 +1133,9 @@ provide all the parameter values for ‘p0.a’, ‘sigma.a’, ‘p0.b’,
 <pre><code>##  HRradius    HRarea 
 ##  3.973037 49.590105</code></pre>
 </div>
-<div id="donut-dn-detfun-5" class="section level3">
-<h3>Donut (DN, detFun = 5)</h3>
-<p>The donut (DN) detection function is written as: <span class="math display">\[\begin{align}
+<div id="donut-detfun-5" class="section level3">
+<h3>Donut (detFun = 5)</h3>
+<p>The donut detection function is written as: <span class="math display">\[\begin{align}
 p_{\text{DN}}(d) =
 \begin{cases}
     p_0 \, \exp\Big{(}-\frac{(d-w)^2}{2\sigma_{a}^2}\Big{)},&amp;
@@ -1190,7 +1188,7 @@ distance.</p>
 range radius and area for donut detection function. Note that we only
 have to provide the parameter values for ‘sigma.a’, ‘sigma.b’ and ‘w’
 (i.e., ‘p0’ is not needed) to compute home range radius or area.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Donut (DN) </span></span>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Donut </span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>sigma.a <span class="ot">=</span> <span class="fl">1.5</span> </span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>sigma.b <span class="ot">=</span> <span class="dv">1</span> </span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">1</span> </span>
