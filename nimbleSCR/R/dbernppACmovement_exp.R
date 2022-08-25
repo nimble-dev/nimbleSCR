@@ -1,6 +1,6 @@
 #' Bernoulli point process for activity center movement (exponential kernel)
 #' 
-#' Density and random generation functions of the Bernoulli point process for activity center movement. 
+#' Density and random generation functions of the Bernoulli point process for activity center movement between occasions based on a bivariate exponential distribution. 
 #'
 #' The \code{dbernppACmovement_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' movement of activity centers between consecutive occasions in open population models.
@@ -9,16 +9,16 @@
 #' 
 #' @name dbernppACmovement_exp
 #' 
-#' @param x Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1). 
+#' @param x Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). 
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
-#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window. 
-#' Each window should be of size 1x1 (after rescaling if necessary). 
+#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).
+#'  One row for each window. Each window should be of size 1x1.
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).
 #' @param rate Rate parameter of the isotropic multivariate exponential distribution.
-#' @param lambda Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).
+#' @param lambda Rate parameter of the isotropic bivariate exponential distribution. Soon deprecated, use argument "rate" instead.
 #' @param baseIntensities Vector of baseline habitat intensities for all habitat windows.
-#' @param habitatGrid Matrix of habitat window indices. Baseline habitat intensities should match the order in \code{lowerCoords} and \code{upperCoords}. 
-#' When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} in order to be able to use the distribution in \code{nimble} model code.     
+#' @param habitatGrid Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in  \code{lowerCoords} and \code{upperCoords}. 
+#'  When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.     
 #' @param numGridRows,numGridCols Numbers of rows and columns of the habitat grid. 
 #' @param numWindows Number of habitat windows. This value (positive integer) can be used to truncate \code{lowerCoords} and \code{upperCoords} so that extra rows beyond \code{numWindows} are ignored.  
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
