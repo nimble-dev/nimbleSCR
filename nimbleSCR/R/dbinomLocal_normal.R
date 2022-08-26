@@ -1,11 +1,10 @@
 #' Local evaluation of a binomial SCR detection process 
 #'
-#' The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
-#' binomial observations (\emph{x}) of a single individual over a set of detectors defined by their 
-#' coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
-#' follows a half-normal function of the distance between the  individual's activity center (\emph{s}) and the detector location. 
-#' All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}})
-#'
+#' The \code{dbinomLocal_normal} distribution is a NIMBLE custom distribution which can be used to model 
+#' and simulate binomial observations (x) of a single individual over a set of traps defined by their coordinates \emph{trapCoords}
+#' the distribution assumes that an individual’s detection probability at any trap follows a half-normal function of the distance between 
+#' the individual's activity center (s) and the trap location. All coordinates (\code{s} and \code{trapCoords}) should be scaled to the habitat (see \code{\link{scaleCoordsToHabitatGrid}})
+#' 
 #' The \code{dbinomLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):
 #' \enumerate{
 #' \item A local evaluation of the detection probability calculation (see Milleret et al., 2019 <doi:10.1002/ece3.4751> for more details)
@@ -26,14 +25,17 @@
 #' 
 #' @name dbinomLocal_normal
 #'
-#' @param x Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by the \code{\link{getSparseY}} function; (ii) with the \emph{yCombined} object as returned by \code{\link{getSparseY}}. 
-#' Note that when the random generation functionality is used (\code{rbinomLocal_normal}), only the \emph{yCombined} format can be used. 
-#' The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order).  When such consolidated representation of the detection data \emph{x} is used, \emph{detIndices} and \emph{detNums} arguments shouldn’t be specified.
+#' @param x Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by \code{\link{getSparseY}}; (ii) with the
+#' \emph{yCombined} object as returned by \code{\link{getSparseY}} Note that when the random generation functionality is used (rbinomLocal_normal), only the yCombined format can be used. 
+#' The  \emph{yCombined}  object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order). When such consolidated 
+#' representation of the detection data x is used, \emph{detIndices} and \emph{detNums} arguments should not be specified.
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
-#' @param detIndices Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.
-#' @param detNums Number of detections recorded in \emph{x}, as returned by the \emph{detNums} object from the \code{\link{getSparseY}} function. This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x}, and when detection data are simulated.
+#' @param detIndices Vector of indices of traps where the detections in \emph{x} were recorded; from the \emph{detIndices} object returned by the \code{\link{getSparseY}} function. 
+#' This argument should not be specified when x is provided as the  \emph{yCombined} object (returned by \code{\link{getSparseY}} ) and when detection data are simulated.
+#' @param detNums Number of traps with at least one detection recorded in \emph{x}; from the \emph{detNums} object returned by the \code{\link{getSparseY}} function. 
+#' This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x} and when detection data are simulated.
 #' @param size Vector of the number of trials (zero or more) for each trap (\emph{trapCoords}).
-#' @param p0 Baseline detection probability used in the half-normal detection function.
+#' @param p0 Baseline detection probability (scalar) used in the half-normal detection function. For trap-specific baseline detection probabilities use argument \emph{p0Traps} (vector) instead.
 #' @param p0Traps Vector of baseline detection probabilities for each trap used in the half-normal detection function. When \emph{p0Traps} is used, \emph{p0} should not be provided. 
 #' @param sigma Scale parameter of the half-normal detection function.
 #' @param s Individual activity center x- and y-coordinates scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).
@@ -41,9 +43,9 @@
 #' @param localTrapsIndices Matrix of indices of local traps around each habitat grid cell, as returned by the \code{\link{getLocalObjects}} function.
 #' @param localTrapsNum  Vector of numbers of local traps around all habitat grid cells, as returned by the \code{\link{getLocalObjects}} function.
 #' @param resizeFactor Aggregation factor used in the \code{\link{getLocalObjects}} function to reduce the number of habitat grid cells to retrieve local traps for.
-#' @param habitatGrid Matrix of habitat grid cells indices, as returned by the \code{\link{getLocalObjects}} function.
-#' @param indicator Logical argument specifying whether the individual is available for detection.
-#' @param lengthYCombined The length of the  x argument when the (\emph{yCombined}) format of the detection data is provided (as returned by the \emph{lengthYCombined} object from \code{\link{getSparseY}}). 
+#' @param habitatGrid Matrix of local habitat grid cell indices, from \emph{habitatGrid} returned by the \code{\link{getLocalObjects}} function. 
+#' @param indicator Binary argument specifying whether the individual is available for detection (indicator = 1) or not (indicator = 0).
+#' @param lengthYCombined The length of the x argument when the (\emph{yCombined}) format of the detection data is provided;  from the \emph{lengthYCombined} object returned by \code{\link{getSparseY}}
 #' 
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #'

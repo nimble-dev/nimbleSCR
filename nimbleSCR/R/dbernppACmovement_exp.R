@@ -11,8 +11,8 @@
 #' 
 #' @param x Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). 
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
-#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).
-#'  One row for each window. Each window should be of size 1x1.
+#' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
+#' Each window should be of size 1x1 (after rescaling if necessary). 
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).
 #' @param rate Rate parameter of the isotropic multivariate exponential distribution.
 #' @param lambda Rate parameter of the isotropic bivariate exponential distribution. Soon deprecated, use argument "rate" instead.

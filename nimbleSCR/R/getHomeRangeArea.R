@@ -4,12 +4,12 @@
 #' @title Computation of home range radius and area
 #'
 #' @description
-#' \code{getHomeRangeArea} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4) and donut (detFun = 5).
+#' \code{getHomeRangeArea} returns approximates estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4) and donut (detFun = 5).
 #' 
 #' @name getHomeRangeArea
 #' 
 #' @param x \code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.
-#' @param detFun \code{Numeric} variable denoting the type of detection function. 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Asymmetric logistic, 4 = Bimodal, 5 = Donut.
+#' @param detFun \code{Numeric} vNumeric variable denoting the type of detection function. 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Asymmetric logistic, 4 = Bimodal, 5 = Donut.
 #' @param prob \code{Numeric}  variable denoting the quantile probability to compute the home range radius.
 #' @param d \code{Numeric} variable giving an initial value of the radius.
 #' @param xlim \code{Vector} of length 2 giving the range along x-axis.

@@ -1,6 +1,6 @@
 #' Local evaluation for a Bernoulli point process detection model
 #' 
-#' Density and random generation functions of the Bernoulli point process for detection.  
+#' Density and random generation functions of the Bernoulli point process for detection based on a bivariate normal distribution. 
 #' 
 #' The \code{dbernppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' Bernoulli observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
@@ -11,21 +11,21 @@
 #' 
 #' @name dbernppLocalDetection_normal
 #' 
-#' @param x Vector with three elements representing the x- and y-coordinates (x[1:2]), and the corresponding id the detection window (x[3]) of a single spatial point (detection location).
+#' @param x Vector with three elements representing the x- and y-coordinates (x[1:2]), and the corresponding id the detection window (x[3]) of a single spatial point (detection location) scaled to the habitat (see \code{scaleCoordsToHabitatGrid}).
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.
-#' @param s Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (i.e. the AC location).
-#' @param sd Standard deviation of the isotropic multivariate normal distribution.
+#' Each window should be of size 1x1 (after rescaling if necessary). 
+#' @param s Vector of x- and y-coordinates of the isotropic bivariate normal distribution mean (i.e. the AC location).
+#' @param sd Standard deviation of the bivariate normal distribution.
 #' @param baseIntensities Vector of baseline detection intensities for all detection windows.
 #' @param habitatGridLocal Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).        
-#' @param resizeFactor Scalar (aggregation factor) for rescaling habitat windows as used in \code{getLocalObjects}.   
-#' @param localObsWindowIndices Matrix of indices of local observation windows around each rescaled habitat grid cell, as returned by the getLocalObjects function (object named \code{localIndices}).        
+#' @param resizeFactor Aggregation factor used in the  \code{getLocalObjects} function to reduce the number of habitat grid cells.   
+#' @param localObsWindowIndices Matrix of indices of local observation windows around each local habitat grid cell (habitatGridLocal), from localIndices returned by the \code{getLocalObjects} function.
 #' @param numLocalObsWindows Vector of numbers of local observation windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
 #' The ith number gives the number of local (original) observation windows for the ith (rescaled) habitat window.
 #' @param numWindows Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 #' so that extra rows beyond \code{numWindows} are ignored. 
-#' @param indicator Binary variable (0 or 1). \code{indicator = 0} means the individual is not available for detection 
-#' and thus the probability of no detection is 1.
+#' @param indicator Binary argument specifying whether the individual is available for detection (indicator = 1) or not (indicator = 0).
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' 
 #' @return The (log) probability density of the observation vector \code{x}.

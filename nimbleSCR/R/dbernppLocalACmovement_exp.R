@@ -1,6 +1,6 @@
 #' Local evaluation of a Bernoulli point process for activity center movement (exponential kernel)
 #' 
-#' Density and random generation functions of the Bernoulli point process for activity center movement. 
+#' Density and random generation functions of the Bernoulli point process for activity center movement between occasions based on a bivariate exponential distribution and local evaluation.
 #'
 #' The \code{dbernppLocalACmovement_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
 #' movement of activity centers between consecutive occasions in open population models.
@@ -10,21 +10,20 @@
 #' 
 #' @name dbernppLocalACmovement_exp
 #' 
-#' @param x Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1).
+#' @param x Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). 
 #' @param n Integer specifying the number of realisations to generate.  Only n = 1 is supported.
 #' @param lowerCoords,upperCoords Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
 #' Each window should be of size 1x1 (after rescaling if necessary). 
 #' @param s Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).
-#' @param rate Rate parameter of the isotropic multivariate exponential distribution.
-#' @param lambda Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).
+#' @param rate Rate parameter of the isotropic bivariate exponential distribution.
+#' @param lambda Rate parameter of the isotropic bivariate exponential distribution. Soon deprecated, use argument "rate" instead.
 #' @param baseIntensities Vector of baseline habitat intensities for all habitat windows.
-#' @param habitatGrid Matrix of habitat window indices. When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} 
-#' in order to be able to use the distribution in \code{nimble} model code.     
-#' @param habitatGridLocal Matrix of resized habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).        
-#' @param resizeFactor Scalar (aggregation factor) for rescaling habitat windows as used in \code{getLocalObjects}.   
-#' @param localHabWindowIndices Matrix of indices of local habitat windows around each rescaled habitat grid cell, as returned by the getLocalObjects function (object named \code{localIndices}).        
-#' @param numLocalHabWindows Vector of numbers of local habitat windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
-#' The ith number gives the number of local (original) habitat windows for the ith (rescaled) habitat window.
+#' @param habitatGrid Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in  \code{lowerCoords} and \code{upperCoords}. 
+#'  When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.     
+#' @param habitatGridLocal Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).        
+#' @param resizeFactor Aggregation factor used in the  \code{getLocalObjects} function to reduce the number of habitat grid cells.   
+#' @param localHabWindowIndices Matrix of indices of local habitat windows around each local habitat grid cell (\code{habitatGridLocal}) from localIndices returned by \code{getLocalObjects} function.        
+#' @param numLocalHabWindows Vector of numbers of local habitat windows around all habitat grid cells, from  \code{numLocalIndices} returned by the \code{getLocalObjects} function. The ith number gives the number of local (original) habitat windows for the ith local habitat grid cell \code{habitatGridLocal}.
 #' @param numGridRows,numGridCols Numbers of rows and columns of the \code{habitatGrid}.
 #' @param numWindows Number of habitat windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 #' so that extra rows beyond \code{numWindows} are ignored. 
