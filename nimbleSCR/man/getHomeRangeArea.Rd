@@ -19,7 +19,7 @@ getHomeRangeArea(
 \arguments{
 \item{x}{\code{Vector} or \code{matrix} (parameters in columns) of values for different parameters corresponding to the specified detection function.}
 
-\item{detFun}{\code{Numeric} variable denoting the type of detection function. 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Asymmetric logistic, 4 = Bimodal, 5 = Donut.}
+\item{detFun}{\code{Numeric} vNumeric variable denoting the type of detection function. 0 = Half-normal, 1 = Half-normal plateau, 2 = Exponential, 3 = Asymmetric logistic, 4 = Bimodal, 5 = Donut.}
 
 \item{prob}{\code{Numeric}  variable denoting the quantile probability to compute the home range radius.}
 
@@ -36,7 +36,7 @@ getHomeRangeArea(
 \item{nIter}{\code{Numeric} variable giving the maximum number of iterations in bisection algorithm.}
 }
 \description{
-\code{getHomeRangeArea} returns the estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4) and donut (detFun = 5).
+\code{getHomeRangeArea} returns approximates estimates of home range radius and area for a given set of parameters with respect to a specified detection function using bisection algorithm. The following circular detection functions are available to use in nimbleSCR: half-normal (detFun = 0), half-normal plateau (detFun = 1), exponential (detFun = 2), asymmetric logistic (detFun = 3), bimodal (detFun = 4) and donut (detFun = 5).
 }
 \examples{
 

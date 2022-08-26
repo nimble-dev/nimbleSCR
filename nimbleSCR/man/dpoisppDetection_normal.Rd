@@ -34,7 +34,7 @@ rpoisppDetection_normal(
 \item{x}{Array containing the total number of detections (x[1,1]), the x- and y-coordinates (x[2:(x[1,1]+1),1:2]), 
 and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of spatial points (detection locations).}
 
-\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
+\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). One row for each window. Each window should be of size 1x1.}
 
 \item{s}{Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (the AC location).}
 
@@ -47,8 +47,7 @@ and the corresponding detection window indices (x[2:(x[1,1]+1),3]) for a set of 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
 
-\item{indicator}{Binary variable (0 or 1) used for data augmentation. \code{indicator = 0} means the individual does not exist 
-and thus the probability of no detection is 1.}
+\item{indicator}{Binary argument specifying whether the individual is available for detection (indicator = 1) or not (indicator = 0).}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
@@ -63,7 +62,8 @@ Density and random generation functions of the Poisson point process for detecti
 The \code{dpoisppDetection_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
 Poisson observations (\emph{x}) of a single individual in continuous space over a set of detection windows defined by their upper and lower
 coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that an individual’s detection intensity 
-follows an isotropic multivariate normal centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
+follows an isotropic bivariate normal function centered on the individual's activity center (\emph{s}) with standard deviation (\emph{sd}).
+All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (\code{\link{scaleCoordsToHabitatGrid}}).
 }
 \examples{
 coordsHabitatGridCenter <- matrix(c(0.5, 3.5,

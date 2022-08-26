@@ -38,10 +38,9 @@ Each window should be of size 1x1.}
 
 \item{logSumIntensity}{Log of the sum of habitat intensities over all windows.}
 
-\item{habitatGrid}{Matrix of habitat window indices. Only needed for \code{dbernppAC}. 
-Habitat window indices should match the order in \code{lowerCoords}, \code{upperCoords}, and \code{logIntensities}. 
-When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} in order 
-to be able to use the distribution in \code{nimble} model code.}
+\item{habitatGrid}{Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in
+\code{lowerCoords}, \code{upperCoords}, and \code{logIntensities}. 
+When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.}
 
 \item{numGridRows, numGridCols}{Numbers of rows and columns of the habitat grid.}
 

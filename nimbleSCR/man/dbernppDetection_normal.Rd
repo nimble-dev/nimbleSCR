@@ -29,21 +29,20 @@ rbernppDetection_normal(
 )
 }
 \arguments{
-\item{x}{Vector with three elements representing the x- and y-coordinates  and the corresponding id the detection window of a single spatial point (detection location).}
+\item{x}{Vector with three elements representing the x- and y-coordinates and the id of the corresponding detection window for a single spatial point (detection location) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).}
 
-\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows. One row for each window.}
+\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). One row for each window. Each window should be of size 1x1.}
 
-\item{s}{Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (i.e. the AC location).}
+\item{s}{VVector of x- and y-coordinates of the isotropic bivariate normal distribution mean (i.e. the AC location)..}
 
-\item{sd}{Standard deviation of the isotropic multivariate normal distribution.}
+\item{sd}{Standard deviation of the isotropic bivariate normal distribution.}
 
 \item{baseIntensities}{Vector of baseline detection intensities for all detection windows.}
 
 \item{numWindows}{Number of detection windows. This value (positive integer) is used to truncate \code{lowerCoords} and \code{upperCoords} 
 so that extra rows beyond \code{numWindows} are ignored.}
 
-\item{indicator}{Binary variable (0 or 1). \code{indicator = 0} means the individual is not available for detection 
-and thus the probability of no detection is 1.}
+\item{indicator}{Binary argument specifying whether the individual is available for detection (indicator = 1) or not (indicator = 0).}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 

@@ -31,17 +31,17 @@ rpoisppAC(
 )
 }
 \arguments{
-\item{x}{Matrix of x- and y-coordinates of a set of spatial points (AC locations). Each row corresponds to a point.}
+\item{x}{Matrix of x- and y-coordinates of a set of spatial points (AC locations) scaled to the habitat (\code{\link{scaleCoordsToHabitatGrid}}). Each row corresponds to a point.}
 
-\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
-Each window should be of size 1x1 (after rescaling if necessary).}
+\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all detection windows scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}). One row for each window. Each window should be of size 1x1.}
 
 \item{logIntensities}{Vector of log habitat intensities for all habitat windows.}
 
-\item{sumIntensity}{Sum of the habitat intensities over all windows. This can be obtained using \code{logIntensities}.}
+\item{sumIntensity}{Sum of the habitat intensities over all windows. Provided as an argument for computational speed, instead of calculating it in the function.}
 
-\item{habitatGrid}{Matrix of habitat window indices. Habitat window indices should match the order in \code{lowerCoords}, \code{upperCoords}, and \code{logIntensities}. 
-When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} to be able to use the distribution in \code{nimble} model code.}
+\item{habitatGrid}{Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in
+\code{lowerCoords}, \code{upperCoords}, and \code{logIntensities}. 
+When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.}
 
 \item{numGridRows, numGridCols}{Numbers of rows and columns of the habitat grid.}
 
@@ -58,10 +58,11 @@ so that extra rows beyond \code{numPoints} are ignored.}
 }
 \description{
 Density and random generation functions of the Poisson point process for the distribution of activity centers. 
-The \code{dpoisppAC} distribution is a NIMBLE custom distribution which can be used to model and simulate
-activity center locations (\emph{x}) of multiple individual in continuous space over a set of habitat windows defined by their upper and lower
-coordinates (\emph{lowerCoords,upperCoords}). The distribution assumes that activity centers  
-follow a Poisson point process with intensity = \emph{exp(logIntensities)}.
+The \code{dpoisppAC} distribution is a NIMBLE custom distribution which 
+can be used to model and simulate activity center locations (\emph{x}) of multiple individual in 
+continuous space over a set of habitat windows defined by their upper and lower coordinates (\emph{lowerCoords,upperCoords}). 
+The distribution assumes that activity centers follow a Poisson point process with intensity = exp(logIntensities).  
+All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (\code{\link{scaleCoordsToHabitatGrid}}).
 }
 \examples{
 lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)

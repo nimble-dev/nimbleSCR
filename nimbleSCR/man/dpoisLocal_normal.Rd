@@ -41,13 +41,16 @@ rpoisLocal_normal(
 )
 }
 \arguments{
-\item{x}{Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by the \code{\link{getSparseY}} function; (ii) with the \emph{yCombined} object as returned by \code{\link{getSparseY}}. 
-Note that when the random generation functionality is used (\code{rpoisLocal_normal}), only the \emph{yCombined} format can be used. 
-The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order).  When such consolidated representation of the detection data \emph{x} is used, \emph{detIndices} and \emph{detNums} arguments shouldn’t be specified.}
+\item{x}{Vector of individual detection frequencies. This argument can be provided in two formats: (i) with the \emph{y} object as returned by \code{\link{getSparseY}}; (ii) with the
+\emph{yCombined} object as returned by \code{\link{getSparseY}} Note that when the random generation functionality is used (rpoisLocal_normal), only the yCombined format can be used. 
+The  \emph{yCombined}  object combines \emph{detNums}, \emph{x}, and \emph{detIndices} (in that order). When such consolidated 
+representation of the detection data x is used, \emph{detIndices} and \emph{detNums} arguments should not be specified.}
 
-\item{detNums}{Number of detections recorded in \emph{x}, as returned by the \emph{detNums} object from the \code{\link{getSparseY}} function. This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x}, and when detection data are simulated.}
+\item{detNums}{Number of traps with at least one detection recorded in \emph{x}; from the \emph{detNums} object returned by the \code{\link{getSparseY}} function. 
+This argument should not be specified when the \emph{yCombined} object (returned by \code{\link{getSparseY}}) is provided as \emph{x} and when detection data are simulated.}
 
-\item{detIndices}{Vector of indices of traps where the detections in x were recorded, as returned by the \emph{detIndices} object from the \code{\link{getSparseY}} function. This argument should not be specified when \emph{x} is provided as the \emph{yCombined} object (returned by \code{\link{getSparseY}}) and when detection data are simulated.}
+\item{detIndices}{Vector of indices of traps where the detections in \emph{x} were recorded; from the \emph{detIndices} object returned by the \code{\link{getSparseY}} function. 
+This argument should not be specified when x is provided as the  \emph{yCombined} object (returned by \code{\link{getSparseY}} ) and when detection data are simulated.}
 
 \item{lambda}{Baseline detection rate used in the half-normal detection function.}
 
@@ -65,11 +68,11 @@ The \emph{yCombined} object combines \emph{detNums}, \emph{x}, and \emph{detIndi
 
 \item{resizeFactor}{Aggregation factor used in the \code{\link{getLocalObjects}} function to reduce the number of habitat grid cells to retrieve local traps for.}
 
-\item{habitatGrid}{Matrix of habitat grid cells indices, as returned by the \code{\link{getLocalObjects}} function.}
+\item{habitatGrid}{Matrix of local habitat grid cell indices, from \emph{habitatGrid} returned by the \code{\link{getLocalObjects}} function.}
 
-\item{indicator}{Logical argument specifying whether the individual is available for detection.}
+\item{indicator}{Binary argument specifying whether the individual is available for detection (indicator = 1) or not (indicator = 0).}
 
-\item{lengthYCombined}{The length of the  x argument when the (\emph{yCombined}) format of the detection data is provided (as returned by the \emph{lengthYCombined} object from \code{\link{getSparseY}}).}
+\item{lengthYCombined}{The length of the x argument when the (\emph{yCombined}) format of the detection data is provided;  from the \emph{lengthYCombined} object returned by \code{\link{getSparseY}}}
 
 \item{log}{Logical argument, specifying whether to return the log-probability of the distribution.}
 
@@ -80,11 +83,10 @@ The log-likelihood value associated with the vector of detections, given the loc
  and the half-normal detection function : \eqn{p = lambda * exp(-d^2 / 2 \sigma^2)}.
 }
 \description{
-The \code{dpoisLocal_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate
-Poisson observations (\emph{x}) of a single individual over a set of detectors defined by their 
-coordinates (\emph{trapCoords}). The distribution assumes that an individual’s detection probability at any detector
-follows a half-normal function of the distance between the individual's activity center (\emph{s}) and the detector location.
-All coordinates (\emph{s} and \emph{trapCoords}) should be scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}})
+The \code{dpoisLocal_normal} distribution is a NIMBLE custom distribution which can be used to model 
+and simulate Poisson observations (x) of a single individual over a set of traps defined by their coordinates \emph{trapCoords}
+the distribution assumes that an individual’s detection probability at any trap follows a half-normal function of the distance between 
+the individual's activity center (s) and the trap location. All coordinates (\code{s} and \code{trapCoords}) should be scaled to the habitat (see \code{\link{scaleCoordsToHabitatGrid}})
 }
 \details{
 The \code{dpoisLocal_normal} distribution incorporates three features to increase computation efficiency (see Turek et al., 2021 <doi.org/10.1002/ecs2.3385>  for more details):

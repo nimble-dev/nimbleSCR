@@ -41,25 +41,25 @@ rbernppLocalACmovement_normal(
 )
 }
 \arguments{
-\item{x}{Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1).}
+\item{x}{Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).}
 
 \item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
 Each window should be of size 1x1 (after rescaling if necessary).}
 
-\item{s}{Vector of x- and y-coordinates of the isotropic multivariate normal distribution mean (AC location at time t).}
+\item{s}{Vector of x- and y-coordinates of the isotropic bivariate normal distribution mean (i.e. the AC location).}
 
-\item{sd}{Standard deviation of the isotropic multivariate normal distribution.}
+\item{sd}{Standard deviation of the isotropic bivariate normal distribution.}
 
 \item{baseIntensities}{Vector of baseline habitat intensities for all habitat windows.}
 
-\item{habitatGrid}{Matrix of habitat window indices. When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} 
-in order to be able to use the distribution in \code{nimble} model code.}
+\item{habitatGrid}{Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in  \code{lowerCoords} and \code{upperCoords}. 
+When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.}
 
-\item{habitatGridLocal}{Matrix of rescaled habitat grid cells indices, as returned by the \code{getLocalObjects} function (object named \code{habitatGrid}).}
+\item{habitatGridLocal}{Matrix of rescaled habitat grid cells indices, from localIndices returned by the  \code{getLocalObjects} function (}
 
-\item{resizeFactor}{Scalar (aggregation factor) for rescaling habitat windows as used in \code{getLocalObjects}.}
+\item{resizeFactor}{Aggregation factor used in the  \code{getLocalObjects} function to reduce the number of habitat grid cells.}
 
-\item{localHabWindowIndices}{Matrix of indices of local habitat windows around each rescaled habitat grid cell, as returned by the getLocalObjects function (object named \code{localIndices}).}
+\item{localHabWindowIndices}{Matrix of indices of local habitat windows around each local habitat grid cell (\code{habitatGridLocal}), from localIndices returned by the \code{getLocalObjects} function.}
 
 \item{numLocalHabWindows}{Vector of numbers of local habitat windows around all habitat grid cells, as returned by the getLocalObjects function (object named \code{numLocalIndices}). 
 The ith number gives the number of local (original) habitat windows for the ith (rescaled) habitat window.}
@@ -77,7 +77,7 @@ so that extra rows beyond \code{numWindows} are ignored.}
 The (log) probability density of the observation vector \code{x}.
 }
 \description{
-Density and random generation functions of the Bernoulli point process for activity center movement.
+Density and random generation functions of the Bernoulli point process for activity center movement between occasions based on a bivariate normal distribution and local evaluation.
 }
 \details{
 The \code{dbernppLocalACmovement_normal} distribution is a NIMBLE custom distribution which can be used to model and simulate

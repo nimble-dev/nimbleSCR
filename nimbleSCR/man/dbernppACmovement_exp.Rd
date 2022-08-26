@@ -35,21 +35,21 @@ rbernppACmovement_exp(
 )
 }
 \arguments{
-\item{x}{Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1).}
+\item{x}{Vector of x- and y-coordinates of a single spatial point (typically AC location at time t+1) scaled to the habitat (see (\code{\link{scaleCoordsToHabitatGrid}}).}
 
-\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window. 
+\item{lowerCoords, upperCoords}{Matrices of lower and upper x- and y-coordinates of all habitat windows. One row for each window.
 Each window should be of size 1x1 (after rescaling if necessary).}
 
 \item{s}{Vector of x- and y-coordinates of the isotropic multivariate exponential distribution mean (AC location at time t).}
 
-\item{lambda}{Alternative parameter for the rate of the isotropic multivariate exponential distribution (soon deprecated).}
+\item{lambda}{Rate parameter of the isotropic bivariate exponential distribution. Soon deprecated, use argument "rate" instead.}
 
 \item{rate}{Rate parameter of the isotropic multivariate exponential distribution.}
 
 \item{baseIntensities}{Vector of baseline habitat intensities for all habitat windows.}
 
-\item{habitatGrid}{Matrix of habitat window indices. Baseline habitat intensities should match the order in \code{lowerCoords} and \code{upperCoords}. 
-When the grid has only one row/column, artificial indices have to be provided to inflate \code{habitatGrid} in order to be able to use the distribution in \code{nimble} model code.}
+\item{habitatGrid}{Matrix of habitat window indices. Cell values should correspond to the order of habitat windows in  \code{lowerCoords} and \code{upperCoords}. 
+When the habitat grid only consists of a single row or column of windows, an additional row or column of dummy indices has to be added because the \code{nimble} model code requires a matrix.}
 
 \item{numGridRows, numGridCols}{Numbers of rows and columns of the habitat grid.}
 
@@ -64,7 +64,7 @@ When the grid has only one row/column, artificial indices have to be provided to
 \code{rbernppACmovement_exp} gives coordinates of a randomly generated spatial point.
 }
 \description{
-Density and random generation functions of the Bernoulli point process for activity center movement.
+Density and random generation functions of the Bernoulli point process for activity center movement between occasions based on a bivariate exponential distribution.
 }
 \details{
 The \code{dbernppACmovement_exp} distribution is a NIMBLE custom distribution which can be used to model and simulate
