@@ -12,11 +12,23 @@
 
 <meta name="author" content="Cyril Milleret" />
 
-<meta name="date" content="2021-11-13" />
+<meta name="date" content="2022-08-29" />
 
 <title>Using nimbleSCR to simulate and fit Bayesian SCR models</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -26,6 +38,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -149,7 +162,187 @@ div.csl-indent {
 }
 </style>
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -161,13 +354,15 @@ div.csl-indent {
 
 
 
-<h1 class="title toc-ignore">Using nimbleSCR to simulate and fit Bayesian SCR models</h1>
+<h1 class="title toc-ignore">Using nimbleSCR to simulate and fit
+Bayesian SCR models</h1>
 <h4 class="author">Cyril Milleret</h4>
-<h4 class="date">2021-11-13</h4>
+<h4 class="date">2022-08-29</h4>
 
 
 
-<p>In this vignette, we will use the nimbleSCR <span class="citation">(Bischof et al. 2020)</span> package and NIMBLE <span class="citation">(de Valpine et al. 2017; NIMBLE Development Team 2020)</span> to simulate and fit an efficient Bayesian SCR model.</p>
+<p>In this vignette, we will use the nimbleSCR <span class="citation">(Bischof et al. 2020)</span> package and NIMBLE <span class="citation">(de Valpine et al. 2017; NIMBLE Development Team
+2020)</span> to simulate and fit an efficient Bayesian SCR model.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LOAD PACKAGES</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nimble)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nimbleSCR)</span>
@@ -176,7 +371,9 @@ div.csl-indent {
 <h2>1. SIMULATE BINOMIAL SCR DATA</h2>
 <div id="habitat-and-trapping-grid" class="section level3">
 <h3>1.1 Habitat and trapping grid</h3>
-<p>For this example, we create a <span class="math inline">\(12*12\)</span> habitat grid represented by grid cell centers. We center a <span class="math inline">\(8*8\)</span> trapping grid leaving a buffer area of 2 units around it.</p>
+<p>For this example, we create a <span class="math inline">\(12*12\)</span> habitat grid represented by grid
+cell centers. We center a <span class="math inline">\(8*8\)</span>
+trapping grid leaving a buffer area of 2 units around it.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CREATE HABITAT GRID </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>coordsHabitatGridCenter <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">11.5</span>, <span class="fl">0.5</span>, <span class="at">by=</span><span class="sc">-</span><span class="dv">1</span>), <span class="dv">12</span>),</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">sort</span>(<span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">11.5</span>, <span class="at">by=</span><span class="dv">1</span>), <span class="dv">12</span>)))</span>
@@ -202,21 +399,31 @@ div.csl-indent {
 </div>
 <div id="rescale-coordinates-and-local-evaluation" class="section level3">
 <h3>1.2 Rescale coordinates and local evaluation</h3>
-<p>Here we rescale the trap coordinates to the habitat to allow a fast habitat cell ID lookup and the local evaluation (see <span class="citation">Milleret et al. (2019)</span> and <span class="citation">Turek et al. (2021)</span> for further details).</p>
+<p>Here we rescale the trap coordinates to the habitat to allow a fast
+habitat cell ID lookup and the local evaluation (see <span class="citation">Milleret et al. (2019)</span> and <span class="citation">Turek et al. (2021)</span> for further details).</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ScaledtrapCoords <span class="ot">&lt;-</span> <span class="fu">scaleCoordsToHabitatGrid</span>(<span class="at">coordsData =</span>  trapCoords,</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">coordsHabitatGridCenter =</span> coordsHabitatGridCenter)<span class="sc">$</span>coordsDataScaled</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>habitatMask <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span>, <span class="at">nrow =</span> <span class="dv">12</span>, <span class="at">ncol=</span> <span class="dv">12</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p>We also set up the objects necessary to perform the local evaluation using the ‘getLocalObjects’ function. Special care should be taken when chosing ‘dmax’ relative to <span class="math inline">\(\sigma\)</span> <span class="citation">(Milleret et al. 2019)</span>. Here we are using a value <span class="math inline">\(&gt;2*\sigma\)</span> (see below for the <span class="math inline">\(\sigma\)</span> chosen.</p>
+<p>We also set up the objects necessary to perform the local evaluation
+using the ‘getLocalObjects’ function. Special care should be taken when
+choosing ‘dmax’ relative to <span class="math inline">\(\sigma\)</span>
+<span class="citation">(Milleret et al. 2019)</span>. Here we are using
+a value <span class="math inline">\(&gt;2*\sigma\)</span> (see below for
+the <span class="math inline">\(\sigma\)</span> chosen.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>trapLocal <span class="ot">&lt;-</span> <span class="fu">getLocalObjects</span>(<span class="at">habitatMask =</span> habitatMask,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">coords =</span> ScaledtrapCoords,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">dmax =</span> <span class="dv">7</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">resizeFactor =</span> <span class="dv">1</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="co">#resizeFactor = 1,</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">plot.check =</span> <span class="cn">FALSE</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="define-model-code" class="section level3">
 <h3>1.3 Define model code</h3>
-<p>We use the <a href="https://doi.org/10.1002/ecs2.3385">model code</a> described in <span class="citation">Turek et al. (2021)</span>. Note that we do not provide ‘detNums’ and ‘detIndices’ arguments in the ‘dbinomLocal_normal’ function as we wish to use this model to simulate data (see ‘?dbinomLocal_normal’ for further details).</p>
+<p>We use the <a href="https://doi.org/10.1002/ecs2.3385">model code</a>
+described in <span class="citation">Turek et al. (2021)</span>. Note
+that we do not provide ‘detNums’ and ‘detIndices’ arguments in the
+‘dbinomLocal_normal’ function as we wish to use this model to simulate
+data (see ‘?dbinomLocal_normal’ for further details).</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>modelCode <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## priors</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  psi <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
@@ -244,7 +451,7 @@ div.csl-indent {
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">trapCoords =</span> trapCoords[<span class="dv">1</span><span class="sc">:</span>n.traps,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">localTrapsIndices =</span> trapIndex[<span class="dv">1</span><span class="sc">:</span>n.cells,<span class="dv">1</span><span class="sc">:</span>maxNBDets],</span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">localTrapsNum =</span> nTraps[<span class="dv">1</span><span class="sc">:</span>n.cells],</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">resizeFactor =</span> ResizeFactor,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                                                 <span class="co">#resizeFactor = ResizeFactor,</span></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">habitatGrid =</span> habitatIDDet[<span class="dv">1</span><span class="sc">:</span>y.maxDet,<span class="dv">1</span><span class="sc">:</span>x.maxDet],</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">indicator =</span> z[i],</span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">lengthYCombined =</span> lengthYCombined)</span>
@@ -259,15 +466,31 @@ div.csl-indent {
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">2</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> <span class="fl">0.5</span></span></code></pre></div>
-<p>The model formulation uses data augmentation to derive N estimates <span class="citation">(Royle and Dorazio 2012)</span>. We therefore need to choose the total number of individuals <em>M</em> (detected + augmented). Here we used 200. The expected total number of individuals present in the population is ‘M * psi.’</p>
+<p>The model formulation uses data augmentation to derive N estimates
+<span class="citation">(Royle and Dorazio 2012)</span>. We therefore
+need to choose the total number of individuals <em>M</em> (detected +
+augmented). Here we used 200. The expected total number of individuals
+present in the population is ‘M * psi’.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="dv">200</span></span></code></pre></div>
-<p>When simulating detections using this formulation of the SCR model in NIMBLE, all the information about detections (where and how many) is stored in ‘y’ in that order (See ?dbinomlocal_normal for more details.):</p>
+<p>When simulating detections using this formulation of the SCR model in
+NIMBLE, all the information about detections (where and how many) is
+stored in ‘y’ in that order (See ?dbinomLocal_normal for more
+details.):</p>
 <ul>
 <li>‘detNums’ (total number of individual detections),</li>
 <li>‘x’ (number of individual detections at each trap),</li>
 <li>‘detIndices’ (id of the trap at which detections occur).</li>
 </ul>
-<p>We now need to provide the maximum number of spatial recaptures that can be simulated per individual. We recommend using ‘trapLocal$numlocalindicesmax’ that defines the maximum number of traps available for detections when local evaluation is used. This will enable the simulation of as many spatial detections as allowed by the restrictions imposed by the local evaluation (defined by the ‘dmax’ argument from ‘getLocalObjects’). This means that the length of the ‘y’ observation vector for each individual is equal to the length of <span class="math inline">\(c(detNums, x, detIndices)\)</span> and is therefore equal to <span class="math inline">\(lengthYCombined = 1+ trapLocal\$numLocalIndicesMax * 2\)</span>.</p>
+<p>We now need to provide the maximum number of spatial recaptures that
+can be simulated per individual. We recommend using
+‘trapLocal$numlocalindicesmax’ that defines the maximum number of traps
+available for detections when local evaluation is used. This will enable
+the simulation of as many spatial detections as allowed by the
+restrictions imposed by the local evaluation (defined by the ‘dmax’
+argument from ‘getLocalObjects’). This means that the length of the ‘y’
+observation vector for each individual is equal to the length of <span class="math inline">\(c(detNums, x, detIndices)\)</span> and is
+therefore equal to <span class="math inline">\(lengthYCombined = 1+
+trapLocal\$numLocalIndicesMax * 2\)</span>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>lengthYCombined <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> trapLocal<span class="sc">$</span>numLocalIndicesMax<span class="sc">*</span><span class="dv">2</span></span></code></pre></div>
 </div>
 <div id="create-data-constants-and-inits-objects" class="section level3">
@@ -278,7 +501,7 @@ div.csl-indent {
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x.max =</span> <span class="fu">dim</span>(habitatMask)[<span class="dv">2</span>],</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y.maxDet =</span> <span class="fu">dim</span>(trapLocal<span class="sc">$</span>habitatGrid)[<span class="dv">1</span>],</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x.maxDet =</span> <span class="fu">dim</span>(trapLocal<span class="sc">$</span>habitatGrid)[<span class="dv">2</span>],</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ResizeFactor =</span> trapLocal<span class="sc">$</span>resizeFactor,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># ResizeFactor = trapLocal$resizeFactor,</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n.cells =</span> <span class="fu">dim</span>(trapLocal<span class="sc">$</span>localIndices)[<span class="dv">1</span>],</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">maxNBDets =</span> trapLocal<span class="sc">$</span>numLocalIndicesMax,</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">trapIndex =</span> trapLocal<span class="sc">$</span>localIndices,</span>
@@ -310,16 +533,25 @@ div.csl-indent {
 </div>
 <div id="simualte-scr-data-from-the-nimble-model" class="section level3">
 <h3>1.7 Simualte SCR data from the NIMBLE model</h3>
-<p>We first need to obtain the list of nodes that will be simulated. We used the ‘getDependencies’ function from NIMBLE. Using the ‘simulate’ function from NIMBLE, we will then simulate the activity center (AC) locations (‘sxy’), the state of the individual (‘z’) and SCR observation data (‘y’) given the values we provided for ‘p0,’ ‘sigma’ and ‘psi.’</p>
+<p>We first need to obtain the list of nodes that will be simulated. We
+used the ‘getDependencies’ function from NIMBLE. Using the ‘simulate’
+function from NIMBLE, we will then simulate the activity center (AC)
+locations (‘sxy’), the state of the individual (‘z’) and SCR observation
+data (‘y’) given the values we provided for ‘p0’, ‘sigma’ and ‘psi’.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># FIRST WE GET THE NODES TO SIMULATE</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>nodesToSim <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">getDependencies</span>(<span class="fu">c</span>(<span class="st">&quot;sxy&quot;</span>, <span class="st">&quot;z&quot;</span>), <span class="at">self=</span>T)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># THEN WE SIMULATE THOSE NODES </span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span><span class="fu">simulate</span>(nodesToSim, <span class="at">includeData =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p>After running ‘simulate,’ the simulated data are stored in the ‘model’ object. For example, we can access the simulated ‘z’ and check how many individuals were considered present:</p>
+<p>After running ‘simulate’, the simulated data are stored in the
+‘model’ object. For example, we can access the simulated ‘z’ and check
+how many individuals were considered present:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">sum</span>(model<span class="sc">$</span>z)</span></code></pre></div>
-<p>We have simulated 108 individuals present in the population of which 86 were detected.</p>
-<p>Here we also make some plots to check where are located the simulated detections in relation with the simulated location of the activity center for a given individual.</p>
+<p>We have simulated 108 individuals present in the population of which
+86 were detected.</p>
+<p>Here we also make some plots to check where are located the simulated
+detections in relation with the simulated location of the activity
+center for a given individual.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>y[i,<span class="dv">1</span>]</span></code></pre></div>
@@ -347,7 +579,9 @@ div.csl-indent {
 </div>
 <div id="run-mcmc-with-nimble" class="section level2">
 <h2>2. RUN MCMC WITH NIMBLE</h2>
-<p>Here, we build the NIMBLE model again using the simulated ‘y’ as data. For simplicity, we used the simulated ‘z’ as initial values. Then we can fit the SCR model with the simulated ‘y’ data set.</p>
+<p>Here, we build the NIMBLE model again using the simulated ‘y’ as
+data. For simplicity, we used the simulated ‘z’ as initial values. Then
+we can fit the SCR model with the simulated ‘y’ data set.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nimData1 <span class="ot">&lt;-</span> nimData</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>nimData1<span class="sc">$</span>y <span class="ot">&lt;-</span> model<span class="sc">$</span>y</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nimInits1 <span class="ot">&lt;-</span> nimInits</span>
@@ -410,8 +644,12 @@ div.csl-indent {
 </div>
 <div id="simulate-binomial-scr-data-with-trap-covariates-on-p_0" class="section level2">
 <h2>3. SIMULATE BINOMIAL SCR DATA WITH TRAP COVARIATES ON <span class="math inline">\(p_0\)</span></h2>
-<p>Now we imagine a scenario where we would like to build a SCR model with trap covariates on baseline detection probability (<span class="math inline">\(p_0\)</span>). Compared to the model in (1.3), the baseline detection probability (<span class="math inline">\(p_0\)</span>) is linearly modelled as a function of two covariates on the logistic scale such as:</p>
-<p><span class="math inline">\(logit(p0Traps{_j}) = logit(p_0) + BetaTraps_1 * trapCovs1_j + BetaTraps_2 * trapCovs2_j\)</span></p>
+<p>Now we imagine a scenario where we would like to build a SCR model
+with trap covariates on baseline detection probability (<span class="math inline">\(p_0\)</span>). Compared to the model in (1.3), the
+baseline detection probability (<span class="math inline">\(p_0\)</span>) is linearly modelled as a function
+of two covariates on the logistic scale such as:</p>
+<p><span class="math inline">\(logit(p0Traps{_j}) = logit(p_0) +
+BetaTraps_1 * trapCovs1_j + BetaTraps_2 * trapCovs2_j\)</span></p>
 <div id="simulate-trap-covariates" class="section level3">
 <h3>3.1 Simulate trap covariates</h3>
 <p>First, we simulate values for two independent trap covariates.</p>
@@ -425,7 +663,12 @@ div.csl-indent {
 </div>
 <div id="define-model-code-1" class="section level3">
 <h3>3.2 Define model code</h3>
-<p>Because we are modelling the effect of trap covariates on baseline detection probability (<span class="math inline">\(p_0\)</span>), this means that we have a <span class="math inline">\(p0Traps\)</span> that varies for each trap <em>j</em>. When this is the case, we need to provide the ‘p0Traps’ argument for the ‘dbinomLocal_normal’ function, because the ‘p0’ argument only accepts a scalar.</p>
+<p>Because we are modelling the effect of trap covariates on baseline
+detection probability (<span class="math inline">\(p_0\)</span>), this
+means that we have a <span class="math inline">\(p0Traps\)</span> that
+varies for each trap <em>j</em>. When this is the case, we need to
+provide the ‘p0Traps’ argument for the ‘dbinomLocal_normal’ function,
+because the ‘p0’ argument only accepts a scalar.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>modelCodeTrap <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## priors</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  psi <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
@@ -460,7 +703,7 @@ div.csl-indent {
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">trapCoords =</span> trapCoords[<span class="dv">1</span><span class="sc">:</span>n.traps,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">localTrapsIndices =</span> trapIndex[<span class="dv">1</span><span class="sc">:</span>n.cells,<span class="dv">1</span><span class="sc">:</span>maxNBDets],</span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">localTrapsNum =</span> nTraps[<span class="dv">1</span><span class="sc">:</span>n.cells],</span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">resizeFactor =</span> ResizeFactor,</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>                                                  <span class="co">#resizeFactor = ResizeFactor,</span></span>
 <span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">habitatGrid =</span> habitatIDDet[<span class="dv">1</span><span class="sc">:</span>y.maxDet,<span class="dv">1</span><span class="sc">:</span>x.maxDet],</span>
 <span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">indicator =</span> z[i],</span>
 <span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>                                                  <span class="at">lengthYCombined =</span> lengthYCombined)</span>
@@ -486,8 +729,10 @@ div.csl-indent {
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span><span class="fu">simulate</span>(nodesToSim, <span class="at">includeData =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">sum</span>(model<span class="sc">$</span>z)</span></code></pre></div>
-<p>We have simulated 108 individuals present in the population of which 93 were detected.</p>
-<p>Here we make some plots to check where are located the detections in relation with the location of activity center.</p>
+<p>We have simulated 108 individuals present in the population of which
+93 were detected.</p>
+<p>Here we make some plots to check where are located the detections in
+relation with the location of activity center.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#NUMBER OF DETECTIONS SIMULATED FOR INDIVIDUAL i</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>y[i,<span class="dv">1</span>]</span></code></pre></div>
@@ -581,22 +826,38 @@ div.csl-indent {
 <h2 class="unnumbered">REFERENCES</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-nimbleSCR" class="csl-entry">
-Bischof, Richard, Daniel Turek, Cyril Milleret, Torbjørn Ergon, Pierre Dupont, and de Valpine Perry. 2020. <em>nimbleSCR: Spatial Capture-Recapture (SCR) Methods Using ’Nimble’</em>.
+Bischof, Richard, Daniel Turek, Cyril Milleret, Torbjørn Ergon, Pierre
+Dupont, and de Valpine Perry. 2020. <em>nimbleSCR: Spatial
+Capture-Recapture (SCR) Methods Using ’Nimble’</em>.
 </div>
 <div id="ref-de2017programming" class="csl-entry">
-de Valpine, Perry, Daniel Turek, Christopher J Paciorek, Clifford Anderson-Bergman, Duncan Temple Lang, and Rastislav Bodik. 2017. <span>“Programming with Models: Writing Statistical Algorithms for General Model Structures with <span>NIMBLE</span>.”</span> <em>J. Comput. Graph. Stat.</em> 26 (2): 403–13.
+de Valpine, Perry, Daniel Turek, Christopher J Paciorek, Clifford
+Anderson-Bergman, Duncan Temple Lang, and Rastislav Bodik. 2017.
+<span>“Programming with Models: Writing Statistical Algorithms for
+General Model Structures with <span>NIMBLE</span>.”</span> <em>J.
+Comput. Graph. Stat.</em> 26 (2): 403–13.
 </div>
 <div id="ref-Milleret2019" class="csl-entry">
-Milleret, Cyril, Pierre Dupont, Christophe Bonenfant, Henrik Brøseth, Øystein Flagstad, Chris Sutherland, and Richard Bischof. 2019. <span>“A Local Evaluation of the Individual State-Space to Scale up Bayesian Spatial Capture–Recapture.”</span> <em>Ecology and Evolution</em> 9 (1): 352–63. <a href="https://doi.org/10.1002/ece3.4751">https://doi.org/10.1002/ece3.4751</a>.
+Milleret, Cyril, Pierre Dupont, Christophe Bonenfant, Henrik Brøseth,
+Øystein Flagstad, Chris Sutherland, and Richard Bischof. 2019. <span>“A
+Local Evaluation of the Individual State-Space to Scale up Bayesian
+Spatial Capture–Recapture.”</span> <em>Ecology and Evolution</em> 9 (1):
+352–63. <a href="https://doi.org/10.1002/ece3.4751">https://doi.org/10.1002/ece3.4751</a>.
 </div>
 <div id="ref-nimbleSoftware2020" class="csl-entry">
-NIMBLE Development Team. 2020. <span>“NIMBLE: <span>MCMC</span>, Particle Filtering, and Programmable Hierarchical Modeling.”</span> <a href="https://doi.org/10.5281/zenodo.1211190">https://doi.org/10.5281/zenodo.1211190</a>.
+NIMBLE Development Team. 2020. <span>“NIMBLE: <span>MCMC</span>,
+Particle Filtering, and Programmable Hierarchical Modeling.”</span> <a href="https://doi.org/10.5281/zenodo.1211190">https://doi.org/10.5281/zenodo.1211190</a>.
 </div>
 <div id="ref-Royle2012" class="csl-entry">
-Royle, J Andrew, and Robert M Dorazio. 2012. <span>“Parameter-Expanded Data Augmentation for Bayesian Analysis of Capture–Recapture Models.”</span> <em>Journal of Ornithology</em> 152 (2): 521–37.
+Royle, J Andrew, and Robert M Dorazio. 2012. <span>“Parameter-Expanded
+Data Augmentation for Bayesian Analysis of Capture–Recapture
+Models.”</span> <em>Journal of Ornithology</em> 152 (2): 521–37.
 </div>
 <div id="ref-Turek2021" class="csl-entry">
-Turek, Daniel, Cyril Milleret, Torbjørn Ergon, Henrik Brøseth, Pierre Dupont, Richard Bischof, and Perry de Valpine. 2021. <span>“Efficient Estimation of Large-Scale Spatial Capture–Recapture Models.”</span> <em>Ecosphere</em> 12 (2): e03385. https://doi.org/<a href="https://doi.org/10.1002/ecs2.3385">https://doi.org/10.1002/ecs2.3385</a>.
+Turek, Daniel, Cyril Milleret, Torbjørn Ergon, Henrik Brøseth, Pierre
+Dupont, Richard Bischof, and Perry de Valpine. 2021. <span>“Efficient
+Estimation of Large-Scale Spatial Capture–Recapture Models.”</span>
+<em>Ecosphere</em> 12 (2): e03385. https://doi.org/<a href="https://doi.org/10.1002/ecs2.3385">https://doi.org/10.1002/ecs2.3385</a>.
 </div>
 </div>
 </div>

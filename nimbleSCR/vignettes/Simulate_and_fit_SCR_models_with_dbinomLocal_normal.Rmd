@@ -71,7 +71,6 @@ We also set up the objects necessary to perform the local evaluation using the '
 trapLocal <- getLocalObjects(habitatMask = habitatMask,
                              coords = ScaledtrapCoords,
                              dmax = 7,
-                             resizeFactor = 1,
                              plot.check = FALSE
 )
 ```
@@ -108,7 +107,6 @@ modelCode <- nimbleCode({
                                                  trapCoords = trapCoords[1:n.traps,1:2],
                                                  localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
                                                  localTrapsNum = nTraps[1:n.cells],
-                                                 resizeFactor = ResizeFactor,
                                                  habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
                                                  indicator = z[i],
                                                  lengthYCombined = lengthYCombined)
@@ -158,7 +156,6 @@ nimConstants <- list(M = M,
                      x.max = dim(habitatMask)[2],
                      y.maxDet = dim(trapLocal$habitatGrid)[1],
                      x.maxDet = dim(trapLocal$habitatGrid)[2],
-                     ResizeFactor = trapLocal$resizeFactor,
                      n.cells = dim(trapLocal$localIndices)[1],
                      maxNBDets = trapLocal$numLocalIndicesMax,
                      trapIndex = trapLocal$localIndices,
@@ -359,7 +356,6 @@ modelCodeTrap <- nimbleCode({
                                                   trapCoords = trapCoords[1:n.traps,1:2],
                                                   localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
                                                   localTrapsNum = nTraps[1:n.cells],
-                                                  resizeFactor = ResizeFactor,
                                                   habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
                                                   indicator = z[i],
                                                   lengthYCombined = lengthYCombined)

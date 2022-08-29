@@ -89,7 +89,6 @@ habitatMask <- matrix(1, nrow = 30, ncol= 30, byrow = TRUE)
 trapLocal <- getLocalObjects(habitatMask = habitatMask,
                              coords = ScaledCoords$coordsDataScaled,
                              dmax = 10,
-                             resizeFactor = 1,
                              plot.check = FALSE)
 ```
 
@@ -145,7 +144,6 @@ modelCode <- nimbleCode({
       trapCoords = trapCoords[1:n.traps,1:2],
       localTrapsIndices = trapIndex[1:n.cells,1:maxNBDets],
       localTrapsNum = nTraps[1:n.cells],
-      resizeFactor = ResizeFactor,
       habitatGrid = habitatIDDet[1:y.maxDet,1:x.maxDet],
       indicator = z[i],
       lengthYCombined = lengthYCombined)
@@ -183,7 +181,6 @@ nimConstants <- list(M = M,
                      n.traps = dim(ScaledCoords$coordsDataScaled)[1],
                      y.maxDet = dim(trapLocal$habitatGrid)[1],
                      x.maxDet = dim(trapLocal$habitatGrid)[2],
-                     ResizeFactor = trapLocal$resizeFactor,
                      n.cells = dim(trapLocal$localIndices)[1],
                      maxNBDets = trapLocal$numLocalIndicesMax,
                      nTraps = trapLocal$numLocalIndices,
