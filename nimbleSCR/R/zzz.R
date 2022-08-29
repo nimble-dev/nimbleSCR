@@ -312,7 +312,7 @@
                     BUGSdist = "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGrid, habitatGridLocal,
                                                                resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
                     Rdist = c("dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor    , localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
-                              "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor = 1, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)"
+                              "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor = 1, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)"),
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",
                               "habitatGrid = double(2)", "habitatGridLocal = double(2)",
@@ -330,7 +330,7 @@
             dbernppLocalACmovement_exp = list(
               BUGSdist = "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda, rate, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
               Rdist = c("dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda = -999, rate,        baseIntensities, habitatGrid, habitatGridLocal, resizeFactor    , localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
-                        "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda       , rate = -999, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor    , localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)"
+                        "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda       , rate = -999, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor    , localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
                         "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda = -999, rate,        baseIntensities, habitatGrid, habitatGridLocal, resizeFactor = 1, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)",
                         "dbernppLocalACmovement_exp(lowerCoords, upperCoords, s, lambda       , rate = -999, baseIntensities, habitatGrid, habitatGridLocal, resizeFactor = 1, localHabWindowIndices, numLocalHabWindows, numGridRows, numGridCols, numWindows)"),
               types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
@@ -351,7 +351,7 @@
                     BUGSdist = "dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
                                  habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
                     Rdist = c("dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor    , localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
-                              "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)"
+                              "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)"),
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)", 
                               "habitatGridLocal = double(2)", "resizeFactor = double(0)",
@@ -410,7 +410,7 @@
                     BUGSdist = "dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
                                  habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows, numMaxPoints, numWindows, indicator)",
                     Rdist = c("dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor    , localObsWindowIndices, numLocalObsWindows, numMaxPoints, numWindows, indicator)",
-                              "dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows, numMaxPoints, numWindows, indicator)"
+                              "dpoisppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows, numMaxPoints, numWindows, indicator)"),
                     types = c("value = double(2)", "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)",  
                               "habitatGridLocal = double(2)", "resizeFactor = double(0)",
