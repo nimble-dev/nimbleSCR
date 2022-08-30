@@ -50,7 +50,6 @@ Collate:
     dpoisppDetection_normal.R
     dpoisppLocalDetection_normal.R
     getLocalObjects.R
-    getLocalTraps.R
     getMidPointNodes.R
     getWindowCoords.R
     getSparseY.R

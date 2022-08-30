@@ -97,9 +97,6 @@ dbinomLocal_normal
 getSparseY
 ?getSparseY
 
-getLocalTraps
-?getLocalTraps
-
 getSparseY
 ?dbinom_sparseLocalSCR
 
