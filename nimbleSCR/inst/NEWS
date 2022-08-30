@@ -4,8 +4,6 @@ version 0.2.0 (2022-08-31)
 
 -- removed deprecated functions: dbinom_sparseLocalSCR and getLocalTraps
 
-version 0.1.4 (2022-08-11)
-
 -- fix bug in getLocalTraps() with newest version of R 4.2.1
 
 -- fix bug in getSparseY() when max number of detections per id is 1.
