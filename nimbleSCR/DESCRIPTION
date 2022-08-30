@@ -11,7 +11,7 @@ Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Soumen", "Dey", role = "aut"),
              person("Wei", "Zhang", role = "aut"),
              person("Perry", "de Valpine", role = "aut"))
-Date: 2022-08-17
+Date: 2022-08-31
 Description: Provides utility functions, distributions, and fitting methods for Bayesian Spatial Capture-Recapture (SCR) and Open Population Spatial Capture-Recapture (OPSCR) modelling using the nimble package (de Valpine et al. 2017 <doi:10.1080/10618600.2016.1172487 >). Development of the package was motivated primarily by the need for flexible and efficient analysis of large-scale SCR data (Bischof et al. 2020 <doi:10.1073/pnas.2011383117 >). Computational methods and techniques implemented in nimbleSCR include those discussed in Turek et al. 2021 <doi:10.1002/ecs2.3385>; among others. For a recent application of nimbleSCR, see Milleret et al. (2021) <doi:10.1098/rsbl.2021.0128>.
 License: GPL-3
 Depends: R (>= 3.5.0), nimble
