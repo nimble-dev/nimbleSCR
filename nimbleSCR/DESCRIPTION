@@ -41,7 +41,6 @@ Collate:
     dbernppLocalDetection_normal.R
     dbinomLocal_normal.R
     dmultiLocal_normal.R
-    dbinom_sparseLocalSCR.R
     dbinom_vector.R
     dnormalizer.R
     dpoisLocal_normal.R
