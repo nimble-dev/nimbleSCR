@@ -1,6 +1,8 @@
 
 
+version 0.2.0 (2022-08-31)
 
+-- removed deprecated functions: dbinom_sparseLocalSCR and getLocalTraps
 
 version 0.1.4 (2022-08-11)
 
