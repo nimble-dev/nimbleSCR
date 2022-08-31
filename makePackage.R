@@ -97,14 +97,6 @@ dbinomLocal_normal
 getSparseY
 ?getSparseY
 
-getSparseY
-?dbinom_sparseLocalSCR
-
-dbinomLocal_HNP
-?dbinomLocal_HNP
-
 dbinomLocal_exp
 ?dbinomLocal_exp
 
-HRA_nimble
-?HRA_nimble
