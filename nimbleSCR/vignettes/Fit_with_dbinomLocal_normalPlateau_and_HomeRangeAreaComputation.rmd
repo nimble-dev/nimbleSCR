@@ -485,7 +485,7 @@ The numerical estimate of home range radius and area can be improved further by 
 
 ## 2. Calculating home range radius and area with other detection functions
 
-We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://cran.r-project.org/web/packages/nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_exp' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
+We can also fit SCR models with half-normal or exponential detection function using custom distributions such as 'dbinomLocal_normal()' or 'dbinomLocal_exp()', respectively. An example of SCR model fitting using half-normal detection and other efficient nimbleSCR features is given [here](https://CRAN.R-project.org/package=nimbleSCR/vignettes/Simulate_and_fit_SCR_models_with_dbinomLocal_normal.html). Fitting of SCR model using exponential detection function can be performed following similar steps (see '?dbinomLocal_exp' for further details). Below, we provide  examples to compute home range radius and area for the other detection functions available [@dey2022detfun].
 
 ### Half-normal (detFun = 0)
 The half-normal detection function is written as:
