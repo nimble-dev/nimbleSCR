@@ -14,13 +14,16 @@ version 0.2.0 (2022-08-31)
 
 -- added a dmultiLocal_normal() to allow multi-catch SCR
 
--- added dbinomLocal_HNP() and dbinomLocal_EX() to simulate and fit binomial SCR data with half-normal plateau and exponential detection functions, respectively.
+-- added dbinomLocal_normalPlateau() and dbinomLocal_exp() to simulate and fit binomial SCR data
+with half-normal plateau and exponential detection functions, respectively.
 
--- added function to compute home range radius and area from custom detection functions:  HRA_nimble()
+-- added function to compute home range radius and area from custom detection functions:  getHomeRangeArea()
 
--- added a vignette describing how to use dbinomLocal_HNP() (to simulate and fit SCR models) and to compute home range radius using different detection functions:
+-- added a vignette describing how to use dbinomLocal_normalPlateau() (to simulate and fit SCR models)
+and to compute home range radius and area using different detection functions:
+Fit_with_dbinomLocal_normalPlateau_and_HomeRangeAreaComputation.rmd
 
--- Fit_SCR_models_with_dbinomLocal_HNP_and_HomeRangeRadiusComputation.rmd
+
 
 
 
