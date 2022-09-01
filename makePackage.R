@@ -75,10 +75,6 @@ library(testthat)
 ##test_package('nimbleSCR')
 devtools::test('nimbleSCR')
 
-## inspect package vignettes
-(vignettes <- vignette(package = 'nimbleSCR'))
-for(v in vignettes$results[, 'Item'])   print(vignette(v))
-
 dDispersal_exp
 ?dDispersal_exp
 
@@ -100,3 +96,31 @@ getSparseY
 dbinomLocal_exp
 ?dbinomLocal_exp
 
+
+
+## inspect package vignettes
+(vignettes <- vignette(package = 'nimbleSCR'))
+for(v in vignettes$results[, 'Item'])   print(vignette(v))
+
+
+
+## time building of all vignettes:
+
+library(nimbleSCR)
+library(knitr)
+library(rmarkdown)
+ 
+setwd('~/github/nimble/nimbleSCR/nimbleSCR/vignettes')
+f <- list.files()
+f2 <- grep('\\.[Rr]md$', f, value = TRUE)
+times <- numeric(length(f2))
+names(times) <- f2
+ 
+for(ixi in 1:length(f2)) {
+    message(f2[ixi], ':')
+    tm <- system.time(render(f2[ixi]))
+    times[ixi] <- tm[3]
+}
+ 
+times
+sum(times) / 60   ## total in minutes
