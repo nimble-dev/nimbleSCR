@@ -116,10 +116,10 @@ f2 <- grep('\\.[Rr]md$', f, value = TRUE)
 times <- numeric(length(f2))
 names(times) <- f2
  
-for(ixi in 1:length(f2)) {
-    message(f2[ixi], ':')
-    tm <- system.time(render(f2[ixi]))
-    times[ixi] <- tm[3]
+for(iii in 1:length(f2)) {
+    message(f2[iii], ':')
+    tm <- system.time(render(f2[iii]))
+    times[iii] <- tm[3]
 }
  
 times
