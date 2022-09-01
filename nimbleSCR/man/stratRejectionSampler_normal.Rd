@@ -37,6 +37,7 @@ upperObsCoords <- matrix(c(1, 1, 2, 1, 1, 2, 2, 2), nrow = 4, byrow = TRUE)
 s <- c(1, 1)
 windowIntensities <- c(1:4)
 sd <- 0.1
+set.seed(0)
 stratRejectionSampler_normal(numPoints, lowerObsCoords, upperObsCoords, s, windowIntensities, sd)
 
 }
