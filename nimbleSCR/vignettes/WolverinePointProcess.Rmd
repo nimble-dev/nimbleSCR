@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib  
 vignette: >
-  %\VignetteIndexEntry{Wolverine SCR_pp Example}
+  %\VignetteIndexEntry{Using nimbleSCR to fit 'point process SCR models' to wolverine (Gulo gulo) non-invasive genetic sampling data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

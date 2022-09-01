@@ -256,6 +256,7 @@ nimData1$y <- model$y
 nimInits1 <- nimInits
 nimInits1$z <- model$z
 nimInits1$sxy <- model$sxy
+
 # CREATE AND COMPILE THE NIMBLE MODEL
 model <- nimbleModel( code = modelCode,
                       constants = nimConstants,
@@ -263,9 +264,8 @@ model <- nimbleModel( code = modelCode,
                       inits = nimInits1,
                       check = F,
                       calculate = F)
+
 model$calculate()
-cmodel <- compileNimble(model)
-cmodel$calculate()
 
 MCMCconf <- configureMCMC(model = model,
                           monitors = c("N", "sigma", "p0","w","psi"),
@@ -274,6 +274,10 @@ MCMCconf <- configureMCMC(model = model,
 
 samplerConfList <- MCMCconf$getSamplers()
 print(samplerConfList[1:5])
+```
+
+```{r eval = FALSE}
+cmodel <- compileNimble(model)
 ```
 
 #### 1.7.2 Update the 'adaptive' arguments of MCMC samplers for sigma and w
@@ -311,11 +315,11 @@ MCMCconf$setSamplerExecutionOrder(c(ordering[1],
 #### 1.7.3 Run MCMC
 
 Now we proceed to build and compile the nimble MCMC object. We use the function 'runMCMC' to execute the compiled MCMC object for obtaining posterior samples.
-```{r , warning = FALSE, message = FALSE}
+```{r, eval = FALSE, warning = FALSE, message = FALSE}
 MCMC <- buildMCMC(MCMCconf)
 ```
 
-```{r , eval = F, warning = FALSE, message = FALSE}
+```{r , eval = FALSE, warning = FALSE, message = FALSE}
 cMCMC <- compileNimble(MCMC, project = model, resetFunctions = TRUE)
 
 # RUN THE MCMC 
@@ -330,13 +334,13 @@ MCMCRuntime <- system.time(myNimbleOutput <- runMCMC( mcmc = cMCMC,
 
 ```
 
-```{r eval = F, echo = FALSE}
-save(myNimbleOutput, niter, burnin, nchains, MCMCRuntime,  
-     file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_normalPlateau_samples.RData"))
+```{r eval = FALSE, echo = FALSE}
+save(myNimbleOutput, niter, burnin, nchains, MCMCRuntime,
+     file = file.path(baseDir,"nimbleSCR/inst/extdata/dbinomLocal_normalPlateau_samples.RData"))
 ```
 
 
-```{r echo = F}
+```{r echo = FALSE}
 if(is.null(baseDir)) {
     load(system.file("extdata", "dbinomLocal_normalPlateau_samples.RData", package = "nimbleSCR"))
 } else {
@@ -439,7 +443,7 @@ print(HR.hnp)
 Simulated values of $95\%$ home range radius and area are `r round(HR.hnp[1], 2)` du and `r round(HR.hnp[2], 2)` du$^2$, respectively. 
 
 We can also obtain estimates of home range size and its associated uncertainty from the MCMC chains of the parameters $p_0, \sigma$, and $w$. 
-```{r , warning = FALSE, message = FALSE}
+```{r, eval = FALSE, warning = FALSE, message = FALSE}
 myNimbleOutput <- as.mcmc.list(myNimbleOutput) 
 if(is.list(myNimbleOutput)){posteriorSamples <- do.call(rbind, myNimbleOutput)} 
 if(!is.list(myNimbleOutput)){posteriorSamples <- as.matrix(myNimbleOutput)} 
@@ -454,6 +458,27 @@ cHRAnim.arr <- compileNimble(HRAnim.mat, resetFunctions = TRUE)
 HRA.Runtime <- system.time(
   HR.chain <- cHRAnim.arr$run()
 )
+```
+
+
+```{r eval = FALSE, echo = FALSE}
+save(HR.chain, HRA.Runtime,
+     file = file.path(baseDir,"nimbleSCR/inst/extdata/HRA_chain_runtime.RData"))
+```
+
+
+```{r echo = FALSE}
+if(is.null(baseDir)) {
+    load(system.file("extdata", "HRA_chain_runtime.RData", package = "nimbleSCR"))
+} else {
+    load(file.path(baseDir,"nimbleSCR/inst/extdata/HRA_chain_runtime.RData"))
+}
+```
+
+
+
+
+```{r}
 print(HRA.Runtime)
 dimnames(HR.chain)[[2]] <- paramnames.hr
 ```
@@ -571,7 +596,6 @@ HRAnim <- getHomeRangeArea(x = params, detFun = 2, prob = prob, d = 6,
 HR.exp <- c(HRAnim$run())
 names(HR.exp) <- paramnames.hr
 print(HR.exp)
-
 ```
 
 ### Asymmetric logistic (detFun = 3) 
