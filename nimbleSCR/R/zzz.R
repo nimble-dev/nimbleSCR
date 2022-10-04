@@ -334,8 +334,8 @@
                 dbernppLocalDetection_normal = list(
                     BUGSdist = "dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, 
                                  habitatGridLocal, resizeFactor, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
-                    Rdist = c("dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor    , localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
-                              "dbernppLocalACmovement_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)"),
+                    Rdist = c("dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor    , localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)",
+                              "dbernppLocalDetection_normal(lowerCoords, upperCoords, s, sd, baseIntensities, habitatGridLocal, resizeFactor = 1, localObsWindowIndices, numLocalObsWindows,  numWindows, indicator)"),
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
                               "s = double(1)", "sd = double(0)", "baseIntensities = double(1)", 
                               "habitatGridLocal = double(2)", "resizeFactor = double(0)",
