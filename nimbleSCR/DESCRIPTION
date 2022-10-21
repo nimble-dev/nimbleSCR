@@ -1,7 +1,7 @@
 Package: nimbleSCR
 Type: Package
 Title: Spatial Capture-Recapture (SCR) Methods Using 'nimble'
-Version: 0.2.0
+Version: 0.2.1
 Maintainer: Daniel Turek <danielturek@gmail.com>
 Authors@R: c(person("Richard", "Bischof", role = "aut"),
              person("Daniel", "Turek", role = c("aut", "cre"), email = "danielturek@gmail.com"),
@@ -59,4 +59,9 @@ Collate:
     marginalVoidProbIntegrand.R
     marginalVoidProbNumIntegration.R
     scaleCoordsToHabitatGrid.R
+    dcatState1Alive1Dead.R
+    dcatState1Alive2Dead.R
+    dcatState2Alive2Dead.R
+    sampler_categorical_general.R
+    calculateDensity.R
     zzz.R
