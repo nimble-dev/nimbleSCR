@@ -10,7 +10,8 @@
 #'  
 #' @author Daniel Turek
 #'
-#'
+#' @rdname sampler_categorical_general
+#' @export
 sampler_categorical_general <- nimbleFunction(
   name = 'sampler_categorical_general',
   contains = sampler_BASE,
