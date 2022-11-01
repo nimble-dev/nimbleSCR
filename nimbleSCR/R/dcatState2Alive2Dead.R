@@ -72,7 +72,6 @@
 #'                                  , prob2To5 = prob2To5
 #'                                  , prob3To4 = prob3To4
 #'                                  , prob3To5 = prob3To5
-#'                                  
 #'                                  , s = s
 #'                                  , habitatGrid = habitatGrid)
 #'

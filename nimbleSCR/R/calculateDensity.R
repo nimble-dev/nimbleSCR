@@ -1,13 +1,13 @@
-#' @title NIMBLE Function to calculate the density of individuals alive in each habitat cell.
+#' @title NIMBLE function to calculate the density of individuals alive in each habitat cell.
 #'
 #' @description
-#' \code{calculateDensity} is a NIMBLE Function to calculate number of individual activity centers (s) in each habitat cell.
+#' \code{calculateDensity} is a NIMBLE function to calculate number of individual activity centers (s) in each habitat cell.
 #' 
 #' @param s \code{Vector} of x- and y-coordinates of individual AC location. 
 #' @param habitatGrid \code{Matrix} Matrix of habitat window indices. 
 #' @param indicator \code{Vector} specifying whether (1) or not (0) individuals are considered alive.
 #' @param numWindows \code{Scalar} Number of habitat windows. 
-#' @param nIndividuals \code{Scalar} Total number of individuals .
+#' @param nIndividuals \code{Scalar} Total number of individuals.
 #'
 #' @author Cyril Milleret
 #'
