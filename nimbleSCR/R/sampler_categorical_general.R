@@ -10,7 +10,7 @@
 #' @param model (uncompiled) model on which the MCMC is to be run. 
 #' @param mvSaved \code{modelValues} object to be used to store MCMC samples. 
 #' @param target node on which the sampler will operate.
-#' @param control named list containing an elemented named \code{numCategories}, which specifies the upper-bound for the range of the random variable.
+#' @param control named list containing an elemente named \code{numCategories}, which specifies the upper-bound for the range of the random variable.
 #'
 #' @author Daniel Turek
 #'
