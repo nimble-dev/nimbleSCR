@@ -13,7 +13,7 @@ sampler_categorical_general(model, mvSaved, target, control)
 
 \item{target}{node on which the sampler will operate.}
 
-\item{control}{named list containing an elemented named \code{numCategories}, which specifies the upper-bound for the range of the random variable.}
+\item{control}{named list containing an elemente named \code{numCategories}, which specifies the upper-bound for the range of the random variable.}
 }
 \description{
 The \code{categorical_general} sampler operates within \code{nimble}'s MCMC engine to perform Gibbs sampling for a single node, which must in essence follow a categorical distribution.  However, the prior distribution need not be \code{nimble}'s \code{dcat} distribution, but rather can be any (potentially user-defined) distribution which has the same support as a standard categorical (\code{dcat}) distribution.  Specifically: the distribution must define a discrete random variable, which can only attain values from the set {1, 2, 3, ..., \code{numCategories}}.
