@@ -2,27 +2,27 @@
 #' 
 #'
 #' The \code{dcatState1Alive2Dead} distribution is a NIMBLE custom distribution which can be used to model and simulate
-#' individual state transition. Typically, this is used to model transitions from one alive and two dead states. 
+#' individual state transition. This function can be used to model transitions from one alive and two dead states. 
 #' If z_{i,t} = 1, individual i can be recruited (transition to state 2) with probability prob1To2_t, so z_{i,t+1} ~ dcat(1- prob1To2_t, prob1To2_t, 0,0 , 0) where prob1To2_t represent the probability of an unborn individual to be recruited.
 #' If z_{i,t} = 2, individual i can die from one cause of mortality (e.g. culling) and transition to z_{i,t+1}=3 with probability prob2To3, or die from another cause with probability prob2To4 z_{i,t+1}=4. 
 #' If the individual does not die it can survive and remain in state 2 with probability (1-(prob2To3+prob2To4)). 
 #' Individuals in dead states (z_{i,t} = 3 or 4) transition to z_{i,t+1} = 4, the absorbing state, with probability 1.
-#' If transition probabilities are assumed to be spatially heterogeneous, a vector of probability should be provided using the "Hab" arguments (e.g. prob1To2Hab,prob2To3Hab,..).
+#' If transition probabilities are spatially variable, a probability vector containing the transition probability value in each habitat window can be provided using the "Hab" arguments (e.g. prob1To2Hab,prob2To3Hab).
 #' 
 #' @name dcatState1Alive2Dead 
 #' 
-#' @param x Scalar of the individual state z_{i,t+1}.
+#' @param x Scalar, individual state z_{i,t+1}.
 #' @param n Integer specifying the number of realizations to generate.  Only n = 1 is supported.
-#' @param z Scalar of the initial individual state z_{i,t}
-#' @param s Vector of x- and y-coordinates corresponding to the AC location of the individual. Used to extract transition probabilities when spatial probabilities are provided.
-#' @param prob1To2 Scalar with probability prob1To2 to transition from z_{i,t} = 1 to z_{i,t+1} = 2.
-#' @param prob1To2Hab Vector with probability prob1To2_r to transition from z_{i,t} =1 to z_{i,t+1} = 2 for each cell r of the habitat. The vector should be of the length of the number of habitat windows in \code{habitatGrid}.
-#' @param prob2To3 Scalar with probability prob2To3 to transition from z_{i,t} = 1 to z_{i,t+1} = 2.
-#' @param prob2To3Hab Vector with probability h_r to transition from z_{i,t} = 2 to z_{i,t+1} = 3 for each cell r of the habitat. The vector should be of the length of the number of habitat windows in \code{habitatGrid}.
-#' @param prob2To4 Vector with probability w_r to transition from z_{i,t} = 2 to z_{i,t+1} = 4 for each cell r of the habitat. The vector should be of the length of the number of habitat windows in \code{habitatGrid}.
-#' @param prob2To4Hab Vector with probability w_r to transition from z_{i,t} = 2 to z_{i,t+1} = 4 for each cell r of the habitat. The vector should be of the length of the number of habitat windows in \code{habitatGrid}.
-#' @param habitatGrid Matrix of habitat window indices and only used if arguements prob2To3Hab, prob2To4Hab or phiSpatial are used.
-#' Habitat window indices should match the order in \code{phiSpatial}, \code{prob2To3Hab}, or \code{prob2To4Hab}. 
+#' @param z Scalar, initial individual state z_{i,t}.
+#' @param s Vector of x- and y-coordinates corresponding to the AC location of the individual. Used to extract transition spatially-explicit probabilities when they are provided.
+#' @param prob1To2 scalar, probability to transition from state 1 to 2.
+#' @param prob1To2Hab vector, Spatially-explicit probability to transition from state 2 to 3.  The length of the vector should be equal the number of habitat windows in \code{habitatGrid}.
+#' @param prob2To3 scalar, probability to transition from state 2 to 3.
+#' @param prob2To3Hab vector, Spatially-explicit probability to transition from state 2 to 3.  The length of the vector should be equal the number of habitat windows in \code{habitatGrid}.
+#' @param prob2To4 scalar, probability to transition from state 2 to 4.
+#' @param prob2To4Hab vector, Spatially-explicit probability to transition from state 2 to 4.  The length of the vector should be equal the number of habitat windows in \code{habitatGrid}.
+#' @param habitatGrid Matrix of habitat window indices. Cell values should correspond to the 
+#' order of habitat windows in \code{prob1To2Hab}, \code{prob2To3Hab} and in \code{lowerCoords}  and \code{upperCoords} as used in the \code{dbernppAC} function.
 #' @param log Logical argument, specifying whether to return the log-probability of the distribution.
 #' @return 
 #' \code{dcatState1Alive2Dead} gives the (log) probability density of \code{x}. 

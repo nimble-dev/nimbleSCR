@@ -1,3 +1,14 @@
+version 0.2.1 (2022-11-01)
+
+-- Add dcatState1Alive1Dead(), dcatState1Alive2Dead(), and dcatState2Alive2Dead() to sample state transition based on spatial probabilities. 
+
+-- Add sampler_categorical_general() to allow the addition of categorical samplers 
+
+-- Add calculateDensity() to calculate the density of individual in each habitat cell.
+
+-- fix bug in the registration of dbernppDetection_normal().
+
+
 
 
 version 0.2.0 (2022-08-31)

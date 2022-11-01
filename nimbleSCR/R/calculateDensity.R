@@ -3,11 +3,12 @@
 #' @description
 #' \code{calculateDensity} is a NIMBLE function to calculate number of individual activity centers (s) in each habitat cell.
 #' 
-#' @param s \code{Vector} of x- and y-coordinates of individual AC location. 
-#' @param habitatGrid \code{Matrix} Matrix of habitat window indices. 
-#' @param indicator \code{Vector} specifying whether (1) or not (0) individuals are considered alive.
+#' @param s \code{Matrix} of x- and y-coordinates of individual AC locations. 
+#' @param habitatGrid Matrix of habitat window indices. Cell values should correspond to the 
+#' order of habitat windows in spatial probabilities (e.g. \code{prob1To2Hab} as used in the function \code{dcatState1Alive2Dead}) or in \code{lowerCoords} and \code{upperCoords} as used in the \code{dbernppAC} function. #' @param indicator \code{Vector} of binary arguments specifying whether the individuals are considered alive (indicator = 1) or not (indicator = 0).
+#' @param indicator \code{Vector} of binary arguments specifying whether the individuals are considered alive (indicator = 1) or not (indicator = 0).
 #' @param numWindows \code{Scalar} Number of habitat windows. 
-#' @param nIndividuals \code{Scalar} Total number of individuals.
+#' @param nIndividuals \code{Scalar} Number of individuals.
 #'
 #' @author Cyril Milleret
 #'
