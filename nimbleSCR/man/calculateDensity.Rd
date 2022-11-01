@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculateDensity.R
 \name{calculateDensity}
 \alias{calculateDensity}
-\title{NIMBLE Function to calculate the density of individuals alive in each habitat cell.}
+\title{NIMBLE function to calculate the density of individuals alive in each habitat cell.}
 \usage{
 calculateDensity(s, habitatGrid, indicator, numWindows, nIndividuals)
 }
@@ -19,7 +19,7 @@ order of habitat windows in spatial probabilities (e.g. \code{prob1To2Hab} as us
 \item{nIndividuals}{\code{Scalar} Number of individuals.}
 }
 \description{
-\code{calculateDensity} is a NIMBLE Function to calculate number of individual activity centers (s) in each habitat cell.
+\code{calculateDensity} is a NIMBLE function to calculate number of individual activity centers (s) in each habitat cell.
 }
 \examples{
 lowerCoords <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), nrow = 4, byrow = TRUE)

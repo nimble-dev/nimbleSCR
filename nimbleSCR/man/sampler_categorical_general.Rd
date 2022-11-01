@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampler_categorical_general.R
 \name{sampler_categorical_general}
 \alias{sampler_categorical_general}
-\title{NIMBLE function to calculate the density of individuals alive in each habitat cell.}
+\title{\code{nimble} MCMC sampler function for general categorial distributions}
 \usage{
 sampler_categorical_general(model, mvSaved, target, control)
 }
@@ -11,12 +11,43 @@ sampler_categorical_general(model, mvSaved, target, control)
 
 \item{mvSaved}{\code{modelValues} object to be used to store MCMC samples.}
 
-\item{target}{node(s) on which the sampler will be used.}
+\item{target}{node on which the sampler will operate.}
 
-\item{control}{named list that controls the precise behavior of the sampler. the number of categories can be provide list("numCategories"= 4)}
+\item{control}{named list containing an elemented named \code{numCategories}, which specifies the upper-bound for the range of the random variable.}
 }
 \description{
-\code{sampler_categorical_general} The categorical sampler performs Gibbs sampling for a single node, which must follow a categorical (dcat) distribution.
+The \code{categorical_general} sampler operates within \code{nimble}'s MCMC engine to perform Gibbs sampling for a single node, which must in essence follow a categorical distribution.  However, the prior distribution need not be \code{nimble}'s \code{dcat} distribution, but rather can be any (potentially user-defined) distribution which has the same support as a standard categorical (\code{dcat}) distribution.  Specifically: the distribution must define a discrete random variable, which can only attain values from the set {1, 2, 3, ..., \code{numCategories}}.
+
+The \code{categorical_general} sampler requires one control list argument, named \code{numCategories}, which specifies the fixed upper-bound for the range of the random variable.
+
+The \code{categorical_general} sampler is designed to be used in \code{nimble}'s MCMC engine, and can be added to an MCMC configuration object using the \code{addSampler} method.  See \code{help(configureMCMC)} for more information about MCMC configuration objects and adding custom samplers.
+}
+\examples{
+
+\dontrun{
+## define custom dmy_categorical distribution as a nimbleFunction
+dmy_categorical <- nimbleFunction(...)
+
+## nimble model code, using custom-written dmy_categorical distribution
+code <- nimbleCode({
+  x ~ dmy_categorical(...)
+})
+
+## create NIMBLE model object
+Rmodel <- nimbleModel(code)
+
+## create MCMC configuration object with no samplers
+conf <- configureMCMC(Rmodel, nodes = NULL)
+
+## add categorical_general sampler to MCMC configuration
+conf$addSampler(target = 'x', type = 'categorical_general', control = list(numCategories = 10))
+
+## build MCMC algorithm
+Rmcmc <- buildMCMC(conf)
+
+## compile model and MCMC, run MCMC algorithm
+}
+
 }
 \author{
 Daniel Turek
