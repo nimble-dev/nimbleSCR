@@ -201,6 +201,7 @@ rbernppLocalACmovement_normal <- nimbleFunction(
     }
     ## Find in which habitat window (from the rescaled habitat grid) the s (source AC location) falls in
     sourceAC <- habitatGridLocal[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
+
     
     ## Get local windows ids within a close distance from the source AC  
     numWindowsLoc <- numLocalHabWindows[sourceAC] 
