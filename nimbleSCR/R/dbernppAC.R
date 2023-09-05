@@ -75,7 +75,7 @@ dbernppAC <- nimbleFunction(
       else return(0.0)
     }
     ## Find which window point x falls within
-    windowInd <- habitatGrid[trunc(x[2])+1, trunc(x[1])+1]
+    windowInd <- habitatGrid[numGridRows-trunc(x[2]), trunc(x[1])+1]
     ## windowInd == 0 means this window is not defined as habitat
     if(windowInd == 0) {
         if(log) return(-Inf)

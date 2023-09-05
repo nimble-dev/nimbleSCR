@@ -138,7 +138,9 @@ dbernppLocalDetection_normal <- nimbleFunction(
       }
     }
     ## Get the habitat window index where the AC is located
-    habWindowInd <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    numGridRows <- nrow(habitatGridLocal)
+    habWindowInd <- habitatGridLocal[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
+    
     ## Get the indices of detection windows that are close to the AC
     localWindows <- localObsWindowIndices[habWindowInd, 1:numLocalObsWindows[habWindowInd]]
     
@@ -203,7 +205,9 @@ rbernppLocalDetection_normal <- nimbleFunction(
       
       
       ## Get the habitat window index where the AC is located
-      habWindowInd <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+      numGridRows <- nrow(habitatGridLocal)
+      habWindowInd <- habitatGridLocal[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
+      
       ## Get the indices of detection windows that are close to the AC
       numWindowsLoc <- numLocalObsWindows[habWindowInd]
       localWindows <- localObsWindowIndices[habWindowInd, 1:numWindowsLoc]

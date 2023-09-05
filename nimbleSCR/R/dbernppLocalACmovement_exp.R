@@ -142,7 +142,7 @@ dbernppLocalACmovement_exp <- nimbleFunction(
       else return(0.0)
     }
     ## Index of the window where x falls
-    windowInd <- habitatGrid[trunc(x[2])+1, trunc(x[1])+1]
+    windowInd <- habitatGrid[numGridRows-trunc(x[2]), trunc(x[1])+1]
     ## windowInd == 0 means this window is not defined as habitat
     if(windowInd == 0) {
       if(log) return(-Inf)
@@ -150,7 +150,7 @@ dbernppLocalACmovement_exp <- nimbleFunction(
     }
     
     ## Find in which habitat window (from the rescaled habitat grid) the s (source AC location) falls in
-    sourceAC <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    sourceAC <- habitatGridLocal[(numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
     ## Get local windows ids within a close distance from the source AC  
     localWindows <- localHabWindowIndices[sourceAC, 1:numLocalHabWindows[sourceAC]]
     ## Check if the point x is out of the local area of the AC
@@ -215,7 +215,8 @@ rbernppLocalACmovement_exp <- nimbleFunction(
     }
     
     ## Find in which habitat window (from the rescaled habitat grid) the s (source AC location) falls in
-    sourceAC <- habitatGridLocal[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    sourceAC <- habitatGridLocal[(numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
+    
     ## Get local windows ids within a close distance from the source AC  
     numWindowsLoc <- numLocalHabWindows[sourceAC] 
     localWindows <- localHabWindowIndices[sourceAC, 1:numWindowsLoc]
