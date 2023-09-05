@@ -47,6 +47,8 @@ getLocalObjects <- function( habitatMask,
   ## STORE THE COORDINATES OF THE ORIGINAL HABITAT CELLS
   oldCoords <- which(habitatMask > 0, arr.ind = T) - 0.5
   oldCoords <- cbind(oldCoords[,2], oldCoords[,1])
+  
+  oldCoords[,2] <- max(oldCoords[,2]) - oldCoords[,2]
   names(oldCoords) <- c("x", "y")
   
   ## GET ORIGIN FOR THE NEW (RESIZED) HABITAT MATRIX 
@@ -60,6 +62,7 @@ getLocalObjects <- function( habitatMask,
   xCoords <- seq(origin, xMax, by = resizeFactor)
   yCoords <- seq(origin, yMax, by = resizeFactor)
   habitatCoords <- expand.grid(list(x = xCoords, y = yCoords))
+  # habitatCoords[,2] <- max(habitatCoords[,2])-habitatCoords[,2]
   habitatCoords <- habitatCoords[order(habitatCoords[ ,1], habitatCoords[ ,2]), ]
   
   ## GET UPPER AND LOWER COORDINATES FOR THE NEW HABITAT CELLS
@@ -76,11 +79,12 @@ getLocalObjects <- function( habitatMask,
   
   ## REMOVE NEW HABITAT CELL COORDINATES THAT ARE NOT HABITAT  
   habitatCoords <- habitatCoords[isIn, ]
-  
+  plot(habitatCoords[,2]~habitatCoords[,1])
+  plot(oldCoords[,2]~oldCoords[,1])
   ## CREATE AN EMPTY MATRIX OF NEW HABITAT CELL IDs
   habitatID <- matrix(0, nrow = length(yCoords), ncol = length(xCoords))
   for(c in 1:dim(habitatCoords)[1]){
-    habitatID[trunc(habitatCoords[c,2]/resizeFactor)+1, trunc(habitatCoords[c,1]/resizeFactor)+1] <- c
+    habitatID[yMax-trunc(habitatCoords[c,2]/resizeFactor), trunc(habitatCoords[c,1]/resizeFactor)+1] <- c
   }
   
   ## DETERMINE WHICH POINTS ARE WITHIN dmax OF THE CENTER OF EACH NEW HABITAT CELL
@@ -114,12 +118,12 @@ getLocalObjects <- function( habitatMask,
   ## PLOT CHECK 
   if(plot.check){
     SXY <- as.numeric(habitatCoords[sample(1:dim(habitatCoords)[1], size = 1), ])
-    sxyID <- habitatID[trunc(SXY[2]/resizeFactor)+1, trunc(SXY[1]/resizeFactor)+1]
+    sxyID <- habitatID[yMax-trunc(SXY[2]/resizeFactor)+1, trunc(SXY[1]/resizeFactor)+1]
     index <- Index[sxyID, 1:numLocalIndices[sxyID]]
     
     plot(habitatCoords[ ,2] ~ habitatCoords[ ,1], pch = 16, cex = 0.1)
-    points(habitatCoords[sxyID,2] ~ habitatCoords[sxyID,1], pch = 16, cex = 0.4, col = "orange")
-    points(coords[ ,2] ~ coords[ ,1], pch = 16, cex = 0.2, col = "red")
+    points(habitatCoords[sxyID,2] ~ habitatCoords[sxyID,1], pch = 16, cex = 3, col = "orange")
+    points(coords[ ,2] ~ coords[ ,1], pch = 16, cex = 0.5, col = "red")
     points(coords[index,2] ~ coords[index,1], pch = 16, cex = 0.4, col = "blue")
     points(SXY[2] ~ SXY[1], bg = "red", pch = 21, cex = 1.2)
   }

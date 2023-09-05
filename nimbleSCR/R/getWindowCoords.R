@@ -79,7 +79,7 @@ getWindowCoords <- function(scaledHabGridCenter = scaledHabGridCenter,
                         ncol = max(scaledHabGridCenter[,"x"])+1 )
   
   for(i in 1:nrow(scaledHabGridCenter)){
-    habitatGrid[trunc(scaledHabGridCenter[i,"y"]) + 1, trunc(scaledHabGridCenter[i,"x"]) + 1] <- i
+    habitatGrid[dim(habitatGrid)[1] -trunc(scaledHabGridCenter[i,"y"]) , trunc(scaledHabGridCenter[i,"x"]) + 1] <- i
   }
   
   ## CONSTRUCT LOWER AND UPPER OBSGRID 

@@ -76,7 +76,8 @@ dpoisppAC <- nimbleFunction(
       }
       logProb <- -sumIntensity
       for(i in 1:numPoints) {
-        windowInd <- habitatGrid[trunc(x[i,2])+1, trunc(x[i,1])+1] ## Window index of the ith point
+        windowInd <- habitatGrid[numGridRows-trunc(x[i,2]), trunc(x[i,1])+1]
+        
         ## windowInd == 0 means this window is not defined as habitat
         if(windowInd == 0) {
             if(log) return(-Inf)

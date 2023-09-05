@@ -211,7 +211,8 @@ dbinomLocal_exp <- nimbleFunction(
     }
     
     ## Retrieve the index of the habitat cell where the current AC is
-    sID <- habitatGrid[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    numGridRows <- nrow(habitatGrid)
+    sID <- habitatGrid[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
     
     ## Retrieve the indices of the local traps surrounding the selected habita grid cell
     theseLocalTraps <- localTrapsIndices[sID,1:localTrapsNum[sID]]
@@ -304,7 +305,8 @@ rbinomLocal_exp <- nimbleFunction(
     if(indicator == 0){return(rep(0.0, lengthYCombined))}
     
     ## RETRIEVE THE ID OF THE HABITAT WINDOW THE CURRENT sxy FALLS IN FROM THE HABITAT_ID MATRIX
-    sID <- habitatGrid[trunc(s[2]/resizeFactor)+1, trunc(s[1]/resizeFactor)+1]
+    numGridRows <- nrow(habitatGrid)
+    sID <- habitatGrid[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
     
     ## RETRIEVE THE IDs OF THE RELEVANT DETECTORS
     theseLocalTraps <- localTrapsIndices[sID, 1:localTrapsNum[sID]]

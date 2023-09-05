@@ -75,7 +75,8 @@ dbernppACmovement_normal <- nimbleFunction(
       else return(0.0)
     }
     ## Index of the window where x falls
-    windowInd <- habitatGrid[trunc(x[2])+1, trunc(x[1])+1]
+    windowInd <- habitatGrid[numGridRows-trunc(x[2]), trunc(x[1])+1]
+    
     ## windowInd == 0 means this window is not defined as habitat
     if(windowInd == 0) {
         if(log) return(-Inf)
