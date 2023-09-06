@@ -101,7 +101,7 @@ dcatState1Alive1Dead  <- nimbleFunction(run = function( x = double(0)
     
     if(prob1To2 == -999){
       # sID <- habitatGrid[trunc(s[2])+1, trunc(s[1])+1]
-      numGridRows <- nrow(habitatGrid)
+      numGridRows <- dim(habitatGrid)[1]
       sID <- habitatGrid[numGridRows-trunc(s[2]), trunc(s[1])+1]
       
       indProb1To2 <- prob1To2Hab[sID]
@@ -117,7 +117,7 @@ dcatState1Alive1Dead  <- nimbleFunction(run = function( x = double(0)
   
   if(z == 2){
     ## EXTRACT LOCATION OF THE ID
-    numGridRows <- nrow(habitatGrid)
+    numGridRows <- dim(habitatGrid)[1]
     sID <- habitatGrid[numGridRows-trunc(s[2]), trunc(s[1])+1]
   
     #prob2To3
@@ -159,7 +159,7 @@ rcatState1Alive1Dead <- nimbleFunction(run = function( n = integer(0)
   
   if(z == 1){
     if(prob1To2 == -999){
-      numGridRows <- nrow(habitatGrid)
+      numGridRows <- dim(habitatGrid)[1]
       sID <- habitatGrid[numGridRows-trunc(s[2]), trunc(s[1])+1]
       indProb1To2 <- prob1To2Hab[sID]
     }else{
@@ -172,7 +172,7 @@ rcatState1Alive1Dead <- nimbleFunction(run = function( n = integer(0)
   
   if(z == 2){
     ## EXTRACT LOCATION OF THE ID
-    numGridRows <- nrow(habitatGrid)
+    numGridRows <- dim(habitatGrid)[1]
     sID <- habitatGrid[numGridRows-trunc(s[2]), trunc(s[1])+1]
     #prob2To3
     if(prob2To3 == -999){

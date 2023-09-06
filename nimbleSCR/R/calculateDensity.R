@@ -45,7 +45,7 @@ calculateDensity <- nimbleFunction(run = function(  s = double(2)
   returnType(double(1))
   
   dens <- numeric(length = numWindows, value = 0)
-  numGridRows <- nrow(habitatGrid)
+  numGridRows <- dim(habitatGrid)[1]
   for(i in 1:nIndividuals){
     if(indicator[i]==1){
       windowInd <- habitatGrid[numGridRows-trunc(s[i,2]), trunc(s[i,1]) + 1]

@@ -12,7 +12,7 @@ getHomeRangeArea(
   xlim = c(0, 30),
   ylim = c(0, 30),
   nBreaks = 800,
-  tol = 0.00001,
+  tol = 1e-05,
   nIter = 2000
 )
 }

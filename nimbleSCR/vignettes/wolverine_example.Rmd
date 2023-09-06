@@ -149,11 +149,14 @@ Here, we resize the habitat matrix by a factor of 24, which corresponds to the `
 
 ```{r, fig.width = 6, fig.height = 7}
 set.seed(2)
-
+#flip detectors upsidedown 
+data$detector.xy <- data$detector.xy
+data$detector.xy[,2] <- data$upperCoords[2]-data$detector.xy[,2]
 DetectorIndex <- getLocalObjects(habitatMask = data$habitat.mx,
                                coords = data$detector.xy,
                                dmax = 38,
                                resizeFactor = 24)
+
 
 constants$y.maxDet <- dim(DetectorIndex$habitatGrid)[1]
 constants$x.maxDet <- dim(DetectorIndex$habitatGrid)[2]
@@ -163,6 +166,8 @@ constants$maxNBDets <- DetectorIndex$numLocalIndicesMax
 data$detectorIndex <- DetectorIndex$localIndices
 data$nDetectors <- DetectorIndex$numLocalIndices
 data$habitatIDDet <- DetectorIndex$habitatGrid
+
+
 ```
 
 ### 2. Sparse representation of the observation matrix
@@ -179,6 +184,11 @@ data$y <- ySparse$y[,,1]
 data$yDets <- ySparse$detIndices[,,1]
 data$nbDetections <- ySparse$detNums[,1]
 constants$nMaxDetectors <- ySparse$maxDetNums
+#flip initial values upsidedown 
+inits$sxy[,2] <- data$upperCoords[2]- inits$sxy[,2]
+
+
+
 ```
 
 
@@ -193,6 +203,29 @@ Now, we can create the `nimble` model object, using the model structure
 defined in `code`, and the constants, data, and initial values.
 ```{r eval = FALSE}
 Rmodel <- nimbleModel(code, constants, data, inits)
+ Rmodel$calculate()
+# 
+ which(is.infinite(Rmodel$logProb_y),arr.ind = T)
+  which(is.infinite(Rmodel$logProb_ones),arr.ind = T)
+
+# plot(data$detector.xy[,2]~data$detector.xy[,1])
+# i=5
+# Rmodel$sxy[i,]
+# points(Rmodel$sxy[i,2]~Rmodel$sxy[i,1],col="red",pch=16)
+# data$y[i,]
+# dets <- data$yDets[i,1:data$nbDetections[i]]
+# points(data$detector.xy[dets,2]~data$detector.xy[dets,1],col="blue",pch=16)
+# 
+# data$detector.xy[dets,]
+# Rmodel$sxy[i,]
+# 
+# 
+# i
+# 
+# my.jags.input$detector.xy[dets,]
+# inits.1$sxy[i,]
+
+
 ```
 
 

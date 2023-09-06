@@ -17,7 +17,7 @@
 #' \item \emph{lowerHabCoords} A matrix with the "x" and "y" lower habitat window coordinates.
 #' \item \emph{upperHabCoords} A matrix with the "x" and "y" upper habitat window coordinates.
 #' \item \emph{habitatGrid} A matrix of habitat cell ID that can be used to lookup efficiently the cell ID from a coordinate scaled to the habitat grid:
-#' habitatGrid[trunc(scaledHabGridCenter[1,"y"]) + 1, trunc(scaledHabGridCenter[1,"x"]) + 1]. See \code{\link{scaleCoordsToHabitatGrid}} for more details.
+#' habitatGrid[trunc(numGridRows - scaledHabGridCenter[1,"y"]), trunc(scaledHabGridCenter[1,"x"]) + 1]. See \code{\link{scaleCoordsToHabitatGrid}} for more details.
 #' \item \emph{lowerObsCoords} A matrix with the "x" and "y" lower observation window coordinates. Only returned when \emph{scaledObsGridCenter} is provided.
 #' \item \emph{upperObsCoords} A matrix with the "x" and "y" upper observation window coordinates. Only returned when \emph{scaledObsGridCenter} is provided.
 #'
