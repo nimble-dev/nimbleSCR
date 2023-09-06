@@ -57,6 +57,7 @@ getLocalObjects <- function( habitatMask,
   ## GET DIMENSIONS FOR THE NEW HABITAT MATRIX
   xMax <- ceiling(dim(habitatMask)[2]/resizeFactor) * resizeFactor
   yMax <- ceiling(dim(habitatMask)[1]/resizeFactor) * resizeFactor
+  yMax1 <- ceiling(dim(habitatMask)[1]/resizeFactor) 
   
   ## GET COORDINATES FOR THE NEW HABITAT CELLS
   xCoords <- seq(origin, xMax, by = resizeFactor)
@@ -79,12 +80,12 @@ getLocalObjects <- function( habitatMask,
   
   ## REMOVE NEW HABITAT CELL COORDINATES THAT ARE NOT HABITAT  
   habitatCoords <- habitatCoords[isIn, ]
-  plot(habitatCoords[,2]~habitatCoords[,1])
-  plot(oldCoords[,2]~oldCoords[,1])
+
   ## CREATE AN EMPTY MATRIX OF NEW HABITAT CELL IDs
-  habitatID <- matrix(0, nrow = length(yCoords), ncol = length(xCoords))
+  numGridRows <- length(yCoords)
+  habitatID <- matrix(0, nrow = numGridRows, ncol = length(xCoords))
   for(c in 1:dim(habitatCoords)[1]){
-    habitatID[yMax-trunc(habitatCoords[c,2]/resizeFactor), trunc(habitatCoords[c,1]/resizeFactor)+1] <- c
+    habitatID[numGridRows-trunc(habitatCoords[c,2]/resizeFactor), trunc(habitatCoords[c,1]/resizeFactor)+1] <- c
   }
   
   ## DETERMINE WHICH POINTS ARE WITHIN dmax OF THE CENTER OF EACH NEW HABITAT CELL
@@ -102,6 +103,13 @@ getLocalObjects <- function( habitatMask,
   numLocalIndices <- unlist(lapply(localIndices, function(x) length(x)))
   maxLocalIndices <- max(numLocalIndices)
   
+  i=1
+  plot(habitatCoords[,2]~habitatCoords[,1])
+  points(habitatCoords[i,2]~habitatCoords[i,1],col="red")
+  points(coords[localIndices[[i]],2]~coords[localIndices[[i]],1],col="red")
+  
+  points(coords[,2]~coords[,1],col="blue",cex=0.1)
+  
   ## FOR ALL HABITAT GRIDS, THE LOCAL EVALUATION SHOULD BE LARGE ENOUGH TO OVERLAP WITH >0 TRAP
   if(any(numLocalIndices %in% 0 )){
     stop("dmax value too small. All habitat grid cells should have at least one local object within a radius of dmax.")
@@ -118,7 +126,7 @@ getLocalObjects <- function( habitatMask,
   ## PLOT CHECK 
   if(plot.check){
     SXY <- as.numeric(habitatCoords[sample(1:dim(habitatCoords)[1], size = 1), ])
-    sxyID <- habitatID[yMax-trunc(SXY[2]/resizeFactor)+1, trunc(SXY[1]/resizeFactor)+1]
+    sxyID <- habitatID[numGridRows-trunc(SXY[2]/resizeFactor), trunc(SXY[1]/resizeFactor)+1]
     index <- Index[sxyID, 1:numLocalIndices[sxyID]]
     
     plot(habitatCoords[ ,2] ~ habitatCoords[ ,1], pch = 16, cex = 0.1)

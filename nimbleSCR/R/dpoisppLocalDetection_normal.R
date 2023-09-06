@@ -146,7 +146,7 @@ dpoisppLocalDetection_normal <- nimbleFunction(
     }
     ## Local evaluation:
     ## Get the index of the habitat window where the AC is located
-    numGridRows <- nrow(habitatGridLocal)
+    numGridRows <- dim(habitatGridLocal)[1]
     habWindowInd <- habitatGridLocal[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
     
     ## Get the indices of detection windows that are close to the AC
@@ -234,7 +234,7 @@ rpoisppLocalDetection_normal <- nimbleFunction(
     if((numWindows > 0) & (numMaxPoints != 0)) {
       ## Local evaluation:
       ## Get the habitat window index where the AC is located
-      numGridRows <- nrow(habitatGridLocal)
+      numGridRows <- dim(habitatGridLocal)[1]
       habWindowInd <- habitatGridLocal[numGridRows-trunc(s[2]/resizeFactor), trunc(s[1]/resizeFactor)+1]
       ## Get the indices of detection windows that are close to the AC
       numWindowsLoc <- numLocalObsWindows[habWindowInd]

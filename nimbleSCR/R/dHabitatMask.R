@@ -77,9 +77,9 @@ dHabitatMask <- nimbleFunction(
     if(s[1] > xmax) return(-Inf)   # max x-coordinates
     if(s[2] < ymin) return(-Inf)   # min y-coordinates
     if(s[2] > ymax) return(-Inf)   # max y-coordinates
-    
-    test <- 1-(habitatMask[trunc(s[2])+1, trunc(s[1])+1] == 0)
-    
+    numGridRows <- dim(habitatMask)[1]
+    test <- 1-(habitatMask[numGridRows-trunc(s[2]), trunc(s[1])+1] == 0)
+
     if(log) return(log(test)) else return(test)
   })
 
@@ -100,8 +100,9 @@ rHabitatMask <- nimbleFunction(
     if(s[1] > xmax) return(0)   # max x-coordinates
     if(s[2] < ymin) return(0)   # min y-coordinates
     if(s[2] > ymax) return(0)   # max y-coordinates
+    numGridRows <- dim(habitatMask)[1]
     
-    if(habitatMask[trunc(s[2])+1, trunc(s[1])+1] == 0) return(0) else return(1)
+    if(habitatMask[numGridRows-trunc(s[2]), trunc(s[1])+1] == 0) return(0) else return(1)
 })
 
 

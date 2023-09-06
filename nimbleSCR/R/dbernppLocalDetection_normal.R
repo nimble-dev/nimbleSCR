@@ -83,8 +83,8 @@
 #'                                               coordsHabitatGridCenter = coordsHabitatGridCenter)
 #' ScaledUpperCoords <- scaleCoordsToHabitatGrid(coordsData =  upperCoords,
 #'                                               coordsHabitatGridCenter = coordsHabitatGridCenter)
-#' ScaledUpperCoords$coordsDataScaled[,2] <- ScaledUpperCoords$coordsDataScaled[,2] + 1.5
-#' ScaledLowerCoords$coordsDataScaled[,2] <- ScaledLowerCoords$coordsDataScaled[,2] - 1.5
+#' ScaledUpperCoords$coordsDataScaled[,2] <- ScaledUpperCoords$coordsDataScaled[,2]
+#' ScaledLowerCoords$coordsDataScaled[,2] <- ScaledLowerCoords$coordsDataScaled[,2]
 #' habitatMask <- matrix(1, nrow = 4, ncol=4, byrow = TRUE)
 #' # Create local objects 
 #' ObsWindowsLocal <- getLocalObjects(habitatMask = habitatMask,
