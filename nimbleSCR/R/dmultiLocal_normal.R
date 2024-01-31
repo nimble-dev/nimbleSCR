@@ -56,7 +56,6 @@
 #' @author Soumen Dey, Cyril Milleret
 #'
 #' @import nimble
-#' @importFrom stats dbinom
 #'
 #' @examples
 #' # I. DATA SET UP 

@@ -33,7 +33,7 @@
 #' @author Wei Zhang, Cyril Milleret and Pierre Dupont
 #' 
 #' @import nimble
-#' @importFrom stats dnorm
+#' @importFrom stats dnorm rpois
 #' 
 #' @references
 #' 

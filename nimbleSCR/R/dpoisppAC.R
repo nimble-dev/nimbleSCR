@@ -28,7 +28,7 @@
 #' \code{rpoisppAC} gives coordinates of a set of randomly generated spatial points.  
 #' 
 #' @author Wei Zhang
-#' 
+#' @import nimble
 #' @references
 #' 
 #' W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

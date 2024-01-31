@@ -18,7 +18,6 @@
 #'
 #' @author Richard Bischof, Cyril Milleret
 #'
-#' @importFrom graphics plot points
 #'
 #' @examples
 #'coordsGridCenter <- expand.grid(list(x = seq(50.5, 100, 1),

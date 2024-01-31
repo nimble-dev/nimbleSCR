@@ -26,7 +26,7 @@
 #' 
 #' @author Cyril Milleret
 #' 
-#' 
+#' @import nimble
 #' @examples
 #' # Use the distribution in R
 #' z <- 2

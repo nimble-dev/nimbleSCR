@@ -32,7 +32,8 @@
 #' 
 #' @author Wei Zhang and Cyril Milleret
 #' 
-#' 
+#' @import nimble
+#' @importFrom stats dnorm
 #' @references 
 #'
 #' W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

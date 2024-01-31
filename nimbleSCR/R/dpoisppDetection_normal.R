@@ -30,7 +30,7 @@
 #' @author Wei Zhang 
 #'
 #' @import nimble
-#' @importFrom stats dnorm
+#' @importFrom stats dnorm rpois
 #'
 #' @references
 #' 

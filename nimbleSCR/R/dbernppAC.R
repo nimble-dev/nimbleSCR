@@ -28,7 +28,8 @@
 #' 
 #' @author Wei Zhang
 #' 
-#' 
+#' @import nimble
+#' @importFrom stats runif
 #' @references
 #' 
 #' W. Zhang, J. D. Chipperfield, J. B. Illian, P. Dupont, C. Milleret, P. de Valpine and R. Bischof. 2020. 

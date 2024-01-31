@@ -11,7 +11,7 @@
 #' @return A matrix of x- and y-coordinates of the generated points. One row corresponds to one point.
 #' 
 #' @import nimble
-#' @importFrom stats qexp
+#' @importFrom stats qexp runif
 #' @author Wei Zhang
 #' 
 #' @examples 

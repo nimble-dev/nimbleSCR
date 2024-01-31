@@ -13,7 +13,7 @@
 #' @author Joseph D. Chipperfield and Wei Zhang
 #' 
 #' @import nimble
-#' @importFrom stats qnorm
+#' @importFrom stats qnorm runif
 #' 
 #' @examples 
 #' numPoints <- 10

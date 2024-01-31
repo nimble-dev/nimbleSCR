@@ -26,7 +26,7 @@
 #'
 #' @author Cyril Milleret
 #' @importFrom grDevices adjustcolor
-#' @importFrom graphics rect
+#' @importFrom graphics rect plot points
 #' @examples
 #' coordsGridCenter <- expand.grid(list(x = seq(50.5, 100, 1),
 #'                                      y = seq(100.5, 150, 1)))
