@@ -24,7 +24,7 @@
 #' }
 #'
 #' @author Cyril Milleret and Pierre Dupont
-#'
+#' @import methods
 #' @importFrom graphics plot points
 #'
 #' @examples
