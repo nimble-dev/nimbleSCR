@@ -236,8 +236,7 @@
                     BUGSdist = "dbernppAC(lowerCoords, upperCoords, logIntensities, logSumIntensity, habitatGrid, numGridRows, numGridCols)",
                     types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)", "logIntensities = double(1)", 
                               "logSumIntensity = double(0)", "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)"),
-                    
-                    discrete = TRUE,
+                    discrete = FALSE,
                     mixedSizes = TRUE,
                     pqAvail = FALSE
                 )
@@ -269,7 +268,7 @@
               types = c("value = double(1)", "lowerCoords = double(2)", "upperCoords = double(2)",
                         "s = double(1)", "lambda = double(0)", "rate = double(0)", "baseIntensities = double(1)",
                         "habitatGrid = double(2)", "numGridRows = double(0)", "numGridCols = double(0)", "numWindows = double(0)"),
-              discrete = TRUE,
+              discrete = FALSE,
               mixedSizes = TRUE,
               pqAvail = FALSE
             )
